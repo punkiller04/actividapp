@@ -366,32 +366,18 @@ window._fs = { collection, addDoc, getDocs, query, where, orderBy, Timestamp, do
 async function loadUsuarios() {
   const snap = await getDocs(collection(db, 'usuarios'));
   const sel = document.getElementById('login-user');
-  if (snap.empty) {
-    // Seed from hardcoded data if collection is empty
-    const usuarios = [
-      {cedula:'32240196',nombre:'FUENTES LOPEZ LINA MARCELA',contrasena:'4D1FLLM',tipo:'ASESOR'},
-      {cedula:'98581819',nombre:'ACEVEDO ZAPATA GUILLERMO',contrasena:'4D1AZGA',tipo:'ASESOR'},
-      {cedula:'42694360',nombre:'CASTANO PUERTA LILIANA',contrasena:'4D1CPLM',tipo:'ASESOR'},
-    ];
-    for(const u of usuarios){
-      await setDoc(doc(db,'usuarios',u.cedula), u);
-      const opt = document.createElement('option');
-      opt.value = u.cedula;
-      opt.textContent = u.nombre;
-      sel.appendChild(opt);
-    }
-    window._usuarios = usuarios;
-  } else {
-    window._usuarios = [];
-    snap.forEach(d => {
-      const u = d.data();
-      window._usuarios.push(u);
-      const opt = document.createElement('option');
-      opt.value = u.cedula;
-      opt.textContent = u.nombre;
-      sel.appendChild(opt);
-    });
-  }
+  window._usuarios = [];
+  snap.forEach(d => {
+    const u = d.data();
+    window._usuarios.push({id: d.id, ...u});
+    const opt = document.createElement('option');
+    // Soporte para ambos formatos de campo
+    const cedula = u['CEDULA ID'] || u.cedula || d.id;
+    const nombre = u['NOMBRE EMPLEADO'] || u.nombre || '';
+    opt.value = cedula;
+    opt.textContent = nombre;
+    sel.appendChild(opt);
+  });
 }
 
 // ---- LOAD PROYECTOS ----
@@ -531,12 +517,12 @@ window.doLogin = function() {
   const pass = document.getElementById('login-pass').value;
   const errEl = document.getElementById('login-error');
   if(!cedula){errEl.textContent='Selecciona un usuario';errEl.style.display='block';return;}
-  const user = window._usuarios?.find(u=>u.cedula==cedula||u['CEDULA ID']==cedula);
+  const user = window._usuarios?.find(u=>(u["CEDULA ID"]==cedula||u.cedula==cedula||u.id==cedula));
   if(!user){errEl.textContent='Usuario no encontrado';errEl.style.display='block';return;}
-  const contrasena = user.contrasena || user['CONTRASEÑA'] || '';
+  const contrasena = user['CONTRASEÑA'] || user.contrasena || '';
   if(pass !== contrasena){errEl.textContent='Contraseña incorrecta';errEl.style.display='block';return;}
   errEl.style.display='none';
-  window._currentUser = {cedula, nombre: user.nombre||user['NOMBRE EMPLEADO']||'', tipo: user.tipo||user['TIPO']||''};
+  const nombreU = user['NOMBRE EMPLEADO']||user.nombre||''; window._currentUser = {cedula, nombre: nombreU, tipo: user['TIPO']||user.tipo||''};
   const nombre = window._currentUser.nombre.split(' ')[0];
   document.getElementById('home-user-pill').textContent = nombre;
   showScreen('home');
