@@ -223,20 +223,30 @@
   <!-- ===== NUEVA VISITA ===== -->
   <div class="screen" id="s-nueva">
     <div class="topbar">
-      <span class="topbar-back" onclick="showScreen('actividades')">‹</span>
+      <span class="topbar-back" onclick="showScreen('actividades')">&#8249;</span>
       <div class="topbar-title">Nueva Visita</div>
     </div>
     <div class="content" id="nueva-content">
       <div class="field">
+        <label>Canal</label>
+        <div class="chips" id="chips-canal">
+          <div class="chip sel" data-val="OBRAS">&#127959;&#65039; Obras</div>
+          <div class="chip" data-val="FERRETERIA">&#128295; Ferretera</div>
+        </div>
+      </div>
+      <div class="field" id="field-proyecto">
         <label>Proyecto</label>
-        <select id="nv-proyecto"><option value="">— Buscar proyecto —</option></select>
+        <input type="text" id="nv-proy-search" placeholder="&#128269; Escribe para buscar..." oninput="filtrarProyectosForm()" style="margin-bottom:6px">
+        <select id="nv-proyecto" size="4" style="width:100%;border:1px solid var(--border);border-radius:8px;font-size:13px;padding:4px;background:var(--card);color:var(--text)">
+          <option value="">Escribe arriba para buscar</option>
+        </select>
       </div>
       <div class="field">
         <label>Tipo de cliente</label>
         <select id="nv-tipo-cliente">
-          <option value="">— Seleccionar —</option>
+          <option value="">Seleccionar</option>
           <option>CONSTRUCTOR</option>
-          <option>FERRETERÍA</option>
+          <option>FERRETERIA</option>
           <option>DISTRIBUIDOR</option>
           <option>ARQUITECTO</option>
           <option>CONTRATISTA</option>
@@ -244,7 +254,10 @@
       </div>
       <div class="field">
         <label>Cliente</label>
-        <select id="nv-cliente"><option value="">— Seleccionar cliente —</option></select>
+        <input type="text" id="nv-cli-search" placeholder="&#128269; Escribe para buscar..." oninput="filtrarClientesForm()" style="margin-bottom:6px">
+        <select id="nv-cliente" size="4" style="width:100%;border:1px solid var(--border);border-radius:8px;font-size:13px;padding:4px;background:var(--card);color:var(--text)">
+          <option value="">Escribe arriba para buscar</option>
+        </select>
       </div>
       <div class="field">
         <label>Tipo de visita</label>
@@ -259,28 +272,28 @@
       <div class="field">
         <label>Impacto</label>
         <div class="chips" id="chips-impacto">
-          <div class="chip sel" data-val="Alto">🔴 Alto</div>
-          <div class="chip" data-val="Medio">🟡 Medio</div>
-          <div class="chip" data-val="Bajo">🟢 Bajo</div>
+          <div class="chip sel" data-val="Alto">&#128308; Alto</div>
+          <div class="chip" data-val="Medio">&#128993; Medio</div>
+          <div class="chip" data-val="Bajo">&#128994; Bajo</div>
         </div>
       </div>
       <div class="field">
-        <label>Ubicación GPS</label>
+        <label>Ubicacion GPS</label>
         <div class="loc-box" id="loc-box">
-          <span>📍</span><span id="loc-text">Obteniendo ubicación...</span>
+          <span>&#128205;</span><span id="loc-text">Obteniendo ubicacion...</span>
         </div>
       </div>
       <div class="field">
         <label>Foto de la visita</label>
         <img id="foto-preview" class="foto-preview">
         <div class="foto-area" onclick="document.getElementById('fileInput').click()">
-          <div class="foto-area-icon">📷</div>
+          <div class="foto-area-icon">&#128247;</div>
           <div class="foto-area-text">Toca para tomar foto o adjuntar</div>
         </div>
         <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="previewFoto(this)">
       </div>
       <div class="field">
-        <label>Observación</label>
+        <label>Observacion</label>
         <textarea id="nv-obs" rows="3" placeholder="Notas de la visita..."></textarea>
       </div>
       <button class="btn-primary" id="btn-guardar" onclick="guardarVisita()">Guardar Visita</button>
@@ -456,14 +469,15 @@ window._loadActividades = loadActividades;
 // ---- GUARDAR VISITA ----
 window.guardarVisita = async function() {
   const btn = document.getElementById('btn-guardar');
-  const proyecto = document.getElementById('nv-proyecto').value;
-  const cliente = document.getElementById('nv-cliente').value;
+  const proyectoSel = document.getElementById('nv-proyecto'); const proyecto = proyectoSel.value || proyectoSel.options[proyectoSel.selectedIndex]?.value || '';
+  const clienteSel = document.getElementById('nv-cliente'); const cliente = clienteSel.value || clienteSel.options[clienteSel.selectedIndex]?.value || '';
   const tipoVisita = document.querySelector('#chips-tipo .chip.sel')?.dataset.val || 'Visita';
   const impacto = document.querySelector('#chips-impacto .chip.sel')?.dataset.val || 'Medio';
   const obs = document.getElementById('nv-obs').value;
   const ubicacion = window._gps || '';
 
-  if(!proyecto){showToast('⚠️ Selecciona un proyecto'); return;}
+  const canal = document.querySelector('#chips-canal .chip.sel')?.dataset.val || 'OBRAS';
+  if(canal === 'OBRAS' && !proyecto){showToast('Selecciona un proyecto'); return;}
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>Guardando...';
@@ -472,13 +486,16 @@ window.guardarVisita = async function() {
     let fotoURL = '';
     const fileInput = document.getElementById('fileInput');
     if(fileInput.files[0] && window._storage){
-      const file = fileInput.files[0];
-      const storageRef = window._fs.ref(window._storage, 'fotos/' + Date.now() + '_' + file.name);
-      await window._fs.uploadBytes(storageRef, file);
-      fotoURL = await window._fs.getDownloadURL(storageRef);
+      try {
+        const file = fileInput.files[0];
+        const storageRef = window._fs.ref(window._storage, 'fotos/' + Date.now() + '_' + file.name);
+        await window._fs.uploadBytes(storageRef, file);
+        fotoURL = await window._fs.getDownloadURL(storageRef);
+      } catch(fotoErr){ fotoURL = ''; }
     }
 
     await addDoc(collection(db,'actividades'), {
+      CANAL: canal,
       ID_VISITA: Math.random().toString(36).substr(2,8),
       fecha: Timestamp.now(),
       ASESOR: window._currentUser?.nombre || '',
@@ -494,8 +511,10 @@ window.guardarVisita = async function() {
 
     showToast('✅ Visita guardada exitosamente');
     // Reset form
-    document.getElementById('nv-proyecto').value='';
-    document.getElementById('nv-cliente').value='';
+    document.getElementById('nv-proyecto').innerHTML='<option value="">Escribe arriba para buscar</option>';
+    document.getElementById('nv-cliente').innerHTML='<option value="">Escribe arriba para buscar</option>';
+    document.getElementById('nv-proy-search').value='';
+    document.getElementById('nv-cli-search').value='';
     document.getElementById('nv-obs').value='';
     document.getElementById('foto-preview').style.display='none';
     fileInput.value='';
@@ -663,6 +682,54 @@ window.renderClientes = function(list){
       <div class="card-sub">NIT: ${nit}${cel?' · '+cel:''}</div>
     </div>`;
   }).join('');
+};
+
+
+// CANAL CHANGE
+window.onCanalChange = function(canal){
+  document.querySelectorAll('#chips-canal .chip').forEach(c=>c.classList.remove('sel'));
+  document.querySelector('#chips-canal .chip[data-val="'+canal+'"]')?.classList.add('sel');
+  const fp = document.getElementById('field-proyecto');
+  if(fp) fp.style.display = canal==='OBRAS' ? 'block' : 'none';
+};
+
+// BUSCAR PROYECTOS EN FORMULARIO
+window.filtrarProyectosForm = function(){
+  const q = document.getElementById('nv-proy-search').value.toLowerCase().trim();
+  const sel = document.getElementById('nv-proyecto');
+  sel.innerHTML = '';
+  if(!q || !window._proyectos){ sel.innerHTML='<option value="">Escribe para buscar...</option>'; return; }
+  const res = window._proyectos.filter(p=>{
+    const n=(p['NOMBRE PROYECTO']||'').toLowerCase();
+    const c=String(p['CODIGO']||'').toLowerCase();
+    return n.includes(q)||c.includes(q);
+  }).slice(0,30);
+  if(!res.length){ sel.innerHTML='<option value="">Sin resultados</option>'; return; }
+  res.forEach(p=>{
+    const o=document.createElement('option');
+    o.value=p['NOMBRE PROYECTO']||'';
+    o.textContent=(p['CODIGO']||'')+' · '+(p['NOMBRE PROYECTO']||'');
+    sel.appendChild(o);
+  });
+};
+
+// BUSCAR CLIENTES EN FORMULARIO
+window.filtrarClientesForm = function(){
+  const q = document.getElementById('nv-cli-search').value.toLowerCase().trim();
+  const sel = document.getElementById('nv-cliente');
+  sel.innerHTML = '';
+  if(!q || !window._clientes){ sel.innerHTML='<option value="">Escribe para buscar...</option>'; return; }
+  const res = window._clientes.filter(c=>{
+    const n=(c['NOMBRE CLIENTE']||'').toLowerCase();
+    return n.includes(q);
+  }).slice(0,30);
+  if(!res.length){ sel.innerHTML='<option value="">Sin resultados</option>'; return; }
+  res.forEach(c=>{
+    const o=document.createElement('option');
+    o.value=c['NOMBRE CLIENTE']||'';
+    o.textContent=c['NOMBRE CLIENTE']||'';
+    sel.appendChild(o);
+  });
 };
 
 // FILTER PROYECTOS
