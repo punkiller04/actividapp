@@ -14,12 +14,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --red:#C0392B;--rdark:#96281B;--rlight:#FAECE7;
-  --bg:#F5F5F0;--card:#FFF;--text:#1A1A1A;--muted:#777;--brd:#E8E8E0;
-  --green:#27AE60;--glight:#EAFBF0;--amber:#E67E22;--alight:#FEF5E7;
-  --blue:#2980B9;--blight:#EBF5FB;--sh:0 1px 3px rgba(0,0,0,.08)
-}
+:root{--red:#C0392B;--rdark:#96281B;--rlight:#FAECE7;--bg:#F5F5F0;--card:#FFF;--text:#1A1A1A;--muted:#777;--brd:#E8E8E0;--green:#27AE60;--glight:#EAFBF0;--amber:#E67E22;--alight:#FEF5E7;--blue:#2980B9;--blight:#EBF5FB;--sh:0 1px 3px rgba(0,0,0,.08)}
 html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
 #app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--card);overflow:hidden}
 .scr{display:none;flex-direction:column;height:100%;overflow:hidden}.scr.on{display:flex}
@@ -32,41 +27,30 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .card{background:var(--card);border-radius:12px;border:1px solid var(--brd);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
 .crow{display:flex;align-items:center;gap:12px}
 .cico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.cbody{flex:1;min-width:0}
-.ct{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cs{font-size:12px;color:var(--muted);margin-top:2px}
+.cbody{flex:1;min-width:0}.ct{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cs{font-size:12px;color:var(--muted);margin-top:2px}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .sc{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--brd)}
 .sn{font-size:24px;font-weight:600;color:var(--red);line-height:1}.sl{font-size:11px;color:var(--muted);margin-top:4px}
-/* FORM */
 .f{margin-bottom:12px}
 .f label{font-size:11px;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
 .f input,.f select,.f textarea{width:100%;padding:9px 12px;border:1px solid var(--brd);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none;transition:border-color .2s}
 .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--red)}.f textarea{resize:none}
-/* SEARCH BOX MEJORADO */
-.sw{position:relative;margin-bottom:6px}
-.sw::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
-.sw input{padding-left:32px;background:var(--bg)}
-/* SELECTED VALUE DISPLAY */
-.sel-val{display:none;background:var(--rlight);border:1px solid var(--red);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--rdark);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.sw{position:relative}.sw::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
+.sw input{padding-left:32px!important;background:var(--bg)!important}
+.sel-val{display:none;background:var(--rlight);border:1px solid var(--red);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--rdark);margin-bottom:6px;align-items:center;justify-content:space-between}
 .sel-val.show{display:flex}
-.sel-val-x{cursor:pointer;font-size:16px;color:var(--red);padding-left:8px;font-weight:600}
-/* SELECT LIST */
-.sl2{width:100%;border:1px solid var(--brd);border-radius:8px;font-size:13px;padding:4px;background:var(--card);color:var(--text);outline:none}
+.sel-val-x{cursor:pointer;font-size:16px;color:var(--red);padding-left:8px;font-weight:600;line-height:1}
+.sl2{width:100%;border:1px solid var(--brd);border-radius:8px;font-size:13px;padding:4px;background:var(--card);color:var(--text);outline:none;margin-top:4px}
 .sl2 option:checked{background:var(--rlight);color:var(--rdark)}
-/* BTN */
-.bp{background:var(--red);color:#fff;border:none;border-radius:10px;padding:13px;width:100%;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
+.bp{background:var(--red);color:#fff;border:none;border-radius:10px;padding:14px;width:100%;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;-webkit-appearance:none;touch-action:manipulation}
 .bp:disabled{background:#ccc;cursor:not-allowed}
-.bs{background:transparent;color:var(--red);border:1.5px solid var(--red);border-radius:10px;padding:11px;width:100%;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px}
-.bg2{background:transparent;color:var(--muted);border:1px solid var(--brd);border-radius:8px;padding:8px 14px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer}
-/* CHIPS */
+.bs{background:transparent;color:var(--red);border:1.5px solid var(--red);border-radius:10px;padding:12px;width:100%;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px;-webkit-appearance:none;touch-action:manipulation}
+.bg2{background:transparent;color:var(--muted);border:1px solid var(--brd);border-radius:8px;padding:8px 14px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;-webkit-appearance:none;touch-action:manipulation}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{padding:5px 11px;border-radius:20px;font-size:12px;border:1px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;user-select:none;transition:all .15s}
+.chip{padding:6px 12px;border-radius:20px;font-size:12px;border:1px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;user-select:none;touch-action:manipulation}
 .chip.on{background:var(--rlight);color:var(--rdark);border-color:var(--red)}
-/* MISC */
 .loc{background:#EAF5FB;border-radius:8px;padding:9px 12px;font-size:12px;color:#1A6F8A;display:flex;align-items:center;gap:8px}
-.fa{border:1.5px dashed var(--brd);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s}
-.fa:active{border-color:var(--red)}
+.fa{border:1.5px dashed var(--brd);border-radius:10px;padding:16px;text-align:center;cursor:pointer;touch-action:manipulation}
 .fpimg{width:100%;max-height:150px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:none}
 #fileInput,#fileInputM{display:none}
 .lw{flex:1;display:flex;flex-direction:column;justify-content:center;padding:28px;background:var(--card)}
@@ -74,7 +58,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .lic{width:64px;height:64px;background:var(--red);border-radius:18px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:700;margin:0 auto 12px}
 .em{text-align:center;padding:32px 16px;color:var(--muted)}.em-i{font-size:34px;margin-bottom:8px}
 .ld{text-align:center;padding:24px;color:var(--muted);font-size:13px}
-.fab{position:fixed;bottom:72px;right:calc(50% - 224px);width:50px;height:50px;background:var(--red);border-radius:50%;border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(192,57,43,.35);z-index:10;display:flex;align-items:center;justify-content:center}
+.fab{position:fixed;bottom:72px;right:calc(50% - 224px);width:50px;height:50px;background:var(--red);border-radius:50%;border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(192,57,43,.35);z-index:10;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
 @media(max-width:480px){.fab{right:12px}}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;padding:9px 16px;border-radius:20px;font-size:13px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.on{opacity:1}
@@ -85,9 +69,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .adm{background:rgba(255,215,0,.3);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:600}
 .dv{height:1px;background:var(--brd);margin:10px 0}
 .b{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500}
-.bg1{background:var(--glight);color:#1E8449}.ba1{background:var(--alight);color:#A04000}
-.br1{background:var(--rlight);color:var(--rdark)}.bb1{background:var(--blight);color:#1A5276}
-/* DASH */
+.bg1{background:var(--glight);color:#1E8449}.ba1{background:var(--alight);color:#A04000}.br1{background:var(--rlight);color:var(--rdark)}.bb1{background:var(--blight);color:#1A5276}
 .dbw{background:var(--card);border-radius:12px;border:1px solid var(--brd);padding:14px;margin-bottom:10px}
 .dbt{font-size:13px;font-weight:500;margin-bottom:10px}
 .brw{display:flex;align-items:center;gap:8px;margin-bottom:6px}
@@ -97,42 +79,46 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .dw{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .dc{background:var(--card);border-radius:12px;border:1px solid var(--brd);padding:14px;text-align:center}
 .dn{font-size:26px;font-weight:600}.dl{font-size:11px;color:var(--muted);margin-top:2px}
-/* MAP */
 #mc{flex:1;position:relative}#lmap{width:100%;height:100%}
-.mleg{position:absolute;bottom:16px;left:16px;background:rgba(255,255,255,.95);border-radius:10px;padding:10px 12px;font-size:11px;z-index:999;box-shadow:var(--sh);line-height:1.8}
-.mfi{background:var(--card);padding:8px 12px;border-bottom:1px solid var(--brd);flex-shrink:0;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.mfc{padding:4px 9px;border-radius:20px;font-size:11px;border:1px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;white-space:nowrap}
+.mleg{position:absolute;bottom:60px;left:10px;background:rgba(255,255,255,.95);border-radius:10px;padding:8px 10px;font-size:11px;z-index:999;box-shadow:var(--sh);line-height:1.9}
+.mfi{background:var(--card);padding:8px 10px;border-bottom:1px solid var(--brd);flex-shrink:0;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.mfc{padding:4px 8px;border-radius:20px;font-size:11px;border:1px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;white-space:nowrap;touch-action:manipulation}
 .mfc.on{background:var(--rlight);color:var(--rdark);border-color:var(--red)}
-/* MODAL */
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:flex-end;justify-content:center;padding:0}
 .mo.on{display:flex}
-.md{background:var(--card);border-radius:16px;padding:20px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto}
+.md{background:var(--card);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
 .mdt{font-size:16px;font-weight:600;margin-bottom:14px}
-/* DATE FILTER */
 .drf{display:flex;gap:6px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
 .drf input[type=date]{padding:6px 8px;border:1px solid var(--brd);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none}
 .drf button{padding:6px 12px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer}
-/* ASIGNACION CARD */
 .asig-card{background:var(--card);border-radius:12px;border-left:4px solid var(--amber);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
-.asig-card.pend{border-left-color:var(--amber)}
-.asig-card.visit{border-left-color:var(--green)}
-.asig-card.cerr{border-left-color:var(--muted)}
+.asig-card.visit{border-left-color:var(--green)}.asig-card.cerr{border-left-color:var(--muted)}
+/* LOADING OVERLAY */
+#app-loading{position:fixed;inset:0;background:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;color:#fff}
+#app-loading.hide{display:none}
+.load-logo{font-size:40px;font-weight:700;margin-bottom:12px}
+.load-txt{font-size:14px;opacity:.8}
 </style>
 </head>
 <body>
+<div id="app-loading">
+  <div class="load-logo">A</div>
+  <div class="load-txt">Cargando Actividapp...</div>
+</div>
+
 <div id="app">
 
 <!-- LOGIN -->
-<div class="scr on" id="s-login">
+<div class="scr" id="s-login">
   <div class="lw">
     <div class="li">
       <div class="lic">A</div>
       <div style="font-size:22px;font-weight:600">Actividapp</div>
       <div style="font-size:13px;color:var(--muted);margin-top:4px">Fuerza Comercial</div>
     </div>
-    <div class="f"><label>Usuario</label><select id="l-usr"><option value="">Seleccionar usuario</option></select></div>
-    <div class="f"><label>Contraseña</label><input type="password" id="l-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <button class="bp" onclick="doLogin()">Iniciar Sesión</button>
+    <div class="f"><label>Usuario</label><select id="l-usr"><option value="">— Seleccionar —</option></select></div>
+    <div class="f"><label>Contraseña</label><input type="password" id="l-pw" placeholder="••••••••"></div>
+    <button class="bp" id="btn-login" type="button" onclick="doLogin()">Iniciar Sesión</button>
     <div id="l-err" style="color:var(--red);font-size:13px;text-align:center;margin-top:10px;display:none"></div>
   </div>
 </div>
@@ -146,29 +132,30 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   </div>
   <div class="cnt">
     <div class="sg">
-      <div class="sc"><div class="sn" id="st-h">0</div><div class="sl">Visitas hoy</div></div>
+      <div class="sc"><div class="sn" id="st-h">0</div><div class="sl">Hoy</div></div>
       <div class="sc"><div class="sn" id="st-m">0</div><div class="sl">Este mes</div></div>
       <div class="sc"><div class="sn" id="st-a">0</div><div class="sl">Asignaciones</div></div>
       <div class="sc"><div class="sn" id="st-c">—</div><div class="sl">Clientes</div></div>
     </div>
-    <div class="stl">Acciones</div>
+    <div class="stl">Módulos</div>
     <div class="card" style="cursor:pointer" onclick="go('nueva')"><div class="crow"><div class="cico" style="background:var(--rlight)">📝</div><div class="cbody"><div class="ct">Registrar visita</div><div class="cs">Nueva actividad comercial</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('actividades')"><div class="crow"><div class="cico" style="background:#EAF3DE">📋</div><div class="cbody"><div class="ct">Actividades</div><div class="cs">Historial de visitas</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('proyectos')"><div class="crow"><div class="cico" style="background:#EAF5FB">🏗️</div><div class="cbody"><div class="ct">Proyectos</div><div class="cs" id="home-proy-sub">Ver y crear proyectos</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('asignaciones')"><div class="crow"><div class="cico" style="background:var(--alight)">📌</div><div class="cbody"><div class="ct">Mis asignaciones</div><div class="cs">Proyectos asignados a mí</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
-    <div class="card" style="cursor:pointer" onclick="go('mapa')"><div class="crow"><div class="cico" style="background:#EAF5FB">🗺️</div><div class="cbody"><div class="ct">Mapa de cobertura</div><div class="cs">Puntos visitados por zona</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
-    <div class="card" style="cursor:pointer" onclick="go('muestras')"><div class="crow"><div class="cico" style="background:#F0FFF4">📦</div><div class="cbody"><div class="ct">Muestras comerciales</div><div class="cs">Productos entregados</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
-    <div class="card" id="c-dash" style="cursor:pointer;display:none" onclick="go('dashboard')"><div class="crow"><div class="cico" style="background:#F5EEF8">📊</div><div class="cbody"><div class="ct">Dashboard</div><div class="cs">Gestión comercial</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
-    <div class="card" id="c-rep" style="cursor:pointer;display:none" onclick="go('reportes')"><div class="crow"><div class="cico" style="background:#FEF5E7">📄</div><div class="cbody"><div class="ct">Reportes PDF</div><div class="cs">Informe gerencial completo</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
-    <div class="card" id="c-asig-admin" style="cursor:pointer;display:none" onclick="go('asig-admin')"><div class="crow"><div class="cico" style="background:#EAF3DE">🏗️</div><div class="cbody"><div class="ct">Asignar proyectos</div><div class="cs">Gestión técnico de obras</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('mapa')"><div class="crow"><div class="cico" style="background:#F5EEF8">🗺️</div><div class="cbody"><div class="ct">Mapa de cobertura</div><div class="cs">Puntos visitados por zona</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('muestras')"><div class="crow"><div class="cico" style="background:#F0FFF4">📦</div><div class="cbody"><div class="ct">Muestras</div><div class="cs">Productos entregados</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
+    <div class="card" id="c-dash" style="cursor:pointer;display:none" onclick="go('dashboard')"><div class="crow"><div class="cico" style="background:#FEF5E7">📊</div><div class="cbody"><div class="ct">Dashboard</div><div class="cs">Gestión comercial</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
+    <div class="card" id="c-rep" style="cursor:pointer;display:none" onclick="go('reportes')"><div class="crow"><div class="cico" style="background:#EAF3DE">📄</div><div class="cbody"><div class="ct">Reportes PDF</div><div class="cs">Informe gerencial con fotos</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
+    <div class="card" id="c-asig-admin" style="cursor:pointer;display:none" onclick="go('asig-admin')"><div class="crow"><div class="cico" style="background:#FAECE7">🏗️</div><div class="cbody"><div class="ct">Asignar proyectos</div><div class="cs">Técnico de obras</div></div><span style="color:var(--muted);font-size:18px">›</span></div></div>
     <div class="dv"></div>
     <button class="bs" style="margin-top:0" onclick="doLogout()">Cerrar sesión</button>
   </div>
   <div class="nb">
     <button class="nb-b on" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
     <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
     <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
-    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
@@ -188,13 +175,35 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <div class="nb">
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b on"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
     <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
     <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
-    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
-<!-- ASIGNACIONES (asesor) -->
+<!-- PROYECTOS -->
+<div class="scr" id="s-proyectos">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Proyectos</div></div>
+  <div class="cnt">
+    <button class="bs" style="margin-bottom:12px;margin-top:0" onclick="openM('m-nuevo-proy')">+ Nuevo proyecto</button>
+    <div class="sw" style="margin-bottom:8px"><input id="ps" placeholder="Buscar proyecto..." oninput="fltPL()" style="width:100%;padding:9px 12px 9px 32px;border:1px solid var(--brd);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="chip on" id="pf-t" onclick="setPF('todos')">Todos</button>
+      <button class="chip" id="pf-a" onclick="setPF('activo')">Activos</button>
+      <button class="chip" id="pf-i" onclick="setPF('inactivo')">Inactivos</button>
+    </div>
+    <div id="proy-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- ASIGNACIONES ASESOR -->
 <div class="scr" id="s-asignaciones">
   <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Mis Asignaciones</div></div>
   <div class="cnt">
@@ -208,9 +217,9 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <div class="nb">
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
     <button class="nb-b on"><span class="nb-i">📌</span>Asign.</button>
     <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
-    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
@@ -224,9 +233,9 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <div class="nb">
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
-    <button class="nb-b on"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b on"><span class="nb-i">🏗️</span>Asignar</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
     <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
-    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
@@ -234,28 +243,22 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 <div class="scr" id="s-nueva">
   <div class="tb"><span class="tb-bk" onclick="go('actividades')">‹</span><div class="tb-t">Nueva Visita</div></div>
   <div class="cnt">
-    <div class="f">
-      <label>Canal</label>
-      <div class="chips" id="ch-canal">
-        <div class="chip on" data-v="OBRAS">🏗️ Obras</div>
-        <div class="chip" data-v="FERRETERIA">🔧 Ferretería</div>
-      </div>
-    </div>
+    <div class="f"><label>Canal</label><div class="chips" id="ch-canal"><div class="chip on" data-v="OBRAS">🏗️ Obras</div><div class="chip" data-v="FERRETERIA">🔧 Ferretería</div></div></div>
     <div class="f" id="fp-proy">
       <label>Proyecto</label>
-      <div id="proy-sel-val" class="sel-val"><span id="proy-sel-txt"></span><span class="sel-val-x" onclick="clearSel('proy')">✕</span></div>
-      <div id="proy-search-wrap">
+      <div id="proy-sv" class="sel-val"><span id="proy-sv-t"></span><span class="sel-val-x" onclick="clearSel('proy')">✕</span></div>
+      <div id="proy-sw">
         <div class="sw"><input id="np-s" placeholder="Buscar proyecto..." oninput="fltProy()" style="width:100%;padding:9px 12px 9px 32px;border:1px solid var(--brd);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
-        <select class="sl2" id="np" size="5" onchange="selProy()" style="margin-top:4px"><option value="">Escribe para buscar...</option></select>
+        <select class="sl2" id="np" size="4" onchange="selProy()"><option value="">Escribe para buscar...</option></select>
       </div>
     </div>
     <div class="f"><label>Tipo de cliente</label><select id="ntc"><option value="">Seleccionar</option><option>CONSTRUCTOR</option><option>FERRETERIA</option><option>DISTRIBUIDOR</option><option>ARQUITECTO</option><option>CONTRATISTA</option></select></div>
     <div class="f">
       <label>Cliente</label>
-      <div id="cli-sel-val" class="sel-val"><span id="cli-sel-txt"></span><span class="sel-val-x" onclick="clearSel('cli')">✕</span></div>
-      <div id="cli-search-wrap">
+      <div id="cli-sv" class="sel-val"><span id="cli-sv-t"></span><span class="sel-val-x" onclick="clearSel('cli')">✕</span></div>
+      <div id="cli-sw">
         <div class="sw"><input id="nc-s" placeholder="Buscar cliente..." oninput="fltCli()" style="width:100%;padding:9px 12px 9px 32px;border:1px solid var(--brd);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
-        <select class="sl2" id="nc" size="5" onchange="selCli()" style="margin-top:4px"><option value="">Escribe para buscar...</option></select>
+        <select class="sl2" id="nc" size="4" onchange="selCli()"><option value="">Escribe para buscar...</option></select>
       </div>
       <button class="bg2" style="margin-top:6px;width:100%" onclick="openM('m-cli')">+ Crear nuevo cliente</button>
     </div>
@@ -263,17 +266,14 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <div class="f"><label>Impacto</label><div class="chips" id="ch-imp"><div class="chip on" data-v="IMPACTADO">🟢 Impactado</div><div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div></div></div>
     <div class="f"><label>GPS</label><div class="loc"><span>📍</span><span id="loc-t">Obteniendo...</span></div></div>
     <div class="f">
-      <label>Foto <span style="color:var(--muted);font-weight:400;text-transform:none">(opcional)</span></label>
+      <label>Foto <span style="font-weight:400;color:var(--muted);text-transform:none">(opcional — se sube en segundo plano)</span></label>
       <img id="fp-img" class="fpimg">
-      <div class="fa" onclick="document.getElementById('fileInput').click()">
-        <div style="font-size:22px">📷</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px">Toca para adjuntar</div>
-      </div>
-      <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="prvFoto(this,'fp-img')">
-      <button class="bg2" id="btn-remove-foto" style="width:100%;margin-top:6px;display:none" onclick="removeFoto()">✕ Quitar foto</button>
+      <div class="fa" onclick="document.getElementById('fileInput').click()"><div style="font-size:22px">📷</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Toca para adjuntar</div></div>
+      <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="prvFoto(this,'fp-img');document.getElementById('btn-rf').style.display='block'">
+      <button class="bg2" id="btn-rf" style="width:100%;margin-top:6px;display:none" onclick="removeFoto()">✕ Quitar foto</button>
     </div>
     <div class="f"><label>Observación</label><textarea id="n-obs" rows="3" placeholder="Notas de la visita..."></textarea></div>
-    <button class="bp" id="btn-g" onclick="guardar()">Guardar Visita</button>
+    <button class="bp" id="btn-g" type="button" onclick="guardar()">Guardar Visita</button>
     <button class="bs" onclick="go('actividades')">Cancelar</button>
     <div style="height:20px"></div>
   </div>
@@ -290,8 +290,8 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <div class="nb">
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
     <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
-    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
     <button class="nb-b on"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
@@ -300,37 +300,35 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 <div class="scr" id="s-mapa">
   <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Mapa de Cobertura</div></div>
   <div class="mfi">
-    <select id="mf-a" onchange="renderMap()" style="font-size:12px;border:1px solid var(--brd);border-radius:8px;padding:4px 8px;background:var(--card);font-family:'DM Sans',sans-serif;outline:none">
-      <option value="">Todos los asesores</option>
-    </select>
-    <span class="mfc on" data-g="canal" data-v="" onclick="setMF(this)">Todos</span>
+    <select id="mf-a" onchange="renderMap()" style="font-size:11px;border:1px solid var(--brd);border-radius:8px;padding:4px 6px;background:var(--card);font-family:'DM Sans',sans-serif;outline:none"><option value="">Todos</option></select>
+    <span class="mfc on" data-g="canal" data-v="" onclick="setMF(this)">Canal: Todos</span>
     <span class="mfc" data-g="canal" data-v="OBRAS" onclick="setMF(this)">🏗️ Obras</span>
-    <span class="mfc" data-g="canal" data-v="FERRETERIA" onclick="setMF(this)">🔧 Ferretería</span>
-    <span class="mfc on" data-g="imp" data-v="" onclick="setMF(this)">Todos</span>
-    <span class="mfc" data-g="imp" data-v="IMPACTADO" onclick="setMF(this)">🟢 Imp.</span>
-    <span class="mfc" data-g="imp" data-v="NO IMPACTADO" onclick="setMF(this)">🔴 No imp.</span>
+    <span class="mfc" data-g="canal" data-v="FERRETERIA" onclick="setMF(this)">🔧 Ferret.</span>
+    <span class="mfc on" data-g="imp" data-v="" onclick="setMF(this)">Imp: Todos</span>
+    <span class="mfc" data-g="imp" data-v="IMPACTADO" onclick="setMF(this)">🟢</span>
+    <span class="mfc" data-g="imp" data-v="NO IMPACTADO" onclick="setMF(this)">🔴</span>
   </div>
   <div id="mc"><div id="lmap"></div>
     <div class="mleg">
-      <div>🏗️🟢 Obra impactada</div>
-      <div>🏗️🔴 Obra no impactada</div>
-      <div>🔧🟢 Ferretería impactada</div>
-      <div>🔧🔴 Ferretería no impactada</div>
-      <div>⭐ Asignado pendiente</div>
+      <div>🏗️ fondo 🟢 = Obra impactada</div>
+      <div>🏗️ fondo 🔴 = Obra no impactada</div>
+      <div>🔧 fondo 🟢 = Ferret. impactada</div>
+      <div>🔧 fondo 🔴 = Ferret. no impactada</div>
+      <div>⭐ = Asignado pendiente</div>
     </div>
   </div>
   <div class="nb">
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
     <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
     <button class="nb-b on"><span class="nb-i">🗺️</span>Mapa</button>
-    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
 <!-- MUESTRAS -->
 <div class="scr" id="s-muestras">
-  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Muestras Comerciales</div></div>
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Muestras</div></div>
   <div class="cnt">
     <button class="bs" style="margin-bottom:12px;margin-top:0" onclick="openM('m-muestra')">+ Nueva muestra</button>
     <div id="m-list"><div class="ld">Cargando...</div></div>
@@ -338,9 +336,9 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <div class="nb">
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
     <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
-    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
-    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
+    <button class="nb-b on"><span class="nb-i">📦</span>Muestras</button>
   </div>
 </div>
 
@@ -366,8 +364,8 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
     <button class="nb-b on"><span class="nb-i">📊</span>Dashboard</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
     <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
-    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
@@ -381,14 +379,15 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <div class="f"><label>Fecha fin</label><input type="date" id="r-f"></div>
       <div class="f"><label>Asesor (opcional)</label><select id="r-a"><option value="">Todos</option></select></div>
       <div class="f"><label>Canal</label><select id="r-c"><option value="">Todos</option><option value="OBRAS">Obras</option><option value="FERRETERIA">Ferretería</option></select></div>
-      <button class="bp" onclick="generarPDF()">📄 Generar PDF Gerencial</button>
+      <div class="f"><label>Incluir fotos</label><div class="chips" id="ch-fotos"><div class="chip on" data-v="si">Sí, incluir fotos</div><div class="chip" data-v="no">Solo texto</div></div></div>
+      <button class="bp" type="button" onclick="generarPDF()">📄 Generar PDF Gerencial</button>
     </div>
   </div>
   <div class="nb">
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
     <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
-    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
     <button class="nb-b on"><span class="nb-i">📄</span>PDF</button>
   </div>
 </div>
@@ -396,86 +395,80 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 </div><!-- /app -->
 
 <!-- MODALES -->
-<div class="mo" id="m-cli">
-  <div class="md">
-    <div class="mdt">Nuevo Cliente</div>
-    <div class="f"><label>NIT / Cédula</label><input id="mc-nit" placeholder="890800148"></div>
-    <div class="f"><label>Nombre *</label><input id="mc-nom" placeholder="Nombre empresa o persona"></div>
-    <div class="f"><label>Persona encargada</label><input id="mc-enc" placeholder="Nombre contacto"></div>
-    <div class="f"><label>Celular</label><input id="mc-cel" type="tel" placeholder="300 000 0000"></div>
-    <button class="bp" onclick="saveCli()">Guardar</button>
-    <button class="bs" onclick="closeM('m-cli')">Cancelar</button>
-  </div>
-</div>
+<div class="mo" id="m-cli"><div class="md">
+  <div class="mdt">Nuevo Cliente</div>
+  <div class="f"><label>NIT / Cédula</label><input id="mc-nit" placeholder="890800148"></div>
+  <div class="f"><label>Nombre *</label><input id="mc-nom" placeholder="Nombre empresa o persona"></div>
+  <div class="f"><label>Persona encargada</label><input id="mc-enc" placeholder="Nombre contacto"></div>
+  <div class="f"><label>Celular</label><input id="mc-cel" type="tel" placeholder="300 000 0000"></div>
+  <button class="bp" type="button" onclick="saveCli()">Guardar</button>
+  <button class="bs" onclick="closeM('m-cli')">Cancelar</button>
+</div></div>
 
-<div class="mo" id="m-act-edit">
-  <div class="md">
-    <div class="mdt">Editar Actividad</div>
-    <div class="f"><label>Impacto</label><div class="chips" id="mae-imp"><div class="chip on" data-v="IMPACTADO">🟢 Impactado</div><div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div></div></div>
-    <div class="f"><label>Tipo de visita</label><select id="mae-tv"><option>VISITA</option><option>SEGUIMIENTO</option><option>CIERRE</option><option>LLAMADA</option><option>OTRO</option></select></div>
-    <div class="f"><label>Observación</label><textarea id="mae-obs" rows="3"></textarea></div>
-    <button class="bp" onclick="saveAct()">Guardar cambios</button>
-    <button class="bs" onclick="closeM('m-act-edit')">Cancelar</button>
-  </div>
-</div>
+<div class="mo" id="m-nuevo-proy"><div class="md">
+  <div class="mdt">Nuevo Proyecto</div>
+  <div class="f"><label>Código</label><input id="mnp-cod" placeholder="Ej: 12345"></div>
+  <div class="f"><label>Nombre del proyecto *</label><input id="mnp-nom" placeholder="Nombre del proyecto"></div>
+  <div class="f"><label>Dirección</label><input id="mnp-dir" placeholder="Dirección"></div>
+  <div class="f"><label>Barrio / Zona</label><input id="mnp-bar" placeholder="Barrio"></div>
+  <div class="f"><label>NIT cliente</label><input id="mnp-nit" placeholder="NIT"></div>
+  <div class="f"><label>Canal</label><select id="mnp-canal"><option value="OBRAS">Obras</option><option value="FERRETERIA">Ferretería</option></select></div>
+  <div class="f"><label>Estado</label><div class="chips" id="mnp-est"><div class="chip on" data-v="ACTIVO">✅ Activo</div><div class="chip" data-v="INACTIVO">❌ Inactivo</div></div></div>
+  <div class="f"><label>Observaciones</label><textarea id="mnp-obs" rows="2" placeholder="Notas del proyecto..."></textarea></div>
+  <button class="bp" type="button" onclick="saveNuevoProy()">Crear Proyecto</button>
+  <button class="bs" onclick="closeM('m-nuevo-proy')">Cancelar</button>
+</div></div>
 
-<div class="mo" id="m-asig-edit">
-  <div class="md">
-    <div class="mdt" id="mae2-t">Actualizar Asignación</div>
-    <div class="f"><label>Estado</label>
-      <div class="chips" id="mae2-est">
-        <div class="chip on" data-v="PENDIENTE">⏳ Pendiente</div>
-        <div class="chip" data-v="VISITADO">✅ Visitado</div>
-        <div class="chip" data-v="CERRADO">🔒 Cerrado</div>
-      </div>
-    </div>
-    <div class="f"><label>Comentario del asesor</label><textarea id="mae2-obs" rows="3" placeholder="¿Qué encontraste en el proyecto?"></textarea></div>
-    <button class="bp" onclick="saveAsigEdit()">Guardar</button>
-    <button class="bs" onclick="closeM('m-asig-edit')">Cancelar</button>
-  </div>
-</div>
+<div class="mo" id="m-edit-proy"><div class="md">
+  <div class="mdt" id="mep-t">Editar Proyecto</div>
+  <div class="f"><label>Estado</label><div class="chips" id="mep-est"><div class="chip on" data-v="ACTIVO">✅ Activo</div><div class="chip" data-v="INACTIVO">❌ Inactivo</div></div></div>
+  <div class="f"><label>Observaciones</label><textarea id="mep-obs" rows="2"></textarea></div>
+  <div class="f"><label>Asesor asignado</label><select id="mep-asesor"><option value="">Sin asignar</option></select></div>
+  <button class="bp" type="button" onclick="saveEditProy()">Guardar cambios</button>
+  <button class="bs" onclick="closeM('m-edit-proy')">Cancelar</button>
+</div></div>
 
-<div class="mo" id="m-muestra">
-  <div class="md">
-    <div class="mdt">Nueva Muestra</div>
-    <div class="f"><label>Producto / Ítem *</label><input id="mm-p" placeholder="Ej: Porcelana Blanca 33x33"></div>
-    <div class="f"><label>Descripción</label><textarea id="mm-d" rows="2" placeholder="Detalles del producto..."></textarea></div>
-    <div class="f"><label>Cantidad</label><input id="mm-c" type="number" min="1" value="1"></div>
-    <div class="f">
-      <label>Cliente</label>
-      <div class="sw"><input id="mm-cs" placeholder="Buscar cliente..." oninput="fltMCli()" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--brd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
-      <select class="sl2" id="mm-cl" size="3" style="margin-top:4px"><option value="">Escribe para buscar...</option></select>
-    </div>
-    <div class="f">
-      <label>Proyecto (opcional)</label>
-      <div class="sw"><input id="mm-ps" placeholder="Buscar proyecto..." oninput="fltMProy()" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--brd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
-      <select class="sl2" id="mm-pr" size="3" style="margin-top:4px"><option value="">Escribe para buscar...</option></select>
-    </div>
-    <div class="f"><label>Foto (opcional)</label><img id="mm-img" class="fpimg"><div class="fa" onclick="document.getElementById('fileInputM').click()"><div style="font-size:20px">📷</div><div style="font-size:12px;color:var(--muted)">Adjuntar foto</div></div><input type="file" id="fileInputM" accept="image/*" capture="environment" onchange="prvFoto(this,'mm-img')"></div>
-    <button class="bp" onclick="saveMuestra()">Guardar Muestra</button>
-    <button class="bs" onclick="closeM('m-muestra')">Cancelar</button>
-  </div>
-</div>
+<div class="mo" id="m-act-edit"><div class="md">
+  <div class="mdt">Editar Actividad</div>
+  <div class="f"><label>Impacto</label><div class="chips" id="mae-imp"><div class="chip on" data-v="IMPACTADO">🟢 Impactado</div><div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div></div></div>
+  <div class="f"><label>Tipo de visita</label><select id="mae-tv"><option>VISITA</option><option>SEGUIMIENTO</option><option>CIERRE</option><option>LLAMADA</option><option>OTRO</option></select></div>
+  <div class="f"><label>Observación</label><textarea id="mae-obs" rows="3"></textarea></div>
+  <button class="bp" type="button" onclick="saveAct()">Guardar</button>
+  <button class="bs" onclick="closeM('m-act-edit')">Cancelar</button>
+</div></div>
 
-<div class="mo" id="m-asig">
-  <div class="md">
-    <div class="mdt">Asignar Proyecto a Asesor</div>
-    <div class="f">
-      <label>Proyecto</label>
-      <div class="sw"><input id="ma-ps" placeholder="Buscar proyecto..." oninput="fltAProy()" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--brd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
-      <select class="sl2" id="ma-pr" size="4" style="margin-top:4px"><option value="">Escribe para buscar...</option></select>
-    </div>
-    <div class="f"><label>Asesor</label><select id="ma-as"><option value="">Seleccionar asesor</option></select></div>
-    <div class="f"><label>Prioridad</label><div class="chips" id="ma-pri"><div class="chip on" data-v="NORMAL">Normal</div><div class="chip" data-v="ALTA">🔴 Alta</div><div class="chip" data-v="URGENTE">⚡ Urgente</div></div></div>
-    <div class="f"><label>Instrucciones para el asesor</label><textarea id="ma-obs" rows="2" placeholder="¿Qué debe hacer en este proyecto?"></textarea></div>
-    <button class="bp" onclick="saveAsig()">Asignar</button>
-    <button class="bs" onclick="closeM('m-asig')">Cancelar</button>
-  </div>
-</div>
+<div class="mo" id="m-asig-edit"><div class="md">
+  <div class="mdt" id="mae2-t">Actualizar Asignación</div>
+  <div class="f"><label>Estado</label><div class="chips" id="mae2-est"><div class="chip on" data-v="PENDIENTE">⏳ Pendiente</div><div class="chip" data-v="VISITADO">✅ Visitado</div><div class="chip" data-v="CERRADO">🔒 Cerrado</div></div></div>
+  <div class="f"><label>Comentario del asesor</label><textarea id="mae2-obs" rows="3" placeholder="¿Qué encontraste?"></textarea></div>
+  <button class="bp" type="button" onclick="saveAsigEdit()">Guardar</button>
+  <button class="bs" onclick="closeM('m-asig-edit')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-muestra"><div class="md">
+  <div class="mdt">Nueva Muestra</div>
+  <div class="f"><label>Producto / Ítem *</label><input id="mm-p" placeholder="Ej: Porcelana Blanca 33x33"></div>
+  <div class="f"><label>Descripción</label><textarea id="mm-d" rows="2" placeholder="Detalles..."></textarea></div>
+  <div class="f"><label>Cantidad</label><input id="mm-c" type="number" min="1" value="1"></div>
+  <div class="f"><label>Cliente</label><div class="sw"><input id="mm-cs" placeholder="Buscar cliente..." oninput="fltMCli()" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--brd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div><select class="sl2" id="mm-cl" size="3"><option value="">Escribe para buscar...</option></select></div>
+  <div class="f"><label>Proyecto (opcional)</label><div class="sw"><input id="mm-ps" placeholder="Buscar proyecto..." oninput="fltMProy()" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--brd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div><select class="sl2" id="mm-pr" size="3"><option value="">Escribe para buscar...</option></select></div>
+  <div class="f"><label>Foto (opcional)</label><img id="mm-img" class="fpimg"><div class="fa" onclick="document.getElementById('fileInputM').click()"><div style="font-size:20px">📷</div><div style="font-size:12px;color:var(--muted)">Adjuntar foto</div></div><input type="file" id="fileInputM" accept="image/*" capture="environment" onchange="prvFoto(this,'mm-img')"></div>
+  <button class="bp" type="button" onclick="saveMuestra()">Guardar Muestra</button>
+  <button class="bs" onclick="closeM('m-muestra')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-asig"><div class="md">
+  <div class="mdt">Asignar Proyecto a Asesor</div>
+  <div class="f"><label>Proyecto</label><div class="sw"><input id="ma-ps" placeholder="Buscar proyecto..." oninput="fltAProy()" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--brd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div><select class="sl2" id="ma-pr" size="4"><option value="">Escribe para buscar...</option></select></div>
+  <div class="f"><label>Asesor</label><select id="ma-as"><option value="">Seleccionar asesor</option></select></div>
+  <div class="f"><label>Prioridad</label><div class="chips" id="ma-pri"><div class="chip on" data-v="NORMAL">Normal</div><div class="chip" data-v="ALTA">🔴 Alta</div><div class="chip" data-v="URGENTE">⚡ Urgente</div></div></div>
+  <div class="f"><label>Instrucciones para el asesor</label><textarea id="ma-obs" rows="2" placeholder="¿Qué debe hacer?"></textarea></div>
+  <button class="bp" type="button" onclick="saveAsig()">Asignar</button>
+  <button class="bs" onclick="closeM('m-asig')">Cancelar</button>
+</div></div>
 
 <div class="toast" id="toast"></div>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, Timestamp, doc, setDoc, updateDoc }
@@ -490,55 +483,70 @@ window.db=db;window.st=st;
 window.FS={collection,addDoc,getDocs,query,orderBy,Timestamp,doc,setDoc,updateDoc,ref,uploadBytes,getDownloadURL};
 
 async function loadAll(){
-  // Usuarios
-  const us=await getDocs(collection(db,'usuarios'));
-  window.Usuarios=[];
-  const lsel=document.getElementById('l-usr');
-  us.forEach(d=>{const u={id:d.id,...d.data()};window.Usuarios.push(u);const o=document.createElement('option');o.value=u['CEDULA ID']||u.cedula||d.id;o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';lsel.appendChild(o);});
-  const asesores=window.Usuarios.filter(u=>(u['TIPO']||u.tipo||'ASESOR')==='ASESOR');
-  ['ma-as','r-a'].forEach(id=>{const s=document.getElementById(id);if(!s)return;asesores.forEach(u=>{const o=document.createElement('option');o.value=u['NOMBRE EMPLEADO']||u.nombre||'';o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';s.appendChild(o);});});
+  try{
+    // USUARIOS
+    const us=await getDocs(collection(db,'usuarios'));
+    window.Usuarios=[];
+    const lsel=document.getElementById('l-usr');
+    lsel.innerHTML='<option value="">— Seleccionar —</option>';
+    us.forEach(d=>{const u={id:d.id,...d.data()};window.Usuarios.push(u);const o=document.createElement('option');o.value=u['CEDULA ID']||u.cedula||d.id;o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';lsel.appendChild(o);});
+    const asesores=window.Usuarios.filter(u=>(u['TIPO']||u.tipo||'ASESOR')==='ASESOR');
+    ['ma-as','r-a','mep-asesor'].forEach(id=>{const s=document.getElementById(id);if(!s)return;const dflt=s.options[0]?s.options[0].outerHTML:'';s.innerHTML=dflt;asesores.forEach(u=>{const o=document.createElement('option');o.value=u['NOMBRE EMPLEADO']||u.nombre||'';o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';s.appendChild(o);});});
 
-  // Clientes
-  const cs=await getDocs(collection(db,'clientes'));
-  window.Clientes=[];cs.forEach(d=>window.Clientes.push({id:d.id,...d.data()}));
-  document.getElementById('st-c').textContent=window.Clientes.length.toLocaleString();
-  renderCliLista(window.Clientes.slice(0,50));
+    // PROYECTOS
+    const ps=await getDocs(collection(db,'proyectos'));
+    window.Proyectos=[];ps.forEach(d=>window.Proyectos.push({id:d.id,...d.data()}));
+    document.getElementById('home-proy-sub').textContent=window.Proyectos.length.toLocaleString()+' proyectos';
+    renderProyLista(window.Proyectos.slice(0,60));
 
-  // Actividades
-  const as=await getDocs(query(collection(db,'actividades'),orderBy('fecha','desc')));
-  window.Actividades=[];as.forEach(d=>window.Actividades.push({id:d.id,...d.data()}));
+    // CLIENTES
+    const cs=await getDocs(collection(db,'clientes'));
+    window.Clientes=[];cs.forEach(d=>window.Clientes.push({id:d.id,...d.data()}));
+    document.getElementById('st-c').textContent=window.Clientes.length.toLocaleString();
+    renderCliLista(window.Clientes.slice(0,50));
 
-  // Muestras
-  const ms=await getDocs(query(collection(db,'muestras'),orderBy('fecha','desc')));
-  window.Muestras=[];ms.forEach(d=>window.Muestras.push({id:d.id,...d.data()}));
-  renderMuestras();
+    // ACTIVIDADES
+    const as=await getDocs(query(collection(db,'actividades'),orderBy('fecha','desc')));
+    window.Actividades=[];as.forEach(d=>window.Actividades.push({id:d.id,...d.data()}));
 
-  // Asignaciones
-  const asg=await getDocs(query(collection(db,'asignaciones'),orderBy('fecha','desc')));
-  window.Asignaciones=[];asg.forEach(d=>window.Asignaciones.push({id:d.id,...d.data()}));
+    // MUESTRAS
+    const ms=await getDocs(query(collection(db,'muestras'),orderBy('fecha','desc')));
+    window.Muestras=[];ms.forEach(d=>window.Muestras.push({id:d.id,...d.data()}));
+    renderMuestras();
 
-  // Stats
-  const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
-  const hD=new Date();hD.setHours(0,0,0,0);const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
-  let h=0,m=0;
-  window.Actividades.forEach(a=>{if(!isA&&a.ASESOR!==mi)return;const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);if(f>=hD)h++;if(f>=mD)m++;});
-  document.getElementById('st-h').textContent=h;
-  document.getElementById('st-m').textContent=m;
-  const misAsig=window.Asignaciones.filter(a=>isA||(a.ASESOR===mi&&a.ESTADO!=='CERRADO'));
-  document.getElementById('st-a').textContent=misAsig.length;
+    // ASIGNACIONES
+    const asg=await getDocs(query(collection(db,'asignaciones'),orderBy('fecha','desc')));
+    window.Asignaciones=[];asg.forEach(d=>window.Asignaciones.push({id:d.id,...d.data()}));
 
-  // Map filter
-  const mf=document.getElementById('mf-a');mf.innerHTML='<option value="">Todos los asesores</option>';
-  [...new Set(window.Actividades.map(a=>a.ASESOR).filter(Boolean))].forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;mf.appendChild(o);});
+    // STATS
+    const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
+    const hD=new Date();hD.setHours(0,0,0,0);const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
+    let h=0,m=0;
+    window.Actividades.forEach(a=>{if(!isA&&a.ASESOR!==mi)return;const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);if(f>=hD)h++;if(f>=mD)m++;});
+    document.getElementById('st-h').textContent=h;
+    document.getElementById('st-m').textContent=m;
+    document.getElementById('st-a').textContent=window.Asignaciones.filter(a=>isA||(a.ASESOR===mi&&a.ESTADO!=='CERRADO')).length;
 
-  renderActs(window.Actividades,'hoy');
-  renderAsigLista();
-  renderAsigAdminLista();
-  if(isA){renderDash(window.Actividades);window.dashLoaded=true;}
+    // MAP ASESOR FILTER
+    const mf=document.getElementById('mf-a');mf.innerHTML='<option value="">Todos</option>';
+    [...new Set(window.Actividades.map(a=>a.ASESOR).filter(Boolean))].forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a.split(' ')[0];mf.appendChild(o);});
+
+    renderActs(window.Actividades,'hoy');
+    renderAsigLista();renderAsigAdminLista();
+    if(isA)renderDash(window.Actividades);
+
+    // Auto-login check AFTER data loads
+    window._dataReady=true;
+    const cu=loadS();
+    if(cu&&!window.CU){applyU(cu);go('home');}
+    else if(!window.CU){go('login');}
+
+  }catch(e){console.error(e);}
+  finally{document.getElementById('app-loading').classList.add('hide');}
 }
 window.loadAll=loadAll;
+loadAll();
 
-// GUARDAR VISITA — foto no bloqueante
 window.guardar=async function(){
   const btn=document.getElementById('btn-g');
   const canal=document.querySelector('#ch-canal .chip.on')?.dataset.v||'OBRAS';
@@ -552,28 +560,48 @@ window.guardar=async function(){
   if(!cli){toast('Selecciona un cliente');return;}
   btn.disabled=true;btn.innerHTML='<span class="sp"></span>Guardando...';
   try{
-    // Guardar sin foto primero
-    const docData={
-      ID_VISITA:Math.random().toString(36).substr(2,8),
-      fecha:FS.Timestamp.now(),ASESOR:window.CU?.nombre||'',
-      CANAL:canal,'TIPO CLIENTE':document.getElementById('ntc').value,
-      CLIENTE:cli,PROYECTO:proy,'TIPO DE VISITA':tv,FOTO:'',IMPACTO:imp,OBSERVACION:obs,'UBICACION':ubi
-    };
-    const docRef=await FS.addDoc(collection(db,'actividades'),docData);
+    const d2={ID_VISITA:Math.random().toString(36).substr(2,8),fecha:FS.Timestamp.now(),ASESOR:window.CU?.nombre||'',CANAL:canal,'TIPO CLIENTE':document.getElementById('ntc').value,CLIENTE:cli,PROYECTO:proy,'TIPO DE VISITA':tv,FOTO:'',IMPACTO:imp,OBSERVACION:obs,'UBICACION':ubi};
+    const ref2=await FS.addDoc(collection(db,'actividades'),d2);
     toast('✅ Visita guardada');
-    // Subir foto en segundo plano sin bloquear
     const fi=document.getElementById('fileInput');
-    if(fi.files[0]){
-      (async()=>{try{const sr=FS.ref(st,'fotos/'+Date.now());await FS.uploadBytes(sr,fi.files[0]);const url=await FS.getDownloadURL(sr);await FS.updateDoc(FS.doc(db,'actividades',docRef.id),{FOTO:url});}catch(e){}})();
-    }
-    // Reset form
+    if(fi.files[0]){(async()=>{try{const sr=FS.ref(st,'fotos/'+Date.now());await FS.uploadBytes(sr,fi.files[0]);const url=await FS.getDownloadURL(sr);await FS.updateDoc(FS.doc(db,'actividades',ref2.id),{FOTO:url});const a=window.Actividades?.find(x=>x.id===ref2.id);if(a)a.FOTO=url;}catch(e){}})();}
     window._selProy='';window._selCli='';
     clearSel('proy');clearSel('cli');
-    document.getElementById('n-obs').value='';removeFoto();
-    window.GPS='';getGPS();loadAll();
-    setTimeout(()=>go('actividades'),700);
-  }catch(e){toast('Error al guardar: '+e.message);}
+    document.getElementById('n-obs').value='';removeFoto();window.GPS='';getGPS();
+    window.Actividades.unshift({id:ref2.id,...d2});
+    renderActs(window.Actividades,window.actTab||'hoy');
+    setTimeout(()=>go('actividades'),600);
+  }catch(e){toast('Error: '+e.message);}
   btn.disabled=false;btn.innerHTML='Guardar Visita';
+};
+
+window.saveNuevoProy=async function(){
+  const nom=document.getElementById('mnp-nom').value.trim();
+  if(!nom){toast('Ingresa el nombre del proyecto');return;}
+  const cod=document.getElementById('mnp-cod').value.trim();
+  const est=document.querySelector('#mnp-est .chip.on')?.dataset.v||'ACTIVO';
+  const data={'CODIGO':cod,'NOMBRE PROYECTO':nom,'DIRECCION':document.getElementById('mnp-dir').value,'BARRIO':document.getElementById('mnp-bar').value,'NIT':document.getElementById('mnp-nit').value,'CANAL':document.getElementById('mnp-canal').value,'ESTADO':est,'OBSERVACIONES':document.getElementById('mnp-obs').value};
+  try{
+    const r2=cod?FS.doc(db,'proyectos',cod):FS.doc(collection(db,'proyectos'));
+    await FS.setDoc(r2,data);
+    window.Proyectos.unshift({id:r2.id,...data});
+    toast('✅ Proyecto creado');closeM('m-nuevo-proy');
+    renderProyLista(window.Proyectos.slice(0,60));
+    document.getElementById('home-proy-sub').textContent=window.Proyectos.length.toLocaleString()+' proyectos';
+    ['mnp-cod','mnp-nom','mnp-dir','mnp-bar','mnp-nit','mnp-obs'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveEditProy=async function(){
+  const id=window._editPID;if(!id)return;
+  const est=document.querySelector('#mep-est .chip.on')?.dataset.v||'ACTIVO';
+  const obs=document.getElementById('mep-obs').value;
+  const asesor=document.getElementById('mep-asesor').value;
+  try{
+    await FS.updateDoc(FS.doc(db,'proyectos',id),{ESTADO:est,OBSERVACIONES:obs,ASESOR_ASIGNADO:asesor});
+    const p=window.Proyectos?.find(x=>x.id===id);if(p){p.ESTADO=est;p.OBSERVACIONES=obs;p.ASESOR_ASIGNADO=asesor;}
+    toast('✅ Proyecto actualizado');closeM('m-edit-proy');fltPL();
+  }catch(e){toast('Error: '+e.message);}
 };
 
 window.saveCli=async function(){
@@ -586,10 +614,10 @@ window.saveCli=async function(){
     await FS.setDoc(r2,data);
     window.Clientes.unshift({id:r2.id,...data});
     window._selCli=nom;
-    document.getElementById('cli-sel-txt').textContent=nom;
-    document.getElementById('cli-sel-val').classList.add('show');
-    document.getElementById('cli-search-wrap').style.display='none';
-    toast('✅ Cliente creado y seleccionado');closeM('m-cli');
+    document.getElementById('cli-sv-t').textContent=nom;
+    document.getElementById('cli-sv').classList.add('show');
+    document.getElementById('cli-sw').style.display='none';
+    toast('✅ Cliente creado');closeM('m-cli');
     renderCliLista(window.Clientes.slice(0,50));
     ['mc-nit','mc-nom','mc-enc','mc-cel'].forEach(id=>document.getElementById(id).value='');
   }catch(e){toast('Error: '+e.message);}
@@ -602,10 +630,8 @@ window.saveAct=async function(){
   const obs=document.getElementById('mae-obs').value;
   try{
     await FS.updateDoc(FS.doc(db,'actividades',id),{IMPACTO:imp,'TIPO DE VISITA':tv,OBSERVACION:obs});
-    const a=window.Actividades?.find(x=>x.id===id);
-    if(a){a.IMPACTO=imp;a['TIPO DE VISITA']=tv;a.OBSERVACION=obs;}
-    toast('✅ Actualizado');closeM('m-act-edit');
-    renderActs(window.Actividades,window.actTab||'todo');renderMap();
+    const a=window.Actividades?.find(x=>x.id===id);if(a){a.IMPACTO=imp;a['TIPO DE VISITA']=tv;a.OBSERVACION=obs;}
+    toast('✅ Actualizado');closeM('m-act-edit');renderActs(window.Actividades,window.actTab||'todo');renderMap();
   }catch(e){toast('Error: '+e.message);}
 };
 
@@ -615,32 +641,26 @@ window.saveAsigEdit=async function(){
   const obs=document.getElementById('mae2-obs').value;
   try{
     await FS.updateDoc(FS.doc(db,'asignaciones',id),{ESTADO:est,COMENTARIO_ASESOR:obs});
-    const a=window.Asignaciones?.find(x=>x.id===id);
-    if(a){a.ESTADO=est;a.COMENTARIO_ASESOR=obs;}
-    toast('✅ Asignación actualizada');closeM('m-asig-edit');
-    renderAsigLista();renderAsigAdminLista();
+    const a=window.Asignaciones?.find(x=>x.id===id);if(a){a.ESTADO=est;a.COMENTARIO_ASESOR=obs;}
+    toast('✅ Actualizado');closeM('m-asig-edit');renderAsigLista();renderAsigAdminLista();
   }catch(e){toast('Error: '+e.message);}
 };
 
 window.saveMuestra=async function(){
-  const p=document.getElementById('mm-p').value.trim();
-  if(!p){toast('Ingresa el producto');return;}
+  const p=document.getElementById('mm-p').value.trim();if(!p){toast('Ingresa el producto');return;}
   try{
-    let foto='';
-    const fi=document.getElementById('fileInputM');
+    let foto='';const fi=document.getElementById('fileInputM');
     if(fi.files[0]){try{const sr=FS.ref(st,'muestras/'+Date.now());await FS.uploadBytes(sr,fi.files[0]);foto=await FS.getDownloadURL(sr);}catch(e){}}
     const data={PRODUCTO:p,DESCRIPCION:document.getElementById('mm-d').value,CANTIDAD:parseInt(document.getElementById('mm-c').value)||1,CLIENTE:document.getElementById('mm-cl').value,PROYECTO:document.getElementById('mm-pr').value,FOTO:foto,ASESOR:window.CU?.nombre||'',fecha:FS.Timestamp.now(),ESTADO:'ENTREGADA'};
     await FS.addDoc(collection(db,'muestras'),data);
-    window.Muestras.unshift({...data});
-    toast('✅ Muestra registrada');closeM('m-muestra');renderMuestras();
+    window.Muestras.unshift({...data});toast('✅ Muestra registrada');closeM('m-muestra');renderMuestras();
     ['mm-p','mm-d','mm-cs','mm-ps'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('mm-c').value='1';fi.value='';document.getElementById('mm-img').style.display='none';
   }catch(e){toast('Error: '+e.message);}
 };
 
 window.saveAsig=async function(){
-  const proy=document.getElementById('ma-pr').value;
-  const asesor=document.getElementById('ma-as').value;
+  const proy=document.getElementById('ma-pr').value;const asesor=document.getElementById('ma-as').value;
   if(!proy||!asesor){toast('Selecciona proyecto y asesor');return;}
   const pri=document.querySelector('#ma-pri .chip.on')?.dataset.v||'NORMAL';
   const obs=document.getElementById('ma-obs').value;
@@ -653,16 +673,14 @@ window.saveAsig=async function(){
     renderAsigAdminLista();
   }catch(e){toast('Error: '+e.message);}
 };
-
-loadAll();
 </script>
 
 <script>
-window.GPS='';window.actTab='hoy';window._editAID=null;window._editAsigID=null;
+window.GPS='';window.actTab='hoy';window._editAID=null;window._editAsigID=null;window._editPID=null;
 window._selProy='';window._selCli='';window.mapFiltros={canal:'',imp:''};window.mapaInited=false;
 
 // SESSION 6h
-const SK='actividapp_v4';
+const SK='actividapp_v5';
 function saveS(cu){try{localStorage.setItem(SK,JSON.stringify({cu,ts:Date.now()}));}catch(e){}}
 function loadS(){try{const s=localStorage.getItem(SK);if(!s)return null;const d=JSON.parse(s);if(Date.now()-d.ts>6*3600*1000){localStorage.removeItem(SK);return null;}return d.cu;}catch(e){return null;}}
 function clearS(){try{localStorage.removeItem(SK);}catch(e){}}
@@ -675,7 +693,7 @@ function applyU(cu){
   document.getElementById('c-rep').style.display=isA?'block':'none';
   document.getElementById('c-asig-admin').style.display=isA?'block':'none';
 }
-(function(){const cu=loadS();if(cu){applyU(cu);go('home');}})();
+// NO auto-login here — se hace DENTRO de loadAll() cuando los datos están listos
 
 // NAV
 window.go=function(id){
@@ -687,10 +705,12 @@ window.go=function(id){
   if(id==='dashboard'&&window.Actividades)renderDash(window.Actividades);
   if(id==='asignaciones')renderAsigLista();
   if(id==='asig-admin')renderAsigAdminLista();
+  if(id==='proyectos')fltPL();
 };
 
-// LOGIN
+// LOGIN — espera a que los datos estén listos
 window.doLogin=function(){
+  if(!window._dataReady){toast('Cargando datos, espera...');return;}
   const ced=document.getElementById('l-usr').value;
   const pw=document.getElementById('l-pw').value;
   const err=document.getElementById('l-err');
@@ -709,40 +729,39 @@ window.doLogout=function(){window.CU=null;clearS();go('login');};
 // GPS
 function getGPS(){
   if(!navigator.geolocation){document.getElementById('loc-t').textContent='GPS no disponible';return;}
-  navigator.geolocation.getCurrentPosition(p=>{window.GPS=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);document.getElementById('loc-t').textContent=window.GPS+' ✓';},()=>{document.getElementById('loc-t').textContent='No se pudo obtener';});
+  navigator.geolocation.getCurrentPosition(p=>{window.GPS=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);document.getElementById('loc-t').textContent=window.GPS+' ✓';},()=>{document.getElementById('loc-t').textContent='No se pudo obtener';},{timeout:10000});
 }
 
-// FOTO
 window.prvFoto=function(inp,id){if(inp.files&&inp.files[0]){const r=new FileReader();r.onload=e=>{const i=document.getElementById(id);i.src=e.target.result;i.style.display='block';};r.readAsDataURL(inp.files[0]);}};
-window.removeFoto=function(){document.getElementById('fp-img').style.display='none';document.getElementById('fp-img').src='';document.getElementById('fileInput').value='';document.getElementById('btn-remove-foto').style.display='none';};
-document.getElementById('fileInput').addEventListener('change',function(){if(this.files[0])document.getElementById('btn-remove-foto').style.display='block';});
+window.removeFoto=function(){document.getElementById('fp-img').style.display='none';document.getElementById('fp-img').src='';document.getElementById('fileInput').value='';document.getElementById('btn-rf').style.display='none';};
 
 // CHIPS
 document.querySelectorAll('#ch-canal .chip').forEach(c=>{c.onclick=function(){document.querySelectorAll('#ch-canal .chip').forEach(x=>x.classList.remove('on'));this.classList.add('on');document.getElementById('fp-proy').style.display=this.dataset.v==='OBRAS'?'block':'none';};});
-['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri'].forEach(id=>{const g=document.getElementById(id);if(!g)return;g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});});
+['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri','mnp-est','mep-est','ch-fotos'].forEach(id=>{const g=document.getElementById(id);if(!g)return;g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});});
 
-// MODAL
+// MODAL — bottom sheet
 window.openM=function(id){document.getElementById(id).classList.add('on');};
 window.closeM=function(id){document.getElementById(id).classList.remove('on');};
 document.querySelectorAll('.mo').forEach(m=>{m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});});
 
-// SELECTED VALUE para proyecto y cliente
-window.selProy=function(){const s=document.getElementById('np');const v=s.value;if(!v)return;window._selProy=v;document.getElementById('proy-sel-txt').textContent=v;document.getElementById('proy-sel-val').classList.add('show');document.getElementById('proy-search-wrap').style.display='none';};
-window.selCli=function(){const s=document.getElementById('nc');const v=s.value;if(!v)return;window._selCli=v;document.getElementById('cli-sel-txt').textContent=v;document.getElementById('cli-sel-val').classList.add('show');document.getElementById('cli-search-wrap').style.display='none';};
-window.clearSel=function(t){if(t==='proy'){window._selProy='';document.getElementById('proy-sel-val').classList.remove('show');document.getElementById('proy-search-wrap').style.display='block';document.getElementById('np-s').value='';document.getElementById('np').innerHTML='<option value="">Escribe para buscar...</option>';}else{window._selCli='';document.getElementById('cli-sel-val').classList.remove('show');document.getElementById('cli-search-wrap').style.display='block';document.getElementById('nc-s').value='';document.getElementById('nc').innerHTML='<option value="">Escribe para buscar...</option>';}};
+// SELECTED VALUE
+window.selProy=function(){const s=document.getElementById('np');const v=s.value;if(!v)return;window._selProy=v;document.getElementById('proy-sv-t').textContent=v;document.getElementById('proy-sv').classList.add('show');document.getElementById('proy-sw').style.display='none';};
+window.selCli=function(){const s=document.getElementById('nc');const v=s.value;if(!v)return;window._selCli=v;document.getElementById('cli-sv-t').textContent=v;document.getElementById('cli-sv').classList.add('show');document.getElementById('cli-sw').style.display='none';};
+window.clearSel=function(t){if(t==='proy'){window._selProy='';document.getElementById('proy-sv').classList.remove('show');document.getElementById('proy-sw').style.display='block';document.getElementById('np-s').value='';document.getElementById('np').innerHTML='<option value="">Escribe para buscar...</option>';}else{window._selCli='';document.getElementById('cli-sv').classList.remove('show');document.getElementById('cli-sw').style.display='block';document.getElementById('nc-s').value='';document.getElementById('nc').innerHTML='<option value="">Escribe para buscar...</option>';}};
 
 // SEARCH
-window.fltProy=function(){const q=document.getElementById('np-s').value.toLowerCase().trim();const s=document.getElementById('np');if(!q||!window.Clientes){s.innerHTML='<option value="">Escribe para buscar...</option>';return;}if(!window.Proyectos){s.innerHTML='<option value="">Cargando...</option>';return;}const r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q)).slice(0,30);s.innerHTML=r.length?r.map(p=>`<option value="${(p['NOMBRE PROYECTO']||'').replace(/"/g,'&quot;')}">${p['CODIGO']||''} - ${p['NOMBRE PROYECTO']||''}</option>`).join(''):'<option value="">Sin resultados</option>';};
-window.fltCli=function(){const q=document.getElementById('nc-s').value.toLowerCase().trim();const s=document.getElementById('nc');if(!q||!window.Clientes){s.innerHTML='<option value="">Escribe para buscar...</option>';return;}const r=window.Clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,30);s.innerHTML=r.length?r.map(c=>`<option value="${(c['NOMBRE CLIENTE']||'').replace(/"/g,'&quot;')}">${c['NOMBRE CLIENTE']||''}</option>`).join(''):'<option value="">Sin resultados</option>';};
-window.fltMCli=function(){const q=document.getElementById('mm-cs').value.toLowerCase().trim();const s=document.getElementById('mm-cl');if(!q||!window.Clientes){s.innerHTML='<option value="">Escribe...</option>';return;}const r=window.Clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,20);s.innerHTML=r.map(c=>`<option value="${c['NOMBRE CLIENTE']||''}">${c['NOMBRE CLIENTE']||''}</option>`).join('');};
-window.fltMProy=function(){const q=document.getElementById('mm-ps').value.toLowerCase().trim();const s=document.getElementById('mm-pr');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe...</option>';return;}const r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)).slice(0,20);s.innerHTML=r.map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['NOMBRE PROYECTO']||''}</option>`).join('');};
-window.fltAProy=function(){const q=document.getElementById('ma-ps').value.toLowerCase().trim();const s=document.getElementById('ma-pr');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe...</option>';return;}const r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)).slice(0,20);s.innerHTML=r.map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['CODIGO']||''} - ${p['NOMBRE PROYECTO']||''}</option>`).join('');};
+window.fltProy=function(){const q=document.getElementById('np-s').value.toLowerCase().trim();const s=document.getElementById('np');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe para buscar...</option>';return;}const r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q)).slice(0,30);s.innerHTML=r.length?r.map(p=>`<option value="${(p['NOMBRE PROYECTO']||'').replace(/"/g,'')}">${p['CODIGO']||''} - ${p['NOMBRE PROYECTO']||''}</option>`).join(''):'<option value="">Sin resultados</option>';};
+window.fltCli=function(){const q=document.getElementById('nc-s').value.toLowerCase().trim();const s=document.getElementById('nc');if(!q||!window.Clientes){s.innerHTML='<option value="">Escribe para buscar...</option>';return;}const r=window.Clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,30);s.innerHTML=r.length?r.map(c=>`<option value="${(c['NOMBRE CLIENTE']||'').replace(/"/g,'')}">${c['NOMBRE CLIENTE']||''}</option>`).join(''):'<option value="">Sin resultados</option>';};
+window.fltMCli=function(){const q=document.getElementById('mm-cs').value.toLowerCase().trim();const s=document.getElementById('mm-cl');if(!q||!window.Clientes){s.innerHTML='<option value="">Escribe...</option>';return;}s.innerHTML=window.Clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,20).map(c=>`<option value="${c['NOMBRE CLIENTE']||''}">${c['NOMBRE CLIENTE']||''}</option>`).join('');};
+window.fltMProy=function(){const q=document.getElementById('mm-ps').value.toLowerCase().trim();const s=document.getElementById('mm-pr');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe...</option>';return;}s.innerHTML=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)).slice(0,20).map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['NOMBRE PROYECTO']||''}</option>`).join('');};
+window.fltAProy=function(){const q=document.getElementById('ma-ps').value.toLowerCase().trim();const s=document.getElementById('ma-pr');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe...</option>';return;}s.innerHTML=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)).slice(0,20).map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['CODIGO']||''} - ${p['NOMBRE PROYECTO']||''}</option>`).join('');};
 window.fltCL=function(){const q=document.getElementById('cs').value.toLowerCase();if(window.Clientes)renderCliLista(window.Clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,60));};
+window._proyF='todos';
+window.fltPL=function(){const q=(document.getElementById('ps')?.value||'').toLowerCase();const f=window._proyF||'todos';if(!window.Proyectos)return;let r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q));if(f==='activo')r=r.filter(p=>(p.ESTADO||'ACTIVO')!=='INACTIVO');if(f==='inactivo')r=r.filter(p=>p.ESTADO==='INACTIVO');renderProyLista(r.slice(0,80));};
+window.setPF=function(f){window._proyF=f;['pf-t','pf-a','pf-i'].forEach(id=>document.getElementById(id).classList.remove('on'));const m={todos:'pf-t',activo:'pf-a',inactivo:'pf-i'};document.getElementById(m[f]).classList.add('on');fltPL();};
 
 // TAB ACTIVIDADES
-window.actTab='hoy';
 window.setTab=function(t){window.actTab=t;['h','s','m','t'].forEach(x=>document.getElementById('t-'+x).classList.remove('on'));const m={hoy:'h',semana:'s',mes:'m',todo:'t'};document.getElementById('t-'+m[t]).classList.add('on');if(window.Actividades)renderActs(window.Actividades,t);};
-
 window.renderActs=function(list,tab){
   const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
   const hD=new Date();hD.setHours(0,0,0,0);const sD=new Date(hD);sD.setDate(sD.getDate()-6);const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
@@ -757,120 +776,82 @@ window.renderActs=function(list,tab){
     const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
     const fd=f.toLocaleDateString('es-CO',{day:'2-digit',month:'short'});
     const fh=f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
-    const imp=(a.IMPACTO||'').toUpperCase();
-    const bc=imp.includes('NO')?'br1':imp==='IMPACTADO'?'bg1':'ba1';
-    return `<div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px">
-        <div style="font-size:14px;font-weight:500;flex:1;min-width:0;margin-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.PROYECTO||a.CLIENTE||'Sin nombre'}</div>
-        <span class="b ${bc}" style="flex-shrink:0;cursor:pointer" onclick="editAct('${a.id}')">${a.IMPACTO||a['TIPO DE VISITA']||'—'}</span>
-      </div>
-      <div style="font-size:12px;color:var(--muted)">${a.CLIENTE||''}${a.CANAL?' · '+a.CANAL:''}</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:3px">${fd} ${fh}${a.ASESOR?' · '+a.ASESOR.split(' ')[0]:''}</div>
-      ${a.OBSERVACION?`<div style="font-size:12px;margin-top:4px">${a.OBSERVACION}</div>`:''}
-    </div>`;
+    const imp=(a.IMPACTO||'').toUpperCase();const bc=imp.includes('NO')?'br1':imp==='IMPACTADO'?'bg1':'ba1';
+    return `<div class="card">${a.FOTO?`<img src="${a.FOTO}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px" loading="lazy">`:''}<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px"><div style="font-size:14px;font-weight:500;flex:1;min-width:0;margin-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.PROYECTO||a.CLIENTE||'Sin nombre'}</div><span class="b ${bc}" style="flex-shrink:0;cursor:pointer" onclick="editAct('${a.id}')">${a.IMPACTO||a['TIPO DE VISITA']||'—'}</span></div><div style="font-size:12px;color:var(--muted)">${a.CLIENTE||''}${a.CANAL?' · '+a.CANAL:''}</div><div style="font-size:11px;color:var(--muted);margin-top:3px">${fd} ${fh}${a.ASESOR?' · '+a.ASESOR.split(' ')[0]:''}</div>${a.OBSERVACION?`<div style="font-size:12px;margin-top:4px">${a.OBSERVACION}</div>`:''}</div>`;
   }).join('');
 };
+window.editAct=function(id){const a=window.Actividades?.find(x=>x.id===id);if(!a)return;window._editAID=id;document.querySelectorAll('#mae-imp .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===a.IMPACTO)c.classList.add('on');});document.getElementById('mae-tv').value=a['TIPO DE VISITA']||'VISITA';document.getElementById('mae-obs').value=a.OBSERVACION||'';openM('m-act-edit');};
 
-window.editAct=function(id){
-  const a=window.Actividades?.find(x=>x.id===id);if(!a)return;
-  window._editAID=id;
-  document.querySelectorAll('#mae-imp .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===a.IMPACTO)c.classList.add('on');});
-  document.getElementById('mae-tv').value=a['TIPO DE VISITA']||'VISITA';
-  document.getElementById('mae-obs').value=a.OBSERVACION||'';
-  openM('m-act-edit');
-};
-
-// ASIGNACIONES ASESOR
-window._asigF='pendiente';
-window.setAsigF=function(f){window._asigF=f;['p','v','t'].forEach(x=>document.getElementById('af-'+x).classList.remove('on'));const m={pendiente:'p',visitado:'v',todo:'t'};document.getElementById('af-'+m[f]).classList.add('on');renderAsigLista();};
-window.renderAsigLista=function(){
-  const el=document.getElementById('asig-list');if(!window.Asignaciones||!window.CU)return;
-  const isA=window.CU.tipo==='ADMINISTRADOR';const mi=window.CU.nombre;
-  const f=window._asigF||'pendiente';
-  let list=window.Asignaciones.filter(a=>isA||a.ASESOR===mi);
-  if(f==='pendiente')list=list.filter(a=>a.ESTADO==='PENDIENTE'||!a.ESTADO);
-  else if(f==='visitado')list=list.filter(a=>a.ESTADO==='VISITADO');
-  if(!list.length){el.innerHTML='<div class="em"><div class="em-i">📌</div><div>Sin asignaciones en este filtro</div></div>';return;}
-  const cls={PENDIENTE:'pend',VISITADO:'visit',CERRADO:'cerr'};
-  const pri={ALTA:'br1',URGENTE:'br1',NORMAL:'bb1'};
-  el.innerHTML=list.map(a=>{
-    const f2=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    return `<div class="asig-card ${cls[a.ESTADO||'PENDIENTE']||'pend'}">
-      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
-        <div style="font-size:14px;font-weight:500;flex:1;min-width:0;margin-right:8px">${a.PROYECTO||'—'}</div>
-        <span class="b ${pri[a.PRIORIDAD||'NORMAL']||'bb1'}">${a.PRIORIDAD||'NORMAL'}</span>
-      </div>
-      ${isA?`<div style="font-size:12px;color:var(--muted)">Asesor: ${a.ASESOR||''}</div>`:''}
-      <div style="font-size:12px;margin-top:4px"><span class="b ${a.ESTADO==='VISITADO'?'bg1':a.ESTADO==='CERRADO'?'ba1':'ba1'}">${a.ESTADO||'PENDIENTE'}</span></div>
-      ${a.INSTRUCCIONES?`<div style="font-size:12px;margin-top:6px;color:var(--text)">📋 ${a.INSTRUCCIONES}</div>`:''}
-      ${a.COMENTARIO_ASESOR?`<div style="font-size:12px;margin-top:4px;color:var(--green)">💬 ${a.COMENTARIO_ASESOR}</div>`:''}
-      <div style="font-size:11px;color:var(--muted);margin-top:6px">${f2.toLocaleDateString('es-CO')}</div>
-      ${a.ESTADO!=='CERRADO'?`<button class="bg2" style="width:100%;margin-top:8px" onclick="editAsig('${a.id}')">✏️ Actualizar estado</button>`:''}
-    </div>`;
+// RENDER PROYECTOS
+window.renderProyLista=function(list){
+  const el=document.getElementById('proy-list');
+  if(!list||!list.length){el.innerHTML='<div class="em"><div class="em-i">🏗️</div><div>Sin proyectos</div></div>';return;}
+  const isA=window.CU?.tipo==='ADMINISTRADOR';
+  el.innerHTML=list.map(p=>{
+    const n=p['NOMBRE PROYECTO']||'';const c=p['CODIGO']||'';const b=p['BARRIO']||'';const e=p['ESTADO']||'ACTIVO';
+    const editBtn=isA?`<button class="bg2" style="margin-top:8px;width:100%" onclick="editProy('${p.id}')">✏️ Editar</button>`:'';
+    return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start"><div style="flex:1;min-width:0"><div class="ct">${n}</div><div class="cs">Cód: ${c}${b?' · '+b:''}</div>${p.CANAL?`<div style="font-size:11px;color:var(--muted)">${p.CANAL}</div>`:''}</div><span class="b ${e==='INACTIVO'?'ba1':'bg1'}" style="margin-left:8px;flex-shrink:0">${e}</span></div>${editBtn}</div>`;
   }).join('');
 };
-
-window.editAsig=function(id){
-  const a=window.Asignaciones?.find(x=>x.id===id);if(!a)return;
-  window._editAsigID=id;
-  document.getElementById('mae2-t').textContent=a.PROYECTO||'Asignación';
-  document.querySelectorAll('#mae2-est .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===(a.ESTADO||'PENDIENTE'))c.classList.add('on');});
-  document.getElementById('mae2-obs').value=a.COMENTARIO_ASESOR||'';
-  openM('m-asig-edit');
-};
-
-window.renderAsigAdminLista=function(){
-  const el=document.getElementById('asig-admin-list');if(!window.Asignaciones)return;
-  if(!window.Asignaciones.length){el.innerHTML='<div class="em"><div class="em-i">🏗️</div><div>Sin asignaciones creadas</div></div>';return;}
-  const pri={ALTA:'br1',URGENTE:'br1',NORMAL:'bb1'};
-  el.innerHTML=window.Asignaciones.map(a=>{
-    const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    const sc={PENDIENTE:'ba1',VISITADO:'bg1',CERRADO:'b'};
-    return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px"><div style="font-size:14px;font-weight:500;flex:1;min-width:0;margin-right:8px">${a.PROYECTO||'—'}</div><span class="b ${pri[a.PRIORIDAD||'NORMAL']||'bb1'}">${a.PRIORIDAD||''}</span></div><div style="font-size:12px;color:var(--muted)">Asesor: ${a.ASESOR||''}</div><div style="margin-top:6px"><span class="b ${sc[a.ESTADO||'PENDIENTE']||'ba1'}">${a.ESTADO||'PENDIENTE'}</span></div>${a.COMENTARIO_ASESOR?`<div style="font-size:12px;margin-top:4px;color:var(--green)">💬 ${a.COMENTARIO_ASESOR}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:4px">${f.toLocaleDateString('es-CO')}</div></div>`;
-  }).join('');
+window.editProy=function(id){
+  const p=window.Proyectos?.find(x=>x.id===id);if(!p)return;
+  window._editPID=id;
+  document.getElementById('mep-t').textContent=(p['NOMBRE PROYECTO']||'Proyecto').substring(0,30);
+  document.querySelectorAll('#mep-est .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===(p.ESTADO||'ACTIVO'))c.classList.add('on');});
+  document.getElementById('mep-obs').value=p.OBSERVACIONES||'';
+  document.getElementById('mep-asesor').value=p.ASESOR_ASIGNADO||'';
+  openM('m-edit-proy');
 };
 
 // RENDER CLIENTES
-window.renderCliLista=function(list){
-  const el=document.getElementById('cli-list');
-  if(!list||!list.length){el.innerHTML='<div class="em"><div class="em-i">👥</div><div>Sin clientes</div></div>';return;}
-  el.innerHTML=list.map(c=>`<div class="card"><div class="ct">${c['NOMBRE CLIENTE']||''}</div><div class="cs">NIT: ${c['NIT CLIENTE']||''}${c['CELULAR']?' · '+c['CELULAR']:''}</div></div>`).join('');
-};
+window.renderCliLista=function(list){const el=document.getElementById('cli-list');if(!list||!list.length){el.innerHTML='<div class="em"><div class="em-i">👥</div><div>Sin clientes</div></div>';return;}el.innerHTML=list.map(c=>`<div class="card"><div class="ct">${c['NOMBRE CLIENTE']||''}</div><div class="cs">NIT: ${c['NIT CLIENTE']||''}${c['CELULAR']?' · '+c['CELULAR']:''}</div></div>`).join('');};
 
 // RENDER MUESTRAS
 window.renderMuestras=function(){
   const el=document.getElementById('m-list');const list=window.Muestras||[];
   const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
   const fl=list.filter(m=>isA||m.ASESOR===mi);
-  if(!fl.length){el.innerHTML='<div class="em"><div class="em-i">📦</div><div>Sin muestras registradas</div></div>';return;}
-  el.innerHTML=fl.map(m=>{
-    const f=m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0);
-    return `<div class="card">${m.FOTO?`<img src="${m.FOTO}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px">`:''}<div class="ct">${m.PRODUCTO||''}</div><div class="cs">${m.DESCRIPCION||''}</div><div style="font-size:12px;margin-top:4px">Cant: <b>${m.CANTIDAD||1}</b> · ${m.CLIENTE||''}</div>${m.PROYECTO?`<div style="font-size:11px;color:var(--muted)">Proy: ${m.PROYECTO}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:2px">${m.ASESOR||''} · ${f.toLocaleDateString('es-CO')}</div></div>`;
-  }).join('');
+  if(!fl.length){el.innerHTML='<div class="em"><div class="em-i">📦</div><div>Sin muestras</div></div>';return;}
+  el.innerHTML=fl.map(m=>{const f=m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0);return `<div class="card">${m.FOTO?`<img src="${m.FOTO}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px" loading="lazy">`:''}<div class="ct">${m.PRODUCTO||''}</div><div class="cs">${m.DESCRIPCION||''}</div><div style="font-size:12px;margin-top:4px">Cant: <b>${m.CANTIDAD||1}</b> · ${m.CLIENTE||''}</div>${m.PROYECTO?`<div style="font-size:11px;color:var(--muted)">Proy: ${m.PROYECTO}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:2px">${m.ASESOR||''} · ${f.toLocaleDateString('es-CO')}</div></div>`;}).join('');
 };
 
-// MAPA — iconos simplificados (solo emoji del canal + color del impacto)
-window.mapaMarkers=[];
-window.setMF=function(el){
-  const g=el.dataset.g;
-  document.querySelectorAll(`.mfc[data-g="${g}"]`).forEach(x=>x.classList.remove('on'));
-  el.classList.add('on');
-  window.mapFiltros[g]=el.dataset.v||'';
-  renderMap();
+// ASIGNACIONES
+window._asigF='pendiente';
+window.setAsigF=function(f){window._asigF=f;['p','v','t'].forEach(x=>document.getElementById('af-'+x).classList.remove('on'));const m={pendiente:'p',visitado:'v',todo:'t'};document.getElementById('af-'+m[f]).classList.add('on');renderAsigLista();};
+window.renderAsigLista=function(){
+  const el=document.getElementById('asig-list');if(!window.Asignaciones||!window.CU)return;
+  const isA=window.CU.tipo==='ADMINISTRADOR';const mi=window.CU.nombre;const f=window._asigF||'pendiente';
+  let list=window.Asignaciones.filter(a=>isA||a.ASESOR===mi);
+  if(f==='pendiente')list=list.filter(a=>a.ESTADO==='PENDIENTE'||!a.ESTADO);
+  else if(f==='visitado')list=list.filter(a=>a.ESTADO==='VISITADO');
+  if(!list.length){el.innerHTML='<div class="em"><div class="em-i">📌</div><div>Sin asignaciones en este filtro</div></div>';return;}
+  const pri={ALTA:'br1',URGENTE:'br1',NORMAL:'bb1'};
+  el.innerHTML=list.map(a=>{
+    const f2=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
+    const cls=a.ESTADO==='VISITADO'?'visit':a.ESTADO==='CERRADO'?'cerr':'';
+    return `<div class="asig-card ${cls}"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px"><div style="font-size:14px;font-weight:500;flex:1;min-width:0;margin-right:8px">${a.PROYECTO||'—'}</div><span class="b ${pri[a.PRIORIDAD||'NORMAL']||'bb1'}">${a.PRIORIDAD||'NORMAL'}</span></div>${isA?`<div style="font-size:12px;color:var(--muted)">Asesor: ${a.ASESOR||''}</div>`:''}<div style="margin-top:4px"><span class="b ${a.ESTADO==='VISITADO'?'bg1':'ba1'}">${a.ESTADO||'PENDIENTE'}</span></div>${a.INSTRUCCIONES?`<div style="font-size:12px;margin-top:6px">📋 ${a.INSTRUCCIONES}</div>`:''} ${a.COMENTARIO_ASESOR?`<div style="font-size:12px;margin-top:4px;color:var(--green)">💬 ${a.COMENTARIO_ASESOR}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:6px">${f2.toLocaleDateString('es-CO')}</div>${a.ESTADO!=='CERRADO'?`<button class="bg2" style="width:100%;margin-top:8px" onclick="editAsig('${a.id}')">✏️ Actualizar estado</button>`:''}  </div>`;
+  }).join('');
 };
+window.editAsig=function(id){const a=window.Asignaciones?.find(x=>x.id===id);if(!a)return;window._editAsigID=id;document.getElementById('mae2-t').textContent=a.PROYECTO||'Asignación';document.querySelectorAll('#mae2-est .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===(a.ESTADO||'PENDIENTE'))c.classList.add('on');});document.getElementById('mae2-obs').value=a.COMENTARIO_ASESOR||'';openM('m-asig-edit');};
+window.renderAsigAdminLista=function(){
+  const el=document.getElementById('asig-admin-list');if(!window.Asignaciones)return;
+  if(!window.Asignaciones.length){el.innerHTML='<div class="em"><div class="em-i">🏗️</div><div>Sin asignaciones creadas</div></div>';return;}
+  const pri={ALTA:'br1',URGENTE:'br1',NORMAL:'bb1'};const sc={PENDIENTE:'ba1',VISITADO:'bg1',CERRADO:'b'};
+  el.innerHTML=window.Asignaciones.map(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px"><div class="ct" style="flex:1;min-width:0;margin-right:8px">${a.PROYECTO||'—'}</div><span class="b ${pri[a.PRIORIDAD||'NORMAL']||'bb1'}">${a.PRIORIDAD||''}</span></div><div style="font-size:12px;color:var(--muted)">Asesor: ${a.ASESOR||''}</div><div style="margin-top:6px"><span class="b ${sc[a.ESTADO||'PENDIENTE']||'ba1'}">${a.ESTADO||'PENDIENTE'}</span></div>${a.COMENTARIO_ASESOR?`<div style="font-size:12px;margin-top:4px;color:var(--green)">💬 ${a.COMENTARIO_ASESOR}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:4px">${f.toLocaleDateString('es-CO')}</div></div>`;}).join('');
+};
+
+// MAPA
+window.mapaMarkers=[];
+window.setMF=function(el){const g=el.dataset.g;document.querySelectorAll(`.mfc[data-g="${g}"]`).forEach(x=>x.classList.remove('on'));el.classList.add('on');window.mapFiltros[g]=el.dataset.v||'';renderMap();};
 window.renderMap=function(){
   if(!window.Actividades)return;
-  const fA=document.getElementById('mf-a').value;
-  const fC=window.mapFiltros.canal||'';const fI=window.mapFiltros.imp||'';
+  const fA=document.getElementById('mf-a').value;const fC=window.mapFiltros.canal||'';const fI=window.mapFiltros.imp||'';
   const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
   const puntos=window.Actividades.filter(a=>{
     const ubi=a['UBICACION']||a['UBICACIÓN']||'';if(!ubi)return false;
     const p=ubi.toString().split(',');if(p.length<2||isNaN(parseFloat(p[0]))||isNaN(parseFloat(p[1])))return false;
-    if(fA&&a.ASESOR!==fA)return false;
-    if(fC&&(a.CANAL||'')!==fC)return false;
-    if(fI&&(a.IMPACTO||'')!==fI)return false;
-    if(!isA&&a.ASESOR!==mi)return false;
-    return true;
+    if(fA&&a.ASESOR!==fA)return false;if(fC&&(a.CANAL||'')!==fC)return false;if(fI&&(a.IMPACTO||'')!==fI)return false;
+    if(!isA&&a.ASESOR!==mi)return false;return true;
   });
   if(!window.mapaInited){
     const cl=puntos.length?parseFloat((puntos[0]['UBICACION']||puntos[0]['UBICACIÓN']||'6.2476,-75.5658').split(',')[0]):6.2476;
@@ -879,54 +860,34 @@ window.renderMap=function(){
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(window.leafMap);
     window.mapaInited=true;
   } else {window.mapaMarkers.forEach(m=>m.remove());window.mapaMarkers=[];}
-
   const lats=[],lngs=[];
-
   // Asignaciones pendientes
-  (window.Asignaciones||[]).filter(a=>{
-    if(!isA&&a.ASESOR!==mi)return false;
-    if(fA&&a.ASESOR!==fA)return false;
-    if(a.ESTADO==='CERRADO')return false;
+  (window.Asignaciones||[]).filter(a=>{if(!isA&&a.ASESOR!==mi)return false;if(fA&&a.ASESOR!==fA)return false;if(a.ESTADO==='CERRADO')return false;const p=window.Proyectos?.find(x=>x['NOMBRE PROYECTO']===a.PROYECTO);return p&&p.COORDENADAS;}).forEach(a=>{
     const p=window.Proyectos?.find(x=>x['NOMBRE PROYECTO']===a.PROYECTO);
-    return p&&p.COORDENADAS;
-  }).forEach(a=>{
-    const p=window.Proyectos?.find(x=>x['NOMBRE PROYECTO']===a.PROYECTO);
-    const coords=(p.COORDENADAS||'').toString().split(',');
-    const lat=parseFloat(coords[0]),lng=parseFloat(coords[1]);
+    const coords=(p.COORDENADAS||'').toString().split(',');const lat=parseFloat(coords[0]),lng=parseFloat(coords[1]);
     if(isNaN(lat)||isNaN(lng))return;
-    const icon=L.divIcon({html:'<div style="font-size:22px;line-height:1;text-shadow:0 1px 3px rgba(0,0,0,.4)">⭐</div>',iconSize:[24,24],className:''});
-    const m=L.marker([lat,lng],{icon});
-    m.bindPopup(`<b>${a.PROYECTO}</b><br>Asesor: ${a.ASESOR}<br><span style="color:orange">⭐ Asignado pendiente</span>`);
+    const icon=L.divIcon({html:'<div style="font-size:22px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))">⭐</div>',iconSize:[24,24],className:''});
+    const m=L.marker([lat,lng],{icon});m.bindPopup(`<b>${a.PROYECTO}</b><br>Asesor: ${a.ASESOR}<br><span style="color:orange">⭐ Pendiente</span>`);
     m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
   });
-
   // Visitas
   puntos.forEach(a=>{
-    const ubi=a['UBICACION']||a['UBICACIÓN']||'';
-    const pts=ubi.toString().split(',');
-    const lat=parseFloat(pts[0]),lng=parseFloat(pts[1]);
+    const ubi=a['UBICACION']||a['UBICACIÓN']||'';const pts=ubi.toString().split(',');const lat=parseFloat(pts[0]),lng=parseFloat(pts[1]);
     const impOk=!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='';
-    const esObra=(a.CANAL||'').toUpperCase()==='OBRAS';
-    // Color del fondo del icono según impacto
     const color=impOk?'#27AE60':'#E74C3C';
-    const emoji=esObra?'🏗️':'🔧';
-    const icon=L.divIcon({
-      html:`<div style="background:${color};border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)">${emoji}</div>`,
-      iconSize:[28,28],iconAnchor:[14,14],className:''
-    });
+    const emoji=(a.CANAL||'').toUpperCase()==='OBRAS'?'🏗️':'🔧';
+    const icon=L.divIcon({html:`<div style="background:${color};border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)">${emoji}</div>`,iconSize:[30,30],iconAnchor:[15,15],className:''});
     const m=L.marker([lat,lng],{icon});
     const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    m.bindPopup(`<b>${a.PROYECTO||a.CLIENTE||'—'}</b><br>${a.ASESOR||''}<br>${f.toLocaleDateString('es-CO')}<br><span style="color:${color};font-weight:600">${a.IMPACTO||''}</span>${a.OBSERVACION?'<br><i>'+a.OBSERVACION+'</i>':''}<br><a href="#" onclick="editAct('${a.id}');window.leafMap.closePopup();return false" style="color:var(--red)">✏️ Editar</a>`);
+    m.bindPopup(`<b>${a.PROYECTO||a.CLIENTE||'—'}</b><br>${a.ASESOR||''}<br>${f.toLocaleDateString('es-CO')}<br><span style="color:${color};font-weight:600">${a.IMPACTO||''}</span>${a.OBSERVACION?'<br><i>'+a.OBSERVACION+'</i>':''}<br><a href="#" onclick="editAct('${a.id}');window.leafMap.closePopup();return false" style="color:#C0392B">✏️ Editar</a>`);
     m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
   });
-
   if(lats.length>1)window.leafMap.fitBounds([[Math.min(...lats),Math.min(...lngs)],[Math.max(...lats),Math.max(...lngs)]],{padding:[40,40]});
 };
 
 // DASHBOARD
 window.renderDash=function(acts,f1,f2){
-  if(!acts)return;
-  let data=acts;
+  if(!acts)return;let data=acts;
   if(f1)data=data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=f1;});
   if(f2)data=data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f<=f2;});
   const tot=data.length;
@@ -934,16 +895,16 @@ window.renderDash=function(acts,f1,f2){
   const aH=data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=hD;}).length;
   const aM=data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=mD;}).length;
   const imp=data.filter(a=>!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='').length;
-  document.getElementById('d-stats').innerHTML=`<div class="sc"><div class="sn">${aH}</div><div class="sl">Hoy</div></div><div class="sc"><div class="sn">${aM}</div><div class="sl">Este mes</div></div><div class="sc"><div class="sn">${tot}</div><div class="sl">Total</div></div><div class="sc"><div class="sn">${tot?Math.round(imp/tot*100):0}%</div><div class="sl">Impacto</div></div>`;
+  document.getElementById('d-stats').innerHTML=`<div class="sc"><div class="sn">${aH}</div><div class="sl">Hoy</div></div><div class="sc"><div class="sn">${aM}</div><div class="sl">Mes</div></div><div class="sc"><div class="sn">${tot}</div><div class="sl">Total</div></div><div class="sc"><div class="sn">${tot?Math.round(imp/tot*100):0}%</div><div class="sl">Impacto</div></div>`;
   const pA={};data.forEach(a=>{const k=(a.ASESOR||'—').split(' ').slice(0,2).join(' ');pA[k]=(pA[k]||0)+1;});
   const mxA=Math.max(...Object.values(pA),1);
   document.getElementById('d-asesores').innerHTML='<div class="dbt">Visitas por asesor</div>'+Object.entries(pA).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="brw"><div class="brl" title="${k}">${k}</div><div class="brt"><div class="brf" style="width:${Math.round(v/mxA*100)}%"></div></div><div class="brv">${v}</div></div>`).join('');
   const pCA={};data.forEach(a=>{const k=(a.ASESOR||'—').split(' ').slice(0,2).join(' ');if(!pCA[k])pCA[k]={o:0,f:0};if((a.CANAL||'')==='OBRAS')pCA[k].o++;else if((a.CANAL||'')==='FERRETERIA')pCA[k].f++;});
-  document.getElementById('d-canal-a').innerHTML='<div class="dbt">Obras vs Ferreterías por asesor</div>'+Object.entries(pCA).sort((a,b)=>(b[1].o+b[1].f)-(a[1].o+a[1].f)).map(([k,v])=>`<div class="brw"><div class="brl" title="${k}">${k}</div><div style="flex:1;font-size:11px;display:flex;gap:10px"><span style="color:var(--blue)">🏗️ ${v.o}</span><span style="color:var(--amber)">🔧 ${v.f}</span></div></div>`).join('');
+  document.getElementById('d-canal-a').innerHTML='<div class="dbt">Obras vs Ferreterías</div>'+Object.entries(pCA).sort((a,b)=>(b[1].o+b[1].f)-(a[1].o+a[1].f)).map(([k,v])=>`<div class="brw"><div class="brl" title="${k}">${k}</div><div style="flex:1;font-size:11px;display:flex;gap:10px"><span style="color:var(--blue)">🏗️${v.o}</span><span style="color:var(--amber)">🔧${v.f}</span></div></div>`).join('');
   const ds=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);ds.push(d);}
   const pD=ds.map(d=>{const nx=new Date(d);nx.setDate(nx.getDate()+1);return{l:d.toLocaleDateString('es-CO',{weekday:'short',day:'numeric'}),n:data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=d&&f<nx;}).length};});
   const mxD=Math.max(...pD.map(d=>d.n),1);
-  document.getElementById('d-dias').innerHTML='<div class="dbt">Actividad diaria</div>'+pD.map(d=>`<div class="brw"><div class="brl">${d.l}</div><div class="brt"><div class="brf" style="width:${Math.round(d.n/mxD*100)}%"></div></div><div class="brv">${d.n}</div></div>`).join('');
+  document.getElementById('d-dias').innerHTML='<div class="dbt">Últimos 7 días</div>'+pD.map(d=>`<div class="brw"><div class="brl">${d.l}</div><div class="brt"><div class="brf" style="width:${Math.round(d.n/mxD*100)}%"></div></div><div class="brv">${d.n}</div></div>`).join('');
   const pT={};data.forEach(a=>{const k=a['TIPO CLIENTE']||'Sin tipo';pT[k]=(pT[k]||0)+1;});
   document.getElementById('d-tipos').innerHTML=Object.entries(pT).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>`<div class="dc"><div class="dn" style="color:var(--red)">${v}</div><div class="dl">${k}</div></div>`).join('');
   const noI=tot-imp;
@@ -952,106 +913,119 @@ window.renderDash=function(acts,f1,f2){
 window.applyDash=function(){const i=document.getElementById('df-i').value;const f=document.getElementById('df-f').value;const fi=i?new Date(i):null;const ff=f?new Date(f):null;if(ff)ff.setHours(23,59,59);if(window.Actividades)renderDash(window.Actividades,fi,ff);};
 window.clearDash=function(){document.getElementById('df-i').value='';document.getElementById('df-f').value='';if(window.Actividades)renderDash(window.Actividades);};
 
-// REPORTE PDF COMPLETO
-window.generarPDF=function(){
+// PDF con fotos
+window.generarPDF=async function(){
   const ini=document.getElementById('r-i').value;const fin=document.getElementById('r-f').value;
-  if(!ini||!fin){toast('Selecciona fechas');return;}
+  if(!ini||!fin){toast('Selecciona las fechas');return;}
+  const conFotos=document.querySelector('#ch-fotos .chip.on')?.dataset.v==='si';
   const fi=new Date(ini);const ff=new Date(fin);ff.setHours(23,59,59);
-  const asesor=document.getElementById('r-a').value;
-  const canal=document.getElementById('r-c').value;
+  const asesor=document.getElementById('r-a').value;const canal=document.getElementById('r-c').value;
   const filterFn=a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);if(f<fi||f>ff)return false;if(asesor&&a.ASESOR!==asesor)return false;if(canal&&a.CANAL!==canal)return false;return true;};
   const acts=(window.Actividades||[]).filter(filterFn);
   const asigs=(window.Asignaciones||[]).filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);if(f<fi||f>ff)return false;if(asesor&&a.ASESOR!==asesor)return false;return true;});
   const muestras=(window.Muestras||[]).filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);if(f<fi||f>ff)return false;if(asesor&&a.ASESOR!==asesor)return false;return true;});
 
+  toast('Generando PDF...');
   const {jsPDF}=window.jspdf;
   const pdf=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
   const W=210,M=15;let y=20;
 
-  const header=(title)=>{pdf.setFillColor(192,57,43);pdf.rect(0,0,W,18,'F');pdf.setTextColor(255,255,255);pdf.setFontSize(13);pdf.setFont('helvetica','bold');pdf.text('ACTIVIDAPP — '+title,M,11);pdf.setFontSize(8);pdf.setFont('helvetica','normal');pdf.text(`Período: ${ini} al ${fin}${asesor?' | '+asesor:''}${canal?' | '+canal:''}  Generado: ${new Date().toLocaleDateString('es-CO')}`,M,16);pdf.setTextColor(30,30,30);y=26;};
+  const hdr=(t)=>{pdf.setFillColor(192,57,43);pdf.rect(0,0,W,18,'F');pdf.setTextColor(255,255,255);pdf.setFontSize(13);pdf.setFont('helvetica','bold');pdf.text('ACTIVIDAPP — '+t,M,11);pdf.setFontSize(8);pdf.setFont('helvetica','normal');pdf.text(`${ini} al ${fin}${asesor?' | '+asesor:''}${canal?' | '+canal:''}  |  Generado: ${new Date().toLocaleDateString('es-CO')}`,M,16);pdf.setTextColor(30,30,30);y=26;};
+  const chkPage=(h)=>{if(y+h>272){pdf.addPage();hdr('Informe (cont.)');y=26;}};
 
-  // Página 1: Resumen
-  header('Informe Gerencial Completo');
+  hdr('Informe Gerencial Completo');
   const imp=acts.filter(a=>!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='').length;
-  const obras=acts.filter(a=>(a.CANAL||'')==='OBRAS').length;
-  const ferr=acts.filter(a=>(a.CANAL||'')==='FERRETERIA').length;
-  pdf.setFillColor(245,245,240);pdf.rect(M,y,W-M*2,30,'F');
-  pdf.setFontSize(11);pdf.setFont('helvetica','bold');pdf.text('RESUMEN EJECUTIVO',M+4,y+7);
+  pdf.setFillColor(245,245,240);pdf.rect(M,y,W-M*2,32,'F');
+  pdf.setFont('helvetica','bold');pdf.setFontSize(11);pdf.text('RESUMEN EJECUTIVO',M+4,y+7);
   pdf.setFont('helvetica','normal');pdf.setFontSize(10);
-  pdf.text(`Visitas totales: ${acts.length}   |   Impactadas: ${imp}   |   Tasa impacto: ${acts.length?Math.round(imp/acts.length*100):0}%`,M+4,y+14);
-  pdf.text(`Obras: ${obras}   |   Ferreterías: ${ferr}   |   Asignaciones: ${asigs.length}   |   Muestras: ${muestras.length}`,M+4,y+21);
+  pdf.text(`Visitas: ${acts.length}  |  Impactadas: ${imp}  |  Tasa: ${acts.length?Math.round(imp/acts.length*100):0}%`,M+4,y+14);
+  pdf.text(`Obras: ${acts.filter(a=>(a.CANAL||'')==='OBRAS').length}  |  Ferreterías: ${acts.filter(a=>(a.CANAL||'')==='FERRETERIA').length}  |  Asignaciones: ${asigs.length}  |  Muestras: ${muestras.length}`,M+4,y+21);
+  const pA={};acts.forEach(a=>{const k=a.ASESOR||'—';pA[k]=(pA[k]||0)+1;});
+  const pAStr=Object.entries(pA).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k.split(' ')[0]}: ${v}`).join('  |  ');
+  if(pAStr)pdf.text(pAStr.substring(0,80),M+4,y+28);
   y+=38;
 
-  // Por asesor
-  const pA={};acts.forEach(a=>{const k=a.ASESOR||'—';pA[k]=(pA[k]||0)+1;});
-  if(Object.keys(pA).length){
-    pdf.setFont('helvetica','bold');pdf.setFontSize(10);pdf.text('Visitas por asesor:',M,y);y+=6;
-    pdf.setFont('helvetica','normal');pdf.setFontSize(9);
-    Object.entries(pA).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{pdf.text(`  ${k}: ${v} visitas`,M,y);y+=5;});
+  // ACTIVIDADES
+  if(acts.length){
+    chkPage(12);
+    pdf.setFont('helvetica','bold');pdf.setFontSize(11);pdf.setTextColor(192,57,43);
+    pdf.text('ACTIVIDADES REGISTRADAS ('+acts.length+')',M,y);pdf.setTextColor(30,30,30);y+=8;
+    for(const a of acts){
+      const impOk=!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='';
+      const fotoH=conFotos&&a.FOTO?52:0;
+      chkPage(28+fotoH);
+      if(impOk)pdf.setFillColor(234,250,242);else pdf.setFillColor(252,235,235);
+      pdf.rect(M,y,W-M*2,24+fotoH,'F');
+      pdf.setFont('helvetica','bold');pdf.setFontSize(9);
+      pdf.text((a.PROYECTO||a.CLIENTE||'—').substring(0,52),M+3,y+5);
+      pdf.setFont('helvetica','normal');pdf.setFontSize(8);
+      const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
+      pdf.text(`${a.ASESOR||'—'} | ${f.toLocaleDateString('es-CO')} ${f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})} | ${a.CANAL||'—'} | ${a.IMPACTO||'—'}`,M+3,y+10);
+      pdf.text(`Cliente: ${(a.CLIENTE||'—').substring(0,50)}`,M+3,y+15);
+      if(a.OBSERVACION)pdf.text(`Obs: ${a.OBSERVACION.substring(0,65)}`,M+3,y+20);
+      // FOTO en PDF
+      if(conFotos&&a.FOTO){
+        try{
+          const imgData=await fetchImgBase64(a.FOTO);
+          if(imgData)pdf.addImage(imgData,'JPEG',M+3,y+24,60,45);
+        }catch(e){}
+      }
+      y+=27+fotoH;
+    }
     y+=4;
   }
 
-  // Sección Actividades
-  if(acts.length){
-    if(y>240){pdf.addPage();header('Informe — Actividades');}
-    else{pdf.setFont('helvetica','bold');pdf.setFontSize(11);pdf.setTextColor(192,57,43);pdf.text('ACTIVIDADES REGISTRADAS',M,y);pdf.setTextColor(30,30,30);y+=8;}
-    acts.forEach(a=>{
-      if(y>265){pdf.addPage();header('Informe — Actividades (cont.)'); }
-      const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-      const fd=f.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
-      const impOk=!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='';
-      if(impOk)pdf.setFillColor(234,250,242);else pdf.setFillColor(252,235,235);
-      pdf.rect(M,y,W-M*2,22,'F');
-      pdf.setFont('helvetica','bold');pdf.setFontSize(9);
-      pdf.text((a.PROYECTO||a.CLIENTE||'—').substring(0,50),M+3,y+5);
-      pdf.setFont('helvetica','normal');pdf.setFontSize(8);
-      pdf.text(`${a.ASESOR||'—'} | ${fd} | ${a.CANAL||'—'} | ${a.IMPACTO||'—'}`,M+3,y+10);
-      pdf.text(`Cliente: ${(a.CLIENTE||'—').substring(0,45)}`,M+3,y+15);
-      if(a.OBSERVACION)pdf.text(`Obs: ${a.OBSERVACION.substring(0,60)}`,M+3,y+19);
-      y+=25;
-    });
-  }
-
-  // Sección Asignaciones
+  // ASIGNACIONES
   if(asigs.length){
-    pdf.addPage();header('Informe — Asignaciones');
-    pdf.setFont('helvetica','bold');pdf.setFontSize(11);pdf.setTextColor(192,57,43);pdf.text('ASIGNACIONES DE PROYECTOS',M,y);pdf.setTextColor(30,30,30);y+=8;
-    asigs.forEach(a=>{
-      if(y>265){pdf.addPage();header('Informe — Asignaciones (cont.)');}
-      const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
+    pdf.addPage();hdr('Asignaciones de Proyectos');
+    pdf.setFont('helvetica','bold');pdf.setFontSize(11);pdf.setTextColor(192,57,43);
+    pdf.text('ASIGNACIONES ('+asigs.length+')',M,y);pdf.setTextColor(30,30,30);y+=8;
+    for(const a of asigs){
+      chkPage(24);
       const est=a.ESTADO||'PENDIENTE';
       if(est==='VISITADO')pdf.setFillColor(234,250,242);else if(est==='CERRADO')pdf.setFillColor(240,240,240);else pdf.setFillColor(254,245,231);
-      pdf.rect(M,y,W-M*2,20,'F');
-      pdf.setFont('helvetica','bold');pdf.setFontSize(9);
-      pdf.text((a.PROYECTO||'—').substring(0,50),M+3,y+5);
+      pdf.rect(M,y,W-M*2,22,'F');
+      pdf.setFont('helvetica','bold');pdf.setFontSize(9);pdf.text((a.PROYECTO||'—').substring(0,52),M+3,y+5);
       pdf.setFont('helvetica','normal');pdf.setFontSize(8);
+      const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
       pdf.text(`Asesor: ${a.ASESOR||'—'} | Prioridad: ${a.PRIORIDAD||'—'} | Estado: ${est} | ${f.toLocaleDateString('es-CO')}`,M+3,y+10);
-      if(a.INSTRUCCIONES)pdf.text(`Instruc: ${a.INSTRUCCIONES.substring(0,55)}`,M+3,y+15);
-      if(a.COMENTARIO_ASESOR)pdf.text(`Asesor comentó: ${a.COMENTARIO_ASESOR.substring(0,50)}`,M+3,y+19);
-      y+=23;
-    });
+      if(a.INSTRUCCIONES)pdf.text(`Instruc: ${a.INSTRUCCIONES.substring(0,58)}`,M+3,y+15);
+      if(a.COMENTARIO_ASESOR)pdf.text(`Asesor: ${a.COMENTARIO_ASESOR.substring(0,55)}`,M+3,y+19);
+      y+=25;
+    }
   }
 
-  // Sección Muestras
+  // MUESTRAS
   if(muestras.length){
-    pdf.addPage();header('Informe — Muestras Comerciales');
-    pdf.setFont('helvetica','bold');pdf.setFontSize(11);pdf.setTextColor(192,57,43);pdf.text('MUESTRAS ENTREGADAS',M,y);pdf.setTextColor(30,30,30);y+=8;
-    muestras.forEach(m=>{
-      if(y>265){pdf.addPage();header('Informe — Muestras (cont.)');}
-      const f=m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0);
-      pdf.setFillColor(245,245,250);pdf.rect(M,y,W-M*2,18,'F');
-      pdf.setFont('helvetica','bold');pdf.setFontSize(9);
-      pdf.text((m.PRODUCTO||'—').substring(0,50),M+3,y+5);
+    pdf.addPage();hdr('Muestras Comerciales');
+    pdf.setFont('helvetica','bold');pdf.setFontSize(11);pdf.setTextColor(192,57,43);
+    pdf.text('MUESTRAS ENTREGADAS ('+muestras.length+')',M,y);pdf.setTextColor(30,30,30);y+=8;
+    for(const m of muestras){
+      const fotoH=conFotos&&m.FOTO?52:0;chkPage(22+fotoH);
+      pdf.setFillColor(245,245,250);pdf.rect(M,y,W-M*2,20+fotoH,'F');
+      pdf.setFont('helvetica','bold');pdf.setFontSize(9);pdf.text((m.PRODUCTO||'—').substring(0,52),M+3,y+5);
       pdf.setFont('helvetica','normal');pdf.setFontSize(8);
-      pdf.text(`Cant: ${m.CANTIDAD||1} | Asesor: ${m.ASESOR||'—'} | ${f.toLocaleDateString('es-CO')}`,M+3,y+10);
-      pdf.text(`Cliente: ${(m.CLIENTE||'—').substring(0,40)}${m.PROYECTO?' | Proy: '+m.PROYECTO.substring(0,25):''}`,M+3,y+15);
-      y+=21;
-    });
+      const f=m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0);
+      pdf.text(`Cant: ${m.CANTIDAD||1} | ${m.ASESOR||'—'} | ${f.toLocaleDateString('es-CO')}`,M+3,y+10);
+      pdf.text(`Cliente: ${(m.CLIENTE||'—').substring(0,45)}${m.PROYECTO?' | Proy: '+m.PROYECTO.substring(0,25):''}`,M+3,y+15);
+      if(conFotos&&m.FOTO){try{const imgData=await fetchImgBase64(m.FOTO);if(imgData)pdf.addImage(imgData,'JPEG',M+3,y+19,60,45);}catch(e){}}
+      y+=23+fotoH;
+    }
   }
 
+  pdf.setFontSize(7);pdf.setTextColor(160,160,160);
+  const pages=pdf.getNumberOfPages();for(let i=1;i<=pages;i++){pdf.setPage(i);pdf.text(`Actividapp · Pág ${i}/${pages}`,M,290);}
   pdf.save(`informe_actividapp_${ini}_${fin}.pdf`);
-  toast('✅ PDF generado');
+  toast('✅ PDF generado con fotos');
 };
+
+// Convertir imagen URL a base64 para PDF
+async function fetchImgBase64(url){
+  try{
+    const r=await fetch(url);const b=await r.blob();
+    return new Promise((res,rej)=>{const rd=new FileReader();rd.onloadend=()=>res(rd.result);rd.onerror=rej;rd.readAsDataURL(b);});
+  }catch(e){return null;}
+}
 
 window.toast=function(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800);};
 </script>
