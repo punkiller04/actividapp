@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#C0392B">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -10,315 +10,409 @@
 <title>Actividapp 1.3</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--red:#C0392B;--red-dark:#96281B;--red-light:#FAECE7;--bg:#F5F5F0;--card:#FFF;--text:#1A1A1A;--muted:#777;--border:#E8E8E0;--green:#27AE60;--green-light:#EAFBF0;--amber:#E67E22;--amber-light:#FEF5E7;--blue:#2980B9;--blue-light:#EBF5FB;--shadow:0 1px 3px rgba(0,0,0,0.08);}
+:root{--red:#C0392B;--rdark:#96281B;--rlight:#FAECE7;--bg:#F5F5F0;--card:#FFF;--text:#1A1A1A;--muted:#777;--brd:#E8E8E0;--green:#27AE60;--glight:#EAFBF0;--amber:#E67E22;--alight:#FEF5E7;--blue:#2980B9;--blight:#EBF5FB;--sh:0 1px 3px rgba(0,0,0,.08)}
 html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
 #app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--card);position:relative;overflow:hidden}
-.screen{display:none;flex-direction:column;height:100%;overflow:hidden}.screen.active{display:flex}
-.topbar{background:var(--red);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-shrink:0}
-.topbar-title{font-size:16px;font-weight:600;flex:1}
-.topbar-back{font-size:22px;cursor:pointer;padding-right:4px}
-.content{flex:1;overflow-y:auto;padding:16px;background:var(--bg)}.content::-webkit-scrollbar{width:0}
-.navbar{display:flex;background:var(--card);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
-.navbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:10px;font-family:'DM Sans',sans-serif}
-.navbtn.active{color:var(--red)}.navico{font-size:20px;line-height:1}
-.card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
-.card-row{display:flex;align-items:center;gap:12px}
-.card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.card-body{flex:1;min-width:0}
-.card-title{font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-sub{font-size:12px;color:var(--muted);margin-top:2px}.card-arrow{color:var(--muted);font-size:18px}
-.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
-.badge-green{background:var(--green-light);color:#1E8449}.badge-amber{background:var(--amber-light);color:#A04000}
-.badge-red{background:var(--red-light);color:var(--red-dark)}.badge-blue{background:var(--blue-light);color:#1A5276}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.stat-card{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border)}
-.stat-num{font-size:26px;font-weight:600;color:var(--red);line-height:1}.stat-lbl{font-size:11px;color:var(--muted);margin-top:4px}
-.field{margin-bottom:13px}
-.field label{font-size:11px;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em}
-.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red)}.field textarea{resize:none}
-.btn-primary{background:var(--red);color:#fff;border:none;border-radius:10px;padding:13px;width:100%;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
-.btn-primary:disabled{background:#ccc}
-.btn-secondary{background:transparent;color:var(--red);border:1.5px solid var(--red);border-radius:10px;padding:11px;width:100%;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px}
-.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.scr{display:none;flex-direction:column;height:100%;overflow:hidden}.scr.on{display:flex}
+.tb{background:var(--red);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-shrink:0}
+.tb-t{font-size:16px;font-weight:600;flex:1}.tb-bk{font-size:22px;cursor:pointer;padding-right:4px}
+.cnt{flex:1;overflow-y:auto;padding:16px;background:var(--bg)}.cnt::-webkit-scrollbar{width:0}
+.nb{display:flex;background:var(--card);border-top:1px solid var(--brd);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+.nb-b{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 4px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:9px;font-family:'DM Sans',sans-serif}
+.nb-b.on{color:var(--red)}.nb-i{font-size:19px;line-height:1}
+.card{background:var(--card);border-radius:12px;border:1px solid var(--brd);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.crow{display:flex;align-items:center;gap:12px}
+.cico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.cbody{flex:1;min-width:0}.ct{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cs{font-size:12px;color:var(--muted);margin-top:2px}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.sc{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--brd)}
+.sn{font-size:24px;font-weight:600;color:var(--red);line-height:1}.sl{font-size:11px;color:var(--muted);margin-top:4px}
+.f{margin-bottom:12px}
+.f label{font-size:11px;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.f input,.f select,.f textarea{width:100%;padding:9px 12px;border:1px solid var(--brd);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--red)}.f textarea{resize:none}
+.bp{background:var(--red);color:#fff;border:none;border-radius:10px;padding:13px;width:100%;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
+.bp:disabled{background:#ccc}
+.bs{background:transparent;color:var(--red);border:1.5px solid var(--red);border-radius:10px;padding:11px;width:100%;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px}
+.bg{background:transparent;color:var(--muted);border:1px solid var(--brd);border-radius:8px;padding:8px 14px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{padding:6px 12px;border-radius:20px;font-size:12px;border:1px solid var(--border);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;user-select:none}
-.chip.sel{background:var(--red-light);color:var(--red-dark);border-color:var(--red)}
-.loc-box{background:#EAF5FB;border-radius:8px;padding:10px 12px;font-size:12px;color:#1A6F8A;display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.foto-area{border:1.5px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer}
-.foto-area-icon{font-size:26px;margin-bottom:4px}.foto-area-text{font-size:12px;color:var(--muted)}
-.foto-preview{width:100%;max-height:160px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:none}
-#fileInput{display:none}
-.login-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:28px;background:var(--card)}
-.login-logo{text-align:center;margin-bottom:32px}
-.login-logo-icon{width:64px;height:64px;background:var(--red);border-radius:18px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:700;margin:0 auto 12px}
-.search-inp{width:100%;padding:9px 12px 9px 34px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;margin-bottom:6px}
-.search-wrap{position:relative}.search-wrap::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px}
-.sel-list{width:100%;border:1px solid var(--border);border-radius:8px;font-size:13px;padding:4px;background:var(--card);color:var(--text)}
-.empty{text-align:center;padding:36px 20px;color:var(--muted)}.empty-icon{font-size:36px;margin-bottom:8px}
-.loading{text-align:center;padding:28px;color:var(--muted);font-size:13px}
-.fab{position:fixed;bottom:76px;right:calc(50% - 224px);width:52px;height:52px;background:var(--red);border-radius:50%;border:none;color:#fff;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(192,57,43,0.35);z-index:10}
-@media(max-width:480px){.fab{right:14px}}
-.toast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:200;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1}
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px}
+.chip{padding:5px 11px;border-radius:20px;font-size:12px;border:1px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;user-select:none}
+.chip.on{background:var(--rlight);color:var(--rdark);border-color:var(--red)}
+.loc{background:#EAF5FB;border-radius:8px;padding:9px 12px;font-size:12px;color:#1A6F8A;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.fa{border:1.5px dashed var(--brd);border-radius:10px;padding:16px;text-align:center;cursor:pointer}
+.fp{width:100%;max-height:150px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:none}
+#fileInput,#fileInputM{display:none}
+.lw{flex:1;display:flex;flex-direction:column;justify-content:center;padding:28px;background:var(--card)}
+.li{text-align:center;margin-bottom:32px}
+.lic{width:64px;height:64px;background:var(--red);border-radius:18px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:700;margin:0 auto 12px}
+.si{width:100%;padding:9px 12px 9px 32px;border:1px solid var(--brd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;margin-bottom:6px}
+.sw{position:relative}.sw::before{content:'🔍';position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px}
+.sl2{width:100%;border:1px solid var(--brd);border-radius:8px;font-size:13px;padding:4px;background:var(--card);color:var(--text)}
+.em{text-align:center;padding:32px 16px;color:var(--muted)}.em-i{font-size:34px;margin-bottom:8px}
+.ld{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+.fab{position:fixed;bottom:72px;right:calc(50% - 224px);width:50px;height:50px;background:var(--red);border-radius:50%;border:none;color:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(192,57,43,.35);z-index:10}
+@media(max-width:480px){.fab{right:12px}}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;padding:9px 16px;border-radius:20px;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.sp{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.section-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;margin-top:4px}
-.user-pill{background:rgba(255,255,255,0.2);border-radius:20px;padding:4px 10px;font-size:12px}
-.admin-badge{background:rgba(255,215,0,0.3);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:600}
-.dash-bar-wrap{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px;margin-bottom:10px}
-.dash-bar-title{font-size:13px;font-weight:500;margin-bottom:10px}
-.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.bar-label{font-size:11px;color:var(--muted);width:100px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar-track{flex:1;background:var(--bg);border-radius:4px;height:8px;overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;background:var(--red)}
-.bar-val{font-size:12px;font-weight:500;color:var(--text);min-width:24px;text-align:right}
-.donut-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.donut-card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px;text-align:center}
-.donut-big{font-size:28px;font-weight:600}.donut-lbl{font-size:11px;color:var(--muted);margin-top:2px}
-#map-container{flex:1;position:relative}
-#leaflet-map{width:100%;height:100%}
-.map-legend{position:absolute;bottom:16px;left:16px;background:rgba(255,255,255,0.92);border-radius:10px;padding:10px 14px;font-size:12px;z-index:999;box-shadow:var(--shadow)}
-.legend-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.map-filter{background:var(--card);padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal{background:var(--card);border-radius:16px;padding:20px;width:100%;max-width:420px;max-height:80vh;overflow-y:auto}
-.modal-title{font-size:16px;font-weight:600;margin-bottom:16px}
-.divider{height:1px;background:var(--border);margin:10px 0}
+.stl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;margin-top:4px}
+.up{background:rgba(255,255,255,.2);border-radius:20px;padding:4px 10px;font-size:12px}
+.adm{background:rgba(255,215,0,.3);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:600}
+.dv{height:1px;background:var(--brd);margin:10px 0}
+/* BADGE */
+.b{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.bg1{background:var(--glight);color:#1E8449}.ba1{background:var(--alight);color:#A04000}
+.br1{background:var(--rlight);color:var(--rdark)}.bb1{background:var(--blight);color:#1A5276}
+/* DASH BARS */
+.dbw{background:var(--card);border-radius:12px;border:1px solid var(--brd);padding:14px;margin-bottom:10px}
+.dbt{font-size:13px;font-weight:500;margin-bottom:10px}
+.br{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bl{font-size:11px;color:var(--muted);width:95px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt{flex:1;background:var(--bg);border-radius:4px;height:7px;overflow:hidden}
+.bf{height:100%;border-radius:4px;background:var(--red)}.bv{font-size:12px;font-weight:500;min-width:22px;text-align:right}
+.dw{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.dc{background:var(--card);border-radius:12px;border:1px solid var(--brd);padding:14px;text-align:center}
+.dn{font-size:26px;font-weight:600}.dl{font-size:11px;color:var(--muted);margin-top:2px}
+/* MAP */
+#mc{flex:1;position:relative}#lmap{width:100%;height:100%}
+.mleg{position:absolute;bottom:16px;left:16px;background:rgba(255,255,255,.93);border-radius:10px;padding:10px 12px;font-size:11px;z-index:999;box-shadow:var(--sh)}
+.mlr{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.mld{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.mfi{background:var(--card);padding:8px 12px;border-bottom:1px solid var(--brd);flex-shrink:0;display:flex;gap:8px;flex-wrap:wrap}
+.mfchip{padding:4px 10px;border-radius:20px;font-size:11px;border:1px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;white-space:nowrap}
+.mfchip.on{background:var(--rlight);color:var(--rdark);border-color:var(--red)}
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+.mo.on{display:flex}
+.md{background:var(--card);border-radius:16px;padding:20px;width:100%;max-width:420px;max-height:85vh;overflow-y:auto}
+.mdt{font-size:16px;font-weight:600;margin-bottom:14px}
+/* DATE FILTER */
+.drf{display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
+.drf input[type=date]{padding:6px 10px;border:1px solid var(--brd);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none}
+.drf button{padding:6px 14px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer}
 </style>
 </head>
 <body>
 <div id="app">
 
 <!-- LOGIN -->
-<div class="screen active" id="s-login">
-  <div class="login-wrap">
-    <div class="login-logo">
-      <div class="login-logo-icon">A</div>
-      <div style="font-size:22px;font-weight:600">Actividapp</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:4px">Gestión de Fuerza Comercial</div>
-    </div>
-    <div class="field"><label>Usuario</label><select id="login-user"><option value="">Seleccionar usuario</option></select></div>
-    <div class="field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••"></div>
-    <button class="btn-primary" onclick="doLogin()">Iniciar Sesión</button>
-    <div id="login-error" style="color:var(--red);font-size:13px;text-align:center;margin-top:10px;display:none"></div>
+<div class="scr on" id="s-login">
+  <div class="lw">
+    <div class="li"><div class="lic">A</div><div style="font-size:22px;font-weight:600">Actividapp</div><div style="font-size:13px;color:var(--muted);margin-top:4px">Fuerza Comercial</div></div>
+    <div class="f"><label>Usuario</label><select id="l-usr"><option value="">Seleccionar usuario</option></select></div>
+    <div class="f"><label>Contraseña</label><input type="password" id="l-pw" placeholder="••••••••"></div>
+    <button class="bp" onclick="doLogin()">Iniciar Sesión</button>
+    <div id="l-err" style="color:var(--red);font-size:13px;text-align:center;margin-top:10px;display:none"></div>
   </div>
 </div>
 
 <!-- HOME -->
-<div class="screen" id="s-home">
-  <div class="topbar">
-    <div class="topbar-title">Actividapp</div>
-    <span class="user-pill" id="home-user-pill"></span>
-    <span class="admin-badge" id="home-admin-badge" style="display:none">★ ADMIN</span>
-  </div>
-  <div class="content">
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-num" id="stat-hoy">0</div><div class="stat-lbl">Visitas hoy</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-mes">0</div><div class="stat-lbl">Este mes</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-proy">—</div><div class="stat-lbl">Proyectos</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-cli">—</div><div class="stat-lbl">Clientes</div></div>
+<div class="scr" id="s-home">
+  <div class="tb"><div class="tb-t">Actividapp</div><span class="up" id="h-up"></span><span class="adm" id="h-adm" style="display:none">★ ADMIN</span></div>
+  <div class="cnt">
+    <div class="sg">
+      <div class="sc"><div class="sn" id="st-h">0</div><div class="sl">Visitas hoy</div></div>
+      <div class="sc"><div class="sn" id="st-m">0</div><div class="sl">Este mes</div></div>
+      <div class="sc"><div class="sn" id="st-p">—</div><div class="sl">Proyectos</div></div>
+      <div class="sc"><div class="sn" id="st-c">—</div><div class="sl">Clientes</div></div>
     </div>
-    <div class="section-title">Acciones</div>
-    <div class="card" style="cursor:pointer" onclick="showScreen('nueva')"><div class="card-row"><div class="card-icon" style="background:var(--red-light)">📝</div><div class="card-body"><div class="card-title">Registrar visita</div><div class="card-sub">Nueva actividad comercial</div></div><div class="card-arrow">›</div></div></div>
-    <div class="card" style="cursor:pointer" onclick="showScreen('actividades')"><div class="card-row"><div class="card-icon" style="background:#EAF3DE">📋</div><div class="card-body"><div class="card-title">Actividades</div><div class="card-sub">Historial de visitas</div></div><div class="card-arrow">›</div></div></div>
-    <div class="card" style="cursor:pointer" onclick="showScreen('mapa')"><div class="card-row"><div class="card-icon" style="background:#EAF5FB">🗺️</div><div class="card-body"><div class="card-title">Mapa de cobertura</div><div class="card-sub">Puntos visitados con GPS</div></div><div class="card-arrow">›</div></div></div>
-    <div class="card" id="card-dashboard" style="cursor:pointer;display:none" onclick="showScreen('dashboard')"><div class="card-row"><div class="card-icon" style="background:#F5EEF8">📊</div><div class="card-body"><div class="card-title">Dashboard Admin</div><div class="card-sub">Resumen de gestión comercial</div></div><div class="card-arrow">›</div></div></div>
-    <div class="divider"></div>
-    <button class="btn-secondary" onclick="doLogout()">Cerrar sesión</button>
+    <div class="stl">Acciones</div>
+    <div class="card" style="cursor:pointer" onclick="go('nueva')"><div class="crow"><div class="cico" style="background:var(--rlight)">📝</div><div class="cbody"><div class="ct">Registrar visita</div><div class="cs">Nueva actividad comercial</div></div><span style="color:var(--muted)">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('actividades')"><div class="crow"><div class="cico" style="background:#EAF3DE">📋</div><div class="cbody"><div class="ct">Actividades</div><div class="cs">Historial de visitas</div></div><span style="color:var(--muted)">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('mapa')"><div class="crow"><div class="cico" style="background:#EAF5FB">🗺️</div><div class="cbody"><div class="ct">Mapa de cobertura</div><div class="cs">Puntos visitados y asignados</div></div><span style="color:var(--muted)">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('muestras')"><div class="crow"><div class="cico" style="background:#F0FFF4">📦</div><div class="cbody"><div class="ct">Muestras comerciales</div><div class="cs">Registro de productos entregados</div></div><span style="color:var(--muted)">›</span></div></div>
+    <div class="card" id="c-dash" style="cursor:pointer;display:none" onclick="go('dashboard')"><div class="crow"><div class="cico" style="background:#F5EEF8">📊</div><div class="cbody"><div class="ct">Dashboard</div><div class="cs">Gestión comercial</div></div><span style="color:var(--muted)">›</span></div></div>
+    <div class="card" id="c-rep" style="cursor:pointer;display:none" onclick="go('reportes')"><div class="crow"><div class="cico" style="background:#FEF5E7">📄</div><div class="cbody"><div class="ct">Reportes PDF</div><div class="cs">Informe gerencial mensual</div></div><span style="color:var(--muted)">›</span></div></div>
+    <div class="card" id="c-asig" style="cursor:pointer;display:none" onclick="go('asignaciones')"><div class="crow"><div class="cico" style="background:#EAF3DE">🏗️</div><div class="cbody"><div class="ct">Asignar proyectos</div><div class="cs">Gestión de técnico de obras</div></div><span style="color:var(--muted)">›</span></div></div>
+    <div class="dv"></div>
+    <button class="bs" onclick="doLogout()">Cerrar sesión</button>
   </div>
-  <div class="navbar">
-    <button class="navbtn active" onclick="showScreen('home')"><span class="navico">🏠</span>Inicio</button>
-    <button class="navbtn" onclick="showScreen('actividades')"><span class="navico">📋</span>Visitas</button>
-    <button class="navbtn" onclick="showScreen('mapa')"><span class="navico">🗺️</span>Mapa</button>
-    <button class="navbtn" onclick="showScreen('proyectos')"><span class="navico">🏗️</span>Proyectos</button>
-    <button class="navbtn" onclick="showScreen('clientes')"><span class="navico">👥</span>Clientes</button>
+  <div class="nb">
+    <button class="nb-b on" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
 <!-- ACTIVIDADES -->
-<div class="screen" id="s-actividades">
-  <div class="topbar"><span class="topbar-back" onclick="showScreen('home')">‹</span><div class="topbar-title">Actividades</div></div>
-  <div class="content">
+<div class="scr" id="s-actividades">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Actividades</div></div>
+  <div class="cnt">
     <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
-      <button class="chip sel" id="tab-hoy" onclick="setTabAct('hoy')">Hoy</button>
-      <button class="chip" id="tab-semana" onclick="setTabAct('semana')">Semana</button>
-      <button class="chip" id="tab-mes" onclick="setTabAct('mes')">Mes</button>
-      <button class="chip" id="tab-todo" onclick="setTabAct('todo')">Todo</button>
+      <button class="chip on" id="t-h" onclick="setTab('hoy')">Hoy</button>
+      <button class="chip" id="t-s" onclick="setTab('semana')">Semana</button>
+      <button class="chip" id="t-m" onclick="setTab('mes')">Mes</button>
+      <button class="chip" id="t-t" onclick="setTab('todo')">Todo</button>
     </div>
-    <div id="act-list"><div class="loading">Cargando...</div></div>
+    <div id="act-list"><div class="ld">Cargando...</div></div>
   </div>
-  <button class="fab" onclick="showScreen('nueva')">+</button>
-  <div class="navbar">
-    <button class="navbtn" onclick="showScreen('home')"><span class="navico">🏠</span>Inicio</button>
-    <button class="navbtn active"><span class="navico">📋</span>Visitas</button>
-    <button class="navbtn" onclick="showScreen('mapa')"><span class="navico">🗺️</span>Mapa</button>
-    <button class="navbtn" onclick="showScreen('proyectos')"><span class="navico">🏗️</span>Proyectos</button>
-    <button class="navbtn" onclick="showScreen('clientes')"><span class="navico">👥</span>Clientes</button>
+  <button class="fab" onclick="go('nueva')">+</button>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b on"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
 <!-- NUEVA VISITA -->
-<div class="screen" id="s-nueva">
-  <div class="topbar"><span class="topbar-back" onclick="showScreen('actividades')">‹</span><div class="topbar-title">Nueva Visita</div></div>
-  <div class="content">
-    <div class="field">
-      <label>Canal</label>
-      <div class="chips" id="chips-canal">
-        <div class="chip sel" data-val="OBRAS">🏗️ Obras</div>
-        <div class="chip" data-val="FERRETERIA">🔧 Ferretería</div>
-      </div>
-    </div>
-    <div class="field" id="field-proyecto">
+<div class="scr" id="s-nueva">
+  <div class="tb"><span class="tb-bk" onclick="go('actividades')">‹</span><div class="tb-t">Nueva Visita</div></div>
+  <div class="cnt">
+    <div class="f"><label>Canal</label><div class="chips" id="ch-canal"><div class="chip on" data-v="OBRAS">🏗️ Obras</div><div class="chip" data-v="FERRETERIA">🔧 Ferretería</div></div></div>
+    <div class="f" id="fp-proy">
       <label>Proyecto</label>
-      <div class="search-wrap"><input class="search-inp" id="nv-proy-search" placeholder="Buscar proyecto..." oninput="filtrarProyectosForm()"></div>
-      <select class="sel-list" id="nv-proyecto" size="4"><option value="">Escribe para buscar...</option></select>
+      <div class="sw"><input class="si" id="np-s" placeholder="Buscar proyecto..." oninput="fltProy()"></div>
+      <select class="sl2" id="np" size="4"><option value="">Escribe para buscar...</option></select>
     </div>
-    <div class="field">
-      <label>Tipo de cliente</label>
-      <select id="nv-tipo-cliente"><option value="">Seleccionar</option><option>CONSTRUCTOR</option><option>FERRETERIA</option><option>DISTRIBUIDOR</option><option>ARQUITECTO</option><option>CONTRATISTA</option></select>
-    </div>
-    <div class="field">
+    <div class="f"><label>Tipo de cliente</label><select id="ntc"><option value="">Seleccionar</option><option>CONSTRUCTOR</option><option>FERRETERIA</option><option>DISTRIBUIDOR</option><option>ARQUITECTO</option><option>CONTRATISTA</option></select></div>
+    <div class="f" id="fp-cli">
       <label>Cliente</label>
-      <div class="search-wrap"><input class="search-inp" id="nv-cli-search" placeholder="Buscar cliente..." oninput="filtrarClientesForm()"></div>
-      <select class="sel-list" id="nv-cliente" size="4"><option value="">Escribe para buscar...</option></select>
-      <button class="btn-ghost" style="margin-top:6px;width:100%" onclick="abrirModalNuevoCliente()">+ Crear nuevo cliente</button>
+      <div class="sw"><input class="si" id="nc-s" placeholder="Buscar cliente..." oninput="fltCli()"></div>
+      <select class="sl2" id="nc" size="4" style="display:block"><option value="">Escribe para buscar...</option></select>
+      <button class="bg" style="margin-top:6px;width:100%" onclick="openM('m-cli')">+ Crear nuevo cliente</button>
     </div>
-    <div class="field">
-      <label>Tipo de visita</label>
-      <div class="chips" id="chips-tipo">
-        <div class="chip sel" data-val="VISITA">Visita</div>
-        <div class="chip" data-val="SEGUIMIENTO">Seguimiento</div>
-        <div class="chip" data-val="CIERRE">Cierre</div>
-        <div class="chip" data-val="LLAMADA">Llamada</div>
-        <div class="chip" data-val="OTRO">Otro</div>
-      </div>
-    </div>
-    <div class="field">
-      <label>Impacto</label>
-      <div class="chips" id="chips-impacto">
-        <div class="chip sel" data-val="IMPACTADO">🟢 Impactado</div>
-        <div class="chip" data-val="NO IMPACTADO">🔴 No impactado</div>
-      </div>
-    </div>
-    <div class="field">
-      <label>Ubicacion GPS</label>
-      <div class="loc-box"><span>📍</span><span id="loc-text">Obteniendo ubicacion...</span></div>
-    </div>
-    <div class="field">
-      <label>Foto</label>
-      <img id="foto-preview" class="foto-preview">
-      <div class="foto-area" onclick="document.getElementById('fileInput').click()"><div class="foto-area-icon">📷</div><div class="foto-area-text">Toca para tomar foto</div></div>
-      <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="previewFoto(this)">
-    </div>
-    <div class="field"><label>Observacion</label><textarea id="nv-obs" rows="3" placeholder="Notas de la visita..."></textarea></div>
-    <button class="btn-primary" id="btn-guardar" onclick="guardarVisita()">Guardar Visita</button>
-    <button class="btn-secondary" onclick="showScreen('actividades')">Cancelar</button>
+    <div class="f"><label>Tipo de visita</label><div class="chips" id="ch-tv"><div class="chip on" data-v="VISITA">Visita</div><div class="chip" data-v="SEGUIMIENTO">Seguimiento</div><div class="chip" data-v="CIERRE">Cierre</div><div class="chip" data-v="LLAMADA">Llamada</div><div class="chip" data-v="OTRO">Otro</div></div></div>
+    <div class="f"><label>Impacto</label><div class="chips" id="ch-imp"><div class="chip on" data-v="IMPACTADO">🟢 Impactado</div><div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div></div></div>
+    <div class="f"><label>GPS</label><div class="loc"><span>📍</span><span id="loc-t">Obteniendo...</span></div></div>
+    <div class="f"><label>Foto</label><img id="fp-img" class="fp"><div class="fa" onclick="document.getElementById('fileInput').click()"><div style="font-size:24px">📷</div><div style="font-size:12px;color:var(--muted)">Toca para tomar foto</div></div><input type="file" id="fileInput" accept="image/*" capture="environment" onchange="prvFoto(this,'fp-img')"></div>
+    <div class="f"><label>Observación</label><textarea id="n-obs" rows="3" placeholder="Notas..."></textarea></div>
+    <button class="bp" id="btn-g" onclick="guardar()">Guardar Visita</button>
+    <button class="bs" onclick="go('actividades')">Cancelar</button>
     <div style="height:20px"></div>
   </div>
 </div>
 
 <!-- PROYECTOS -->
-<div class="screen" id="s-proyectos">
-  <div class="topbar"><span class="topbar-back" onclick="showScreen('home')">‹</span><div class="topbar-title">Proyectos</div></div>
-  <div class="content">
-    <div class="search-wrap" style="margin-bottom:12px"><input class="search-inp" style="background:var(--card)" id="proy-search" placeholder="Buscar proyecto..." oninput="filterProyectos()"></div>
-    <div id="proy-list"><div class="loading">Cargando...</div></div>
+<div class="scr" id="s-proyectos">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Proyectos</div></div>
+  <div class="cnt">
+    <div class="sw" style="margin-bottom:12px"><input class="si" style="background:var(--card)" id="ps" placeholder="Buscar proyecto..." oninput="fltPL()"></div>
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="chip on" id="pf-a" onclick="setPF('todos')">Todos</button>
+      <button class="chip" id="pf-act" onclick="setPF('activo')">Activos</button>
+      <button class="chip" id="pf-in" onclick="setPF('inactivo')">Inactivos</button>
+    </div>
+    <div id="proy-list"><div class="ld">Cargando...</div></div>
   </div>
-  <div class="navbar">
-    <button class="navbtn" onclick="showScreen('home')"><span class="navico">🏠</span>Inicio</button>
-    <button class="navbtn" onclick="showScreen('actividades')"><span class="navico">📋</span>Visitas</button>
-    <button class="navbtn" onclick="showScreen('mapa')"><span class="navico">🗺️</span>Mapa</button>
-    <button class="navbtn active"><span class="navico">🏗️</span>Proyectos</button>
-    <button class="navbtn" onclick="showScreen('clientes')"><span class="navico">👥</span>Clientes</button>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+    <button class="nb-b on"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
 <!-- CLIENTES -->
-<div class="screen" id="s-clientes">
-  <div class="topbar"><span class="topbar-back" onclick="showScreen('home')">‹</span><div class="topbar-title">Clientes</div></div>
-  <div class="content">
-    <div class="search-wrap" style="margin-bottom:8px"><input class="search-inp" style="background:var(--card)" id="cli-search" placeholder="Buscar cliente..." oninput="filterClientes()"></div>
-    <button class="btn-secondary" style="margin-bottom:12px" onclick="abrirModalNuevoCliente()">+ Nuevo cliente</button>
-    <div id="cli-list"><div class="loading">Cargando...</div></div>
+<div class="scr" id="s-clientes">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Clientes</div></div>
+  <div class="cnt">
+    <div class="sw" style="margin-bottom:8px"><input class="si" style="background:var(--card)" id="cs" placeholder="Buscar cliente..." oninput="fltCL()"></div>
+    <button class="bs" style="margin-bottom:12px;margin-top:0" onclick="openM('m-cli')">+ Nuevo cliente</button>
+    <div id="cli-list"><div class="ld">Cargando...</div></div>
   </div>
-  <div class="navbar">
-    <button class="navbtn" onclick="showScreen('home')"><span class="navico">🏠</span>Inicio</button>
-    <button class="navbtn" onclick="showScreen('actividades')"><span class="navico">📋</span>Visitas</button>
-    <button class="navbtn" onclick="showScreen('mapa')"><span class="navico">🗺️</span>Mapa</button>
-    <button class="navbtn" onclick="showScreen('proyectos')"><span class="navico">🏗️</span>Proyectos</button>
-    <button class="navbtn active"><span class="navico">👥</span>Clientes</button>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b on"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
 <!-- MAPA -->
-<div class="screen" id="s-mapa">
-  <div class="topbar"><span class="topbar-back" onclick="showScreen('home')">‹</span><div class="topbar-title">Mapa de Cobertura</div></div>
-  <div class="map-filter">
-    <select id="map-asesor-filter" onchange="renderMapa()" style="width:100%;font-size:13px;border:none;background:transparent;font-family:'DM Sans',sans-serif;outline:none;padding:4px 0">
+<div class="scr" id="s-mapa">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Mapa de Cobertura</div></div>
+  <div class="mfi">
+    <select id="mf-asesor" onchange="renderMap()" style="font-size:12px;border:1px solid var(--brd);border-radius:8px;padding:4px 8px;background:var(--card);font-family:'DM Sans',sans-serif;outline:none">
       <option value="">Todos los asesores</option>
     </select>
+    <span class="mfchip on" data-v="" onclick="setMF(this,'canal')">Canal: Todos</span>
+    <span class="mfchip" data-v="OBRAS" onclick="setMF(this,'canal')">🏗️ Obras</span>
+    <span class="mfchip" data-v="FERRETERIA" onclick="setMF(this,'canal')">🔧 Ferretería</span>
+    <span class="mfchip on" data-v="" onclick="setMF(this,'imp')">Impacto: Todos</span>
+    <span class="mfchip" data-v="IMPACTADO" onclick="setMF(this,'imp')">🟢 Impactado</span>
+    <span class="mfchip" data-v="NO IMPACTADO" onclick="setMF(this,'imp')">🔴 No impactado</span>
   </div>
-  <div id="map-container">
-    <div id="leaflet-map"></div>
-    <div class="map-legend">
-      <div class="legend-row"><div class="legend-dot" style="background:#27AE60"></div><span>Impactado</span></div>
-      <div class="legend-row" style="margin-bottom:0"><div class="legend-dot" style="background:#E74C3C"></div><span>No impactado</span></div>
+  <div id="mc"><div id="lmap"></div>
+    <div class="mleg">
+      <div class="mlr"><div class="mld" style="background:#27AE60"></div><span>Impactado</span></div>
+      <div class="mlr"><div class="mld" style="background:#E74C3C"></div><span>No impactado</span></div>
+      <div class="mlr"><span style="font-size:13px">🏗️</span><span>Proyecto</span></div>
+      <div class="mlr" style="margin-bottom:0"><span style="font-size:13px">🔧</span><span>Ferretería</span></div>
     </div>
   </div>
-  <div class="navbar">
-    <button class="navbtn" onclick="showScreen('home')"><span class="navico">🏠</span>Inicio</button>
-    <button class="navbtn" onclick="showScreen('actividades')"><span class="navico">📋</span>Visitas</button>
-    <button class="navbtn active"><span class="navico">🗺️</span>Mapa</button>
-    <button class="navbtn" onclick="showScreen('proyectos')"><span class="navico">🏗️</span>Proyectos</button>
-    <button class="navbtn" onclick="showScreen('clientes')"><span class="navico">👥</span>Clientes</button>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">🗺️</span>Mapa</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
+  </div>
+</div>
+
+<!-- MUESTRAS -->
+<div class="scr" id="s-muestras">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Muestras Comerciales</div></div>
+  <div class="cnt">
+    <button class="bs" style="margin-bottom:12px;margin-top:0" onclick="openM('m-muestra')">+ Nueva muestra</button>
+    <div id="m-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
 <!-- DASHBOARD -->
-<div class="screen" id="s-dashboard">
-  <div class="topbar"><span class="topbar-back" onclick="showScreen('home')">‹</span><div class="topbar-title">Dashboard Comercial</div></div>
-  <div class="content">
-    <div class="section-title">Resumen General</div>
-    <div class="stats-grid" id="dash-stats"></div>
-    <div class="section-title">Actividades por Asesor</div>
-    <div class="dash-bar-wrap" id="dash-asesores"></div>
-    <div class="section-title">Ultimos 7 dias</div>
-    <div class="dash-bar-wrap" id="dash-dias"></div>
-    <div class="section-title">Tipo de cliente visitado</div>
-    <div class="donut-wrap" id="dash-tipos"></div>
-    <div class="section-title">Impacto</div>
-    <div class="donut-wrap" id="dash-impacto"></div>
-    <div class="section-title">Canal</div>
-    <div class="donut-wrap" id="dash-canal"></div>
+<div class="scr" id="s-dashboard">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Dashboard Comercial</div></div>
+  <div class="cnt">
+    <div class="drf">
+      <input type="date" id="df-ini">
+      <input type="date" id="df-fin">
+      <button onclick="applyDash()">Filtrar</button>
+      <button onclick="clearDash()" style="background:transparent;color:var(--muted);border:1px solid var(--brd);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer">Limpiar</button>
+    </div>
+    <div class="stl">Resumen General</div><div class="sg" id="d-stats"></div>
+    <div class="stl">Visitas por Asesor</div><div class="dbw" id="d-asesores"></div>
+    <div class="stl">Obras vs Ferreterías por Asesor</div><div class="dbw" id="d-canal-asesor"></div>
+    <div class="stl">Últimos 7 días</div><div class="dbw" id="d-dias"></div>
+    <div class="stl">Tipo de cliente</div><div class="dw" id="d-tipos"></div>
+    <div class="stl">Impacto</div><div class="dw" id="d-imp"></div>
+    <div class="stl">Canal</div><div class="dw" id="d-canal"></div>
     <div style="height:20px"></div>
   </div>
-  <div class="navbar">
-    <button class="navbtn" onclick="showScreen('home')"><span class="navico">🏠</span>Inicio</button>
-    <button class="navbtn" onclick="showScreen('actividades')"><span class="navico">📋</span>Visitas</button>
-    <button class="navbtn" onclick="showScreen('mapa')"><span class="navico">🗺️</span>Mapa</button>
-    <button class="navbtn active"><span class="navico">📊</span>Dashboard</button>
-    <button class="navbtn" onclick="showScreen('clientes')"><span class="navico">👥</span>Clientes</button>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+    <button class="nb-b on"><span class="nb-i">📊</span>Dashboard</button>
+    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
   </div>
 </div>
 
+<!-- REPORTES -->
+<div class="scr" id="s-reportes">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Reporte Gerencial</div></div>
+  <div class="cnt">
+    <div class="card">
+      <div class="stl" style="margin-top:0">Seleccionar período</div>
+      <div class="f"><label>Fecha inicio</label><input type="date" id="r-ini"></div>
+      <div class="f"><label>Fecha fin</label><input type="date" id="r-fin"></div>
+      <div class="f"><label>Asesor (opcional)</label><select id="r-asesor"><option value="">Todos</option></select></div>
+      <div class="f"><label>Canal</label><select id="r-canal"><option value="">Todos</option><option value="OBRAS">Obras</option><option value="FERRETERIA">Ferretería</option></select></div>
+      <button class="bp" onclick="generarPDF()">📄 Generar PDF</button>
+    </div>
+    <div id="rep-prev" style="margin-top:12px"></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b on"><span class="nb-i">📄</span>Reportes</button>
+  </div>
 </div>
 
-<!-- MODAL NUEVO CLIENTE -->
-<div class="modal-overlay" id="modal-cliente">
-  <div class="modal">
-    <div class="modal-title">Nuevo Cliente</div>
-    <div class="field"><label>NIT / Cedula</label><input id="nc-nit" placeholder="890800148"></div>
-    <div class="field"><label>Nombre cliente *</label><input id="nc-nombre" placeholder="Nombre empresa o persona"></div>
-    <div class="field"><label>Persona encargada</label><input id="nc-encargado" placeholder="Nombre del contacto"></div>
-    <div class="field"><label>Celular</label><input id="nc-cel" type="tel" placeholder="300 000 0000"></div>
-    <button class="btn-primary" onclick="guardarNuevoCliente()">Guardar Cliente</button>
-    <button class="btn-secondary" onclick="cerrarModalCliente()">Cancelar</button>
+<!-- ASIGNACIONES -->
+<div class="scr" id="s-asignaciones">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Asignar Proyectos</div></div>
+  <div class="cnt">
+    <button class="bs" style="margin-bottom:12px;margin-top:0" onclick="openM('m-asig')">+ Nueva asignación</button>
+    <div id="asig-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+    <button class="nb-b on"><span class="nb-i">🏗️</span>Asignaciones</button>
+    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👥</span>Clientes</button>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- MODALES -->
+<div class="mo" id="m-cli">
+  <div class="md">
+    <div class="mdt">Nuevo Cliente</div>
+    <div class="f"><label>NIT / Cédula</label><input id="mc-nit" placeholder="890800148"></div>
+    <div class="f"><label>Nombre *</label><input id="mc-nom" placeholder="Nombre empresa o persona"></div>
+    <div class="f"><label>Persona encargada</label><input id="mc-enc" placeholder="Nombre contacto"></div>
+    <div class="f"><label>Celular</label><input id="mc-cel" type="tel" placeholder="300 000 0000"></div>
+    <button class="bp" onclick="saveCli()">Guardar</button>
+    <button class="bs" onclick="closeM('m-cli')">Cancelar</button>
+  </div>
+</div>
+
+<div class="mo" id="m-proy-edit">
+  <div class="md">
+    <div class="mdt" id="mpe-t">Editar Proyecto</div>
+    <div class="f"><label>Estado</label>
+      <div class="chips" id="mpe-est" style="margin-top:4px">
+        <div class="chip on" data-v="ACTIVO">✅ Activo</div>
+        <div class="chip" data-v="INACTIVO">❌ Inactivo</div>
+      </div>
+    </div>
+    <div class="f"><label>Observación</label><textarea id="mpe-obs" rows="3" placeholder="Notas del proyecto..."></textarea></div>
+    <div class="f"><label>Asesor asignado</label><select id="mpe-asesor"><option value="">Sin asignar</option></select></div>
+    <button class="bp" onclick="saveProy()">Guardar cambios</button>
+    <button class="bs" onclick="closeM('m-proy-edit')">Cancelar</button>
+  </div>
+</div>
+
+<div class="mo" id="m-act-edit">
+  <div class="md">
+    <div class="mdt">Editar Actividad</div>
+    <div class="f"><label>Impacto</label>
+      <div class="chips" id="mae-imp">
+        <div class="chip on" data-v="IMPACTADO">🟢 Impactado</div>
+        <div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div>
+      </div>
+    </div>
+    <div class="f"><label>Tipo de visita</label><select id="mae-tv"><option>VISITA</option><option>SEGUIMIENTO</option><option>CIERRE</option><option>LLAMADA</option><option>OTRO</option></select></div>
+    <div class="f"><label>Observación</label><textarea id="mae-obs" rows="3"></textarea></div>
+    <button class="bp" onclick="saveAct()">Guardar cambios</button>
+    <button class="bs" onclick="closeM('m-act-edit')">Cancelar</button>
+  </div>
+</div>
+
+<div class="mo" id="m-muestra">
+  <div class="md">
+    <div class="mdt">Nueva Muestra</div>
+    <div class="f"><label>Producto / Ítem</label><input id="mm-prod" placeholder="Ej: Porcelana Blanca 33x33"></div>
+    <div class="f"><label>Descripción</label><textarea id="mm-desc" rows="2" placeholder="Descripción del producto..."></textarea></div>
+    <div class="f"><label>Cantidad</label><input id="mm-cant" type="number" min="1" value="1"></div>
+    <div class="f"><label>Cliente</label><div class="sw"><input class="si" id="mm-cli-s" placeholder="Buscar cliente..." oninput="fltMCli()"></div><select class="sl2" id="mm-cli" size="3"><option value="">Escribe para buscar...</option></select></div>
+    <div class="f"><label>Proyecto (opcional)</label><div class="sw"><input class="si" id="mm-proy-s" placeholder="Buscar proyecto..." oninput="fltMProy()"></div><select class="sl2" id="mm-proy" size="3"><option value="">Escribe para buscar...</option></select></div>
+    <div class="f"><label>Foto (opcional)</label><img id="mm-img" class="fp"><div class="fa" onclick="document.getElementById('fileInputM').click()"><div style="font-size:22px">📷</div><div style="font-size:12px;color:var(--muted)">Adjuntar foto</div></div><input type="file" id="fileInputM" accept="image/*" capture="environment" onchange="prvFoto(this,'mm-img')"></div>
+    <button class="bp" onclick="saveMuestra()">Guardar Muestra</button>
+    <button class="bs" onclick="closeM('m-muestra')">Cancelar</button>
+  </div>
+</div>
+
+<div class="mo" id="m-asig">
+  <div class="md">
+    <div class="mdt">Asignar Proyecto</div>
+    <div class="f"><label>Proyecto</label><div class="sw"><input class="si" id="ma-ps" placeholder="Buscar proyecto..." oninput="fltAProy()"></div><select class="sl2" id="ma-proy" size="4"><option value="">Escribe para buscar...</option></select></div>
+    <div class="f"><label>Asesor</label><select id="ma-asesor"><option value="">Seleccionar asesor</option></select></div>
+    <div class="f"><label>Prioridad</label><div class="chips" id="ma-pri"><div class="chip on" data-v="NORMAL">Normal</div><div class="chip" data-v="ALTA">🔴 Alta</div><div class="chip" data-v="URGENTE">⚡ Urgente</div></div></div>
+    <div class="f"><label>Observación técnica</label><textarea id="ma-obs" rows="2" placeholder="Instrucciones para el asesor..."></textarea></div>
+    <button class="bp" onclick="saveAsig()">Asignar</button>
+    <button class="bs" onclick="closeM('m-asig')">Cancelar</button>
   </div>
 </div>
 
@@ -326,374 +420,550 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, Timestamp, doc, setDoc }
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, Timestamp, doc, setDoc, updateDoc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyACsrCsWCYQxMeXVMMtIfF_49HitqQLmlM",
-  authDomain: "actividapp-31a3a.firebaseapp.com",
-  projectId: "actividapp-31a3a",
-  storageBucket: "actividapp-31a3a.firebasestorage.app",
-  messagingSenderId: "909431542048",
-  appId: "1:909431542048:web:04860ec57338a867990745"
+const FC = {
+  apiKey:"AIzaSyACsrCsWCYQxMeXVMMtIfF_49HitqQLmlM",
+  authDomain:"actividapp-31a3a.firebaseapp.com",
+  projectId:"actividapp-31a3a",
+  storageBucket:"actividapp-31a3a.firebasestorage.app",
+  messagingSenderId:"909431542048",
+  appId:"1:909431542048:web:04860ec57338a867990745"
 };
-const fbApp = initializeApp(firebaseConfig);
-const db = getFirestore(fbApp);
-const storage = getStorage(fbApp);
-window._db=db; window._storage=storage;
-window._fs={collection,addDoc,getDocs,query,orderBy,Timestamp,doc,setDoc,ref,uploadBytes,getDownloadURL};
+const fa=initializeApp(FC);
+const db=getFirestore(fa);
+const st=getStorage(fa);
+window.db=db; window.st=st;
+window.FS={collection,addDoc,getDocs,query,orderBy,Timestamp,doc,setDoc,updateDoc,getDoc,ref,uploadBytes,getDownloadURL};
 
-async function loadUsuarios(){
-  const snap=await getDocs(collection(db,'usuarios'));
-  const sel=document.getElementById('login-user');
-  window._usuarios=[];
-  snap.forEach(d=>{
-    const u={id:d.id,...d.data()};
-    window._usuarios.push(u);
-    const o=document.createElement('option');
-    o.value=u['CEDULA ID']||u.cedula||d.id;
-    o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';
-    sel.appendChild(o);
+async function loadAll(){
+  // Usuarios
+  const us=await getDocs(collection(db,'usuarios'));
+  window.Usuarios=[];
+  const sel=document.getElementById('l-usr');
+  us.forEach(d=>{const u={id:d.id,...d.data()};window.Usuarios.push(u);const o=document.createElement('option');o.value=u['CEDULA ID']||u.cedula||d.id;o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';sel.appendChild(o);});
+  // Populate asesor selects
+  const asesores=window.Usuarios.filter(u=>(u['TIPO']||u.tipo||'ASESOR')==='ASESOR');
+  ['mpe-asesor','ma-asesor','r-asesor'].forEach(id=>{
+    const s=document.getElementById(id);if(!s)return;
+    asesores.forEach(u=>{const o=document.createElement('option');o.value=u['NOMBRE EMPLEADO']||u.nombre||'';o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';s.appendChild(o);});
   });
-}
 
-async function loadProyectos(){
-  const snap=await getDocs(collection(db,'proyectos'));
-  window._proyectos=[];
-  snap.forEach(d=>window._proyectos.push({id:d.id,...d.data()}));
-  document.getElementById('stat-proy').textContent=window._proyectos.length.toLocaleString();
-  renderProyectos(window._proyectos.slice(0,50));
-}
+  // Proyectos
+  const ps=await getDocs(collection(db,'proyectos'));
+  window.Proyectos=[];ps.forEach(d=>window.Proyectos.push({id:d.id,...d.data()}));
+  document.getElementById('st-p').textContent=window.Proyectos.length.toLocaleString();
+  renderProyLista(window.Proyectos.slice(0,50));
 
-async function loadClientes(){
-  const snap=await getDocs(collection(db,'clientes'));
-  window._clientes=[];
-  snap.forEach(d=>window._clientes.push({id:d.id,...d.data()}));
-  document.getElementById('stat-cli').textContent=window._clientes.length.toLocaleString();
-  renderClientes(window._clientes.slice(0,50));
-}
+  // Clientes
+  const cs=await getDocs(collection(db,'clientes'));
+  window.Clientes=[];cs.forEach(d=>window.Clientes.push({id:d.id,...d.data()}));
+  document.getElementById('st-c').textContent=window.Clientes.length.toLocaleString();
+  renderCliLista(window.Clientes.slice(0,50));
 
-async function loadActividades(){
-  if(!window._currentUser) return;
-  const snap=await getDocs(query(collection(db,'actividades'),orderBy('fecha','desc')));
-  window._actividades=[];
-  snap.forEach(d=>window._actividades.push({id:d.id,...d.data()}));
-  const isAdmin=window._currentUser.tipo==='ADMINISTRADOR';
-  const mi=window._currentUser.nombre;
-  const hoyD=new Date();hoyD.setHours(0,0,0,0);
-  const mesD=new Date();mesD.setDate(1);mesD.setHours(0,0,0,0);
+  // Actividades
+  const as=await getDocs(query(collection(db,'actividades'),orderBy('fecha','desc')));
+  window.Actividades=[];as.forEach(d=>window.Actividades.push({id:d.id,...d.data()}));
+
+  // Muestras
+  const ms=await getDocs(query(collection(db,'muestras'),orderBy('fecha','desc')));
+  window.Muestras=[];ms.forEach(d=>window.Muestras.push({id:d.id,...d.data()}));
+  renderMuestras();
+
+  // Asignaciones
+  const asg=await getDocs(query(collection(db,'asignaciones'),orderBy('fecha','desc')));
+  window.Asignaciones=[];asg.forEach(d=>window.Asignaciones.push({id:d.id,...d.data()}));
+  renderAsig();
+
+  // Stats
+  const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
+  const hD=new Date();hD.setHours(0,0,0,0);const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
   let h=0,m=0;
-  window._actividades.forEach(a=>{
-    if(!isAdmin&&a.ASESOR!==mi)return;
-    const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    if(f>=hoyD)h++;if(f>=mesD)m++;
-  });
-  document.getElementById('stat-hoy').textContent=h;
-  document.getElementById('stat-mes').textContent=m;
-  // asesor filter
-  const asesores=[...new Set(window._actividades.map(a=>a.ASESOR).filter(Boolean))];
-  const ms=document.getElementById('map-asesor-filter');
-  ms.innerHTML='<option value="">Todos los asesores</option>';
-  asesores.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;ms.appendChild(o);});
-  renderActividades(window._actividades,'hoy');
-  if(isAdmin) renderDashboard(window._actividades);
-}
-window._loadActividades=loadActividades;
+  window.Actividades.forEach(a=>{if(!isA&&a.ASESOR!==mi)return;const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);if(f>=hD)h++;if(f>=mD)m++;});
+  document.getElementById('st-h').textContent=h;
+  document.getElementById('st-m').textContent=m;
 
-window.guardarVisita=async function(){
-  const btn=document.getElementById('btn-guardar');
-  const canal=document.querySelector('#chips-canal .chip.sel')?.dataset.val||'OBRAS';
-  const proyecto=document.getElementById('nv-proyecto').value||'';
-  const cliente=document.getElementById('nv-cliente').value||'';
-  const tipoVisita=document.querySelector('#chips-tipo .chip.sel')?.dataset.val||'VISITA';
-  const impacto=document.querySelector('#chips-impacto .chip.sel')?.dataset.val||'IMPACTADO';
-  const obs=document.getElementById('nv-obs').value;
-  const ubi=window._gps||'';
-  if(canal==='OBRAS'&&!proyecto){showToast('Selecciona un proyecto');return;}
-  if(!cliente){showToast('Selecciona un cliente');return;}
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Guardando...';
+  // Map asesor filter
+  const mf=document.getElementById('mf-asesor');
+  mf.innerHTML='<option value="">Todos los asesores</option>';
+  [...new Set(window.Actividades.map(a=>a.ASESOR).filter(Boolean))].forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;mf.appendChild(o);});
+
+  renderActs(window.Actividades,'hoy');
+  if(isA){renderDash(window.Actividades);window.dashLoaded=true;}
+}
+window.loadAll=loadAll;
+
+window.guardar=async function(){
+  const btn=document.getElementById('btn-g');
+  const canal=document.querySelector('#ch-canal .chip.on')?.dataset.v||'OBRAS';
+  const proy=document.getElementById('np').value||'';
+  const cli=document.getElementById('nc').value||'';
+  const tv=document.querySelector('#ch-tv .chip.on')?.dataset.v||'VISITA';
+  const imp=document.querySelector('#ch-imp .chip.on')?.dataset.v||'IMPACTADO';
+  const obs=document.getElementById('n-obs').value;
+  const ubi=window.GPS||'';
+  if(canal==='OBRAS'&&!proy){toast('Selecciona un proyecto');return;}
+  if(!cli){toast('Selecciona un cliente');return;}
+  btn.disabled=true;btn.innerHTML='<span class="sp"></span>Guardando...';
   try{
-    let fotoURL='';
+    let foto='';
     const fi=document.getElementById('fileInput');
-    if(fi.files[0]){try{const sr=window._fs.ref(storage,'fotos/'+Date.now()+'_'+fi.files[0].name);await window._fs.uploadBytes(sr,fi.files[0]);fotoURL=await window._fs.getDownloadURL(sr);}catch(e){}}
-    await addDoc(collection(db,'actividades'),{
+    if(fi.files[0]){try{const r2=FS.ref(st,'fotos/'+Date.now()+'_'+fi.files[0].name);await FS.uploadBytes(r2,fi.files[0]);foto=await FS.getDownloadURL(r2);}catch(e){}}
+    await FS.addDoc(collection(db,'actividades'),{
       ID_VISITA:Math.random().toString(36).substr(2,8),
-      fecha:Timestamp.now(),
-      ASESOR:window._currentUser?.nombre||'',
-      CANAL:canal,
-      'TIPO CLIENTE':document.getElementById('nv-tipo-cliente').value,
-      CLIENTE:cliente,PROYECTO:proyecto,
-      'TIPO DE VISITA':tipoVisita,FOTO:fotoURL,IMPACTO:impacto,OBSERVACION:obs,'UBICACION':ubi
+      fecha:FS.Timestamp.now(),ASESOR:window.CU?.nombre||'',
+      CANAL:canal,'TIPO CLIENTE':document.getElementById('ntc').value,
+      CLIENTE:cli,PROYECTO:proy,'TIPO DE VISITA':tv,FOTO:foto,IMPACTO:imp,OBSERVACION:obs,'UBICACION':ubi
     });
-    showToast('Visita guardada correctamente');
-    document.getElementById('nv-proy-search').value='';
-    document.getElementById('nv-cli-search').value='';
-    document.getElementById('nv-proyecto').innerHTML='<option value="">Escribe para buscar...</option>';
-    document.getElementById('nv-cliente').innerHTML='<option value="">Escribe para buscar...</option>';
-    document.getElementById('nv-obs').value='';
-    document.getElementById('foto-preview').style.display='none';
-    fi.value='';window._gps='';getGPS();
-    loadActividades();
-    setTimeout(()=>showScreen('actividades'),800);
-  }catch(e){showToast('Error: '+e.message);}
+    toast('✅ Visita guardada');
+    ['np-s','nc-s','n-obs'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('np').innerHTML='<option value="">Escribe para buscar...</option>';
+    document.getElementById('nc').innerHTML='<option value="">Escribe para buscar...</option>';
+    document.getElementById('fp-img').style.display='none';fi.value='';
+    window.GPS='';getGPS();loadAll();
+    setTimeout(()=>go('actividades'),700);
+  }catch(e){toast('Error: '+e.message);}
   btn.disabled=false;btn.innerHTML='Guardar Visita';
 };
 
-window.guardarNuevoCliente=async function(){
-  const nombre=document.getElementById('nc-nombre').value.trim();
-  if(!nombre){showToast('Ingresa el nombre del cliente');return;}
-  const nit=document.getElementById('nc-nit').value.trim();
-  const enc=document.getElementById('nc-encargado').value.trim();
-  const cel=document.getElementById('nc-cel').value.trim();
+window.saveCli=async function(){
+  const nom=document.getElementById('mc-nom').value.trim();
+  if(!nom){toast('Ingresa el nombre');return;}
+  const nit=document.getElementById('mc-nit').value.trim();
+  const data={'NIT CLIENTE':nit,'NOMBRE CLIENTE':nom,'PERSONA ENCARGADA':document.getElementById('mc-enc').value.trim(),'CELULAR':document.getElementById('mc-cel').value.trim()};
   try{
-    const data={'NIT CLIENTE':nit,'NOMBRE CLIENTE':nombre,'PERSONA ENCARGADA':enc,'CELULAR':cel};
-    const r=nit?doc(db,'clientes',nit):doc(collection(db,'clientes'));
-    await setDoc(r,data);
-    window._clientes.unshift({id:r.id,...data});
-    showToast('Cliente creado correctamente');
-    cerrarModalCliente();
-    const sel=document.getElementById('nv-cliente');
-    if(sel){sel.innerHTML='';const o=document.createElement('option');o.value=nombre;o.textContent=nombre;o.selected=true;sel.appendChild(o);}
-    renderClientes(window._clientes.slice(0,50));
-  }catch(e){showToast('Error: '+e.message);}
+    const r2=nit?FS.doc(db,'clientes',nit):FS.doc(collection(db,'clientes'));
+    await FS.setDoc(r2,data);
+    window.Clientes.unshift({id:r2.id,...data});
+    toast('✅ Cliente creado');closeM('m-cli');
+    const s=document.getElementById('nc');if(s){s.innerHTML=`<option value="${nom}" selected>${nom}</option>`;}
+    renderCliLista(window.Clientes.slice(0,50));
+    ['mc-nit','mc-nom','mc-enc','mc-cel'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){toast('Error: '+e.message);}
 };
 
-loadUsuarios();loadProyectos();loadClientes();
+window.saveProy=async function(){
+  const id=window._editPID;if(!id)return;
+  const est=document.querySelector('#mpe-est .chip.on')?.dataset.v||'ACTIVO';
+  const obs=document.getElementById('mpe-obs').value;
+  const asesor=document.getElementById('mpe-asesor').value;
+  try{
+    await FS.updateDoc(FS.doc(db,'proyectos',id),{ESTADO:est,OBSERVACIONES:obs,ASESOR_ASIGNADO:asesor});
+    const p=window.Proyectos.find(x=>x.id===id);
+    if(p){p.ESTADO=est;p.OBSERVACIONES=obs;p.ASESOR_ASIGNADO=asesor;}
+    toast('✅ Proyecto actualizado');closeM('m-proy-edit');
+    fltPL();
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveAct=async function(){
+  const id=window._editAID;if(!id)return;
+  const imp=document.querySelector('#mae-imp .chip.on')?.dataset.v||'IMPACTADO';
+  const tv=document.getElementById('mae-tv').value;
+  const obs=document.getElementById('mae-obs').value;
+  try{
+    await FS.updateDoc(FS.doc(db,'actividades',id),{IMPACTO:imp,'TIPO DE VISITA':tv,OBSERVACION:obs});
+    const a=window.Actividades.find(x=>x.id===id);
+    if(a){a.IMPACTO=imp;a['TIPO DE VISITA']=tv;a.OBSERVACION=obs;}
+    toast('✅ Actividad actualizada');closeM('m-act-edit');
+    renderActs(window.Actividades,window.actTab||'todo');renderMap();
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveMuestra=async function(){
+  const prod=document.getElementById('mm-prod').value.trim();
+  if(!prod){toast('Ingresa el producto');return;}
+  try{
+    let foto='';
+    const fi=document.getElementById('fileInputM');
+    if(fi.files[0]){try{const r2=FS.ref(st,'muestras/'+Date.now());await FS.uploadBytes(r2,fi.files[0]);foto=await FS.getDownloadURL(r2);}catch(e){}}
+    const data={PRODUCTO:prod,DESCRIPCION:document.getElementById('mm-desc').value,CANTIDAD:parseInt(document.getElementById('mm-cant').value)||1,CLIENTE:document.getElementById('mm-cli').value,PROYECTO:document.getElementById('mm-proy').value,FOTO:foto,ASESOR:window.CU?.nombre||'',fecha:FS.Timestamp.now(),ESTADO:'ENTREGADA'};
+    await FS.addDoc(collection(db,'muestras'),data);
+    window.Muestras.unshift({...data});
+    toast('✅ Muestra registrada');closeM('m-muestra');renderMuestras();
+    ['mm-prod','mm-desc','mm-cli-s','mm-proy-s'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('mm-cant').value='1';fi.value='';document.getElementById('mm-img').style.display='none';
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveAsig=async function(){
+  const proy=document.getElementById('ma-proy').value;
+  const asesor=document.getElementById('ma-asesor').value;
+  if(!proy||!asesor){toast('Selecciona proyecto y asesor');return;}
+  const pri=document.querySelector('#ma-pri .chip.on')?.dataset.v||'NORMAL';
+  const obs=document.getElementById('ma-obs').value;
+  try{
+    const data={PROYECTO:proy,ASESOR:asesor,PRIORIDAD:pri,OBSERVACION:obs,fecha:FS.Timestamp.now(),ESTADO:'PENDIENTE'};
+    await FS.addDoc(collection(db,'asignaciones'),data);
+    window.Asignaciones.unshift({...data});
+    toast('✅ Proyecto asignado a '+asesor);closeM('m-asig');renderAsig();
+    document.getElementById('ma-ps').value='';document.getElementById('ma-proy').innerHTML='<option value="">Escribe para buscar...</option>';
+    document.getElementById('ma-obs').value='';
+  }catch(e){toast('Error: '+e.message);}
+};
+
+loadAll();
 </script>
 
 <script>
-window._gps='';
+window.GPS='';window.actTab='hoy';window._editPID=null;window._editAID=null;
+window.mapFiltros={canal:'',imp:''};window.mapaInited=false;
 
-window.doLogin=function(){
-  const cedula=document.getElementById('login-user').value;
-  const pass=document.getElementById('login-pass').value;
-  const err=document.getElementById('login-error');
-  if(!cedula){err.textContent='Selecciona un usuario';err.style.display='block';return;}
-  const u=window._usuarios?.find(x=>x['CEDULA ID']==cedula||x.cedula==cedula||x.id==cedula);
-  if(!u){err.textContent='Usuario no encontrado';err.style.display='block';return;}
-  const pw=u['CONTRASEÑA']||u.contrasena||'';
-  if(pass!==pw){err.textContent='Contrasena incorrecta';err.style.display='block';return;}
-  err.style.display='none';
-  const nombre=u['NOMBRE EMPLEADO']||u.nombre||'';
-  const tipo=u['TIPO']||u.tipo||'ASESOR';
-  window._currentUser={cedula,nombre,tipo};
-  document.getElementById('home-user-pill').textContent=nombre.split(' ')[0];
-  const isAdmin=tipo==='ADMINISTRADOR';
-  document.getElementById('home-admin-badge').style.display=isAdmin?'inline':'none';
-  document.getElementById('card-dashboard').style.display=isAdmin?'block':'none';
-  showScreen('home');
-  window._loadActividades();
-};
-window.doLogout=function(){window._currentUser=null;showScreen('login');};
-
-window.showScreen=function(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('s-'+id).classList.add('active');
+// NAV
+window.go=function(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
   if(id==='nueva')getGPS();
-  if(id==='mapa')setTimeout(renderMapa,300);
-  if(id==='actividades'&&window._actividades)renderActividades(window._actividades,window._actTab||'hoy');
+  if(id==='mapa')setTimeout(renderMap,300);
+  if(id==='actividades'&&window.Actividades)renderActs(window.Actividades,window.actTab||'hoy');
+  if(id==='dashboard'&&window.Actividades)renderDash(window.Actividades);
 };
 
+// LOGIN
+window.doLogin=function(){
+  const ced=document.getElementById('l-usr').value;
+  const pw=document.getElementById('l-pw').value;
+  const err=document.getElementById('l-err');
+  if(!ced){err.textContent='Selecciona usuario';err.style.display='block';return;}
+  const u=window.Usuarios?.find(x=>x['CEDULA ID']==ced||x.cedula==ced||x.id==ced);
+  if(!u){err.textContent='Usuario no encontrado';err.style.display='block';return;}
+  if(pw!==(u['CONTRASEÑA']||u.contrasena||'')){err.textContent='Contraseña incorrecta';err.style.display='block';return;}
+  err.style.display='none';
+  const nom=u['NOMBRE EMPLEADO']||u.nombre||'';
+  const tipo=u['TIPO']||u.tipo||'ASESOR';
+  window.CU={cedula:ced,nombre:nom,tipo};
+  document.getElementById('h-up').textContent=nom.split(' ')[0];
+  const isA=tipo==='ADMINISTRADOR';
+  document.getElementById('h-adm').style.display=isA?'inline':'none';
+  document.getElementById('c-dash').style.display=isA?'block':'none';
+  document.getElementById('c-rep').style.display=isA?'block':'none';
+  document.getElementById('c-asig').style.display=isA?'block':'none';
+  go('home');
+};
+window.doLogout=function(){window.CU=null;go('login');};
+
+// GPS
 function getGPS(){
-  if(!navigator.geolocation){document.getElementById('loc-text').textContent='GPS no disponible';return;}
+  if(!navigator.geolocation){document.getElementById('loc-t').textContent='GPS no disponible';return;}
   navigator.geolocation.getCurrentPosition(p=>{
-    const lat=p.coords.latitude.toFixed(6),lng=p.coords.longitude.toFixed(6);
-    window._gps=lat+', '+lng;
-    document.getElementById('loc-text').textContent=lat+'N, '+lng+'W';
-  },()=>{document.getElementById('loc-text').textContent='No se pudo obtener ubicacion';});
+    window.GPS=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);
+    document.getElementById('loc-t').textContent=window.GPS+' ✓';
+  },()=>{document.getElementById('loc-t').textContent='No se pudo obtener';});
 }
 
-window.previewFoto=function(input){
-  if(input.files&&input.files[0]){const r=new FileReader();r.onload=e=>{const img=document.getElementById('foto-preview');img.src=e.target.result;img.style.display='block';};r.readAsDataURL(input.files[0]);}
+window.prvFoto=function(input,imgId){
+  if(input.files&&input.files[0]){const r=new FileReader();r.onload=e=>{const i=document.getElementById(imgId);i.src=e.target.result;i.style.display='block';};r.readAsDataURL(input.files[0]);}
 };
 
-// CANAL
-document.querySelectorAll('#chips-canal .chip').forEach(c=>{
-  c.onclick=function(){
-    document.querySelectorAll('#chips-canal .chip').forEach(x=>x.classList.remove('sel'));
-    this.classList.add('sel');
-    document.getElementById('field-proyecto').style.display=this.dataset.val==='OBRAS'?'block':'none';
-  };
+// CHIPS
+document.querySelectorAll('#ch-canal .chip').forEach(c=>{
+  c.onclick=function(){document.querySelectorAll('#ch-canal .chip').forEach(x=>x.classList.remove('on'));this.classList.add('on');document.getElementById('fp-proy').style.display=this.dataset.v==='OBRAS'?'block':'none';};
+});
+['ch-tv','ch-imp','mpe-est','mae-imp','ma-pri'].forEach(id=>{
+  const g=document.getElementById(id);if(!g)return;
+  g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});
 });
 
-// GENERIC CHIPS
-document.querySelectorAll('#chips-tipo, #chips-impacto').forEach(g=>{
-  g.addEventListener('click',e=>{
-    const c=e.target.closest('.chip');if(!c)return;
-    g.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');
-  });
-});
+// MODAL
+window.openM=function(id){document.getElementById(id).classList.add('on');};
+window.closeM=function(id){document.getElementById(id).classList.remove('on');};
+document.querySelectorAll('.mo').forEach(m=>{m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});});
 
-window.filtrarProyectosForm=function(){
-  const q=document.getElementById('nv-proy-search').value.toLowerCase().trim();
-  const sel=document.getElementById('nv-proyecto');
-  if(!q||!window._proyectos){sel.innerHTML='<option value="">Escribe para buscar...</option>';return;}
-  const res=window._proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q)).slice(0,30);
-  sel.innerHTML=res.length?res.map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['CODIGO']||''} - ${p['NOMBRE PROYECTO']||''}</option>`).join(''):'<option value="">Sin resultados</option>';
-};
+// SEARCH FILTERS
+window.fltProy=function(){const q=document.getElementById('np-s').value.toLowerCase().trim();const s=document.getElementById('np');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe para buscar...</option>';return;}const r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q)).slice(0,30);s.innerHTML=r.length?r.map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['CODIGO']||''} - ${p['NOMBRE PROYECTO']||''}</option>`).join(''):'<option value="">Sin resultados</option>';};
+window.fltCli=function(){const q=document.getElementById('nc-s').value.toLowerCase().trim();const s=document.getElementById('nc');if(!q||!window.Clientes){s.innerHTML='<option value="">Escribe para buscar...</option>';return;}const r=window.Clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,30);s.innerHTML=r.length?r.map(c=>`<option value="${c['NOMBRE CLIENTE']||''}">${c['NOMBRE CLIENTE']||''}</option>`).join(''):'<option value="">Sin resultados</option>';};
+window.fltMCli=function(){const q=document.getElementById('mm-cli-s').value.toLowerCase().trim();const s=document.getElementById('mm-cli');if(!q||!window.Clientes){s.innerHTML='<option value="">Escribe...</option>';return;}const r=window.Clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,20);s.innerHTML=r.map(c=>`<option value="${c['NOMBRE CLIENTE']||''}">${c['NOMBRE CLIENTE']||''}</option>`).join('');};
+window.fltMProy=function(){const q=document.getElementById('mm-proy-s').value.toLowerCase().trim();const s=document.getElementById('mm-proy');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe...</option>';return;}const r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)).slice(0,20);s.innerHTML=r.map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['NOMBRE PROYECTO']||''}</option>`).join('');};
+window.fltAProy=function(){const q=document.getElementById('ma-ps').value.toLowerCase().trim();const s=document.getElementById('ma-proy');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe...</option>';return;}const r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)).slice(0,20);s.innerHTML=r.map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['CODIGO']||''} - ${p['NOMBRE PROYECTO']||''}</option>`).join('');};
+window.fltPL=function(){const q=(document.getElementById('ps').value||'').toLowerCase();const f=window._proyF||'todos';if(!window.Proyectos)return;let r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q));if(f==='activo')r=r.filter(p=>(p.ESTADO||'ACTIVO')!=='INACTIVO');if(f==='inactivo')r=r.filter(p=>p.ESTADO==='INACTIVO');renderProyLista(r.slice(0,80));};
+window.setPF=function(f){window._proyF=f;['pf-a','pf-act','pf-in'].forEach(id=>document.getElementById(id).classList.remove('on'));const m={todos:'pf-a',activo:'pf-act',inactivo:'pf-in'};document.getElementById(m[f]).classList.add('on');fltPL();};
+window.fltCL=function(){const q=document.getElementById('cs').value.toLowerCase();if(window.Clientes)renderCliLista(window.Clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,60));};
 
-window.filtrarClientesForm=function(){
-  const q=document.getElementById('nv-cli-search').value.toLowerCase().trim();
-  const sel=document.getElementById('nv-cliente');
-  if(!q||!window._clientes){sel.innerHTML='<option value="">Escribe para buscar...</option>';return;}
-  const res=window._clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,30);
-  sel.innerHTML=res.length?res.map(c=>`<option value="${c['NOMBRE CLIENTE']||''}">${c['NOMBRE CLIENTE']||''}</option>`).join(''):'<option value="">Sin resultados</option>';
-};
-
-window.abrirModalNuevoCliente=function(){document.getElementById('modal-cliente').classList.add('open');};
-window.cerrarModalCliente=function(){document.getElementById('modal-cliente').classList.remove('open');['nc-nit','nc-nombre','nc-encargado','nc-cel'].forEach(id=>document.getElementById(id).value='');};
-document.getElementById('modal-cliente').addEventListener('click',function(e){if(e.target===this)cerrarModalCliente();});
-
-window._actTab='hoy';
-window.setTabAct=function(tab){
-  window._actTab=tab;
-  ['hoy','semana','mes','todo'].forEach(t=>document.getElementById('tab-'+t).classList.remove('sel'));
-  document.getElementById('tab-'+tab).classList.add('sel');
-  if(window._actividades)renderActividades(window._actividades,tab);
-};
-
-window.renderActividades=function(list,tab){
-  tab=tab||'hoy';
-  const isAdmin=window._currentUser?.tipo==='ADMINISTRADOR';
-  const mi=window._currentUser?.nombre||'';
-  const hoyD=new Date();hoyD.setHours(0,0,0,0);
-  const semD=new Date(hoyD);semD.setDate(semD.getDate()-6);
-  const mesD=new Date();mesD.setDate(1);mesD.setHours(0,0,0,0);
-  const filtered=list.filter(a=>{
-    if(!isAdmin&&a.ASESOR!==mi)return false;
+// RENDER ACTIVIDADES
+window.setTab=function(t){window.actTab=t;['h','s','m','t'].forEach(x=>document.getElementById('t-'+x).classList.remove('on'));const m={hoy:'h',semana:'s',mes:'m',todo:'t'};document.getElementById('t-'+m[t]).classList.add('on');if(window.Actividades)renderActs(window.Actividades,t);};
+window.renderActs=function(list,tab){
+  const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
+  const hD=new Date();hD.setHours(0,0,0,0);const sD=new Date(hD);sD.setDate(sD.getDate()-6);const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
+  const fl=list.filter(a=>{
+    if(!isA&&a.ASESOR!==mi)return false;
     const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    if(tab==='hoy')return f>=hoyD;
-    if(tab==='semana')return f>=semD;
-    if(tab==='mes')return f>=mesD;
-    return true;
+    if(tab==='hoy')return f>=hD;if(tab==='semana')return f>=sD;if(tab==='mes')return f>=mD;return true;
   });
   const el=document.getElementById('act-list');
-  if(!filtered.length){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div>Sin actividades en este periodo</div></div>';return;}
-  el.innerHTML=filtered.map(a=>{
+  if(!fl.length){el.innerHTML='<div class="em"><div class="em-i">📋</div><div>Sin actividades</div></div>';return;}
+  el.innerHTML=fl.map(a=>{
     const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    const fecha=f.toLocaleDateString('es-CO',{day:'2-digit',month:'short'});
-    const hora=f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    const fd=f.toLocaleDateString('es-CO',{day:'2-digit',month:'short'});
+    const fh=f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
     const imp=(a.IMPACTO||'').toUpperCase();
-    const bc=imp.includes('NO')?'badge-red':imp==='IMPACTADO'?'badge-green':'badge-amber';
+    const bc=imp.includes('NO')?'br1':imp==='IMPACTADO'?'bg1':'ba1';
     return `<div class="card">
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px">
         <div style="font-size:14px;font-weight:500;flex:1;min-width:0;margin-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.PROYECTO||a.CLIENTE||'Sin nombre'}</div>
-        <span class="badge ${bc}" style="flex-shrink:0">${a.IMPACTO||a['TIPO DE VISITA']||''}</span>
+        <span class="b ${bc}" style="flex-shrink:0;cursor:pointer" onclick="editAct('${a.id}')">${a.IMPACTO||a['TIPO DE VISITA']||'—'}</span>
       </div>
       <div style="font-size:12px;color:var(--muted)">${a.CLIENTE||''}${a.CANAL?' · '+a.CANAL:''}</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:3px">${fecha} ${hora}${a.ASESOR?' · '+a.ASESOR.split(' ')[0]:''}</div>
-      ${a.OBSERVACION?`<div style="font-size:12px;margin-top:5px;color:var(--text)">${a.OBSERVACION}</div>`:''}
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">${fd} ${fh}${a.ASESOR?' · '+a.ASESOR.split(' ')[0]:''}</div>
+      ${a.OBSERVACION?`<div style="font-size:12px;margin-top:4px">${a.OBSERVACION}</div>`:''}
     </div>`;
   }).join('');
 };
 
-window.renderProyectos=function(list){
-  const el=document.getElementById('proy-list');
-  if(!list||!list.length){el.innerHTML='<div class="empty"><div class="empty-icon">🏗️</div><div>Sin proyectos</div></div>';return;}
-  el.innerHTML=list.map(p=>{
-    const n=p['NOMBRE PROYECTO']||'';const c=p['CODIGO']||'';const b=p['BARRIO']||'';const e=p['ESTADO']||'';
-    return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start"><div style="flex:1;min-width:0"><div class="card-title">${n}</div><div class="card-sub">Cod: ${c} · ${b}</div></div><span class="badge ${e==='INACTIVO'?'badge-amber':'badge-green'}" style="margin-left:8px;flex-shrink:0">${e||'Activo'}</span></div></div>`;
-  }).join('');
-};
-window.filterProyectos=function(){
-  const q=document.getElementById('proy-search').value.toLowerCase();
-  if(window._proyectos)renderProyectos(window._proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q)).slice(0,50));
+window.editAct=function(id){
+  const a=window.Actividades?.find(x=>x.id===id);if(!a)return;
+  window._editAID=id;
+  document.querySelectorAll('#mae-imp .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===a.IMPACTO)c.classList.add('on');});
+  document.getElementById('mae-tv').value=a['TIPO DE VISITA']||'VISITA';
+  document.getElementById('mae-obs').value=a.OBSERVACION||'';
+  openM('m-act-edit');
 };
 
-window.renderClientes=function(list){
-  const el=document.getElementById('cli-list');
-  if(!list||!list.length){el.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div>Sin clientes</div></div>';return;}
-  el.innerHTML=list.map(c=>`<div class="card"><div class="card-title">${c['NOMBRE CLIENTE']||''}</div><div class="card-sub">NIT: ${c['NIT CLIENTE']||''}${c['CELULAR']?' · '+c['CELULAR']:''}</div></div>`).join('');
+// RENDER PROYECTOS
+window.renderProyLista=function(list){
+  const el=document.getElementById('proy-list');
+  if(!list||!list.length){el.innerHTML='<div class="em"><div class="em-i">🏗️</div><div>Sin proyectos</div></div>';return;}
+  const isA=window.CU?.tipo==='ADMINISTRADOR';
+  el.innerHTML=list.map(p=>{
+    const n=p['NOMBRE PROYECTO']||'';const c=p['CODIGO']||'';const b=p['BARRIO']||'';const e=p['ESTADO']||'ACTIVO';
+    const editBtn=isA?`<button class="bg" style="margin-top:8px;width:100%" onclick="editProy('${p.id}','${n.replace(/'/g,"\\'")}','${e}')">✏️ Editar</button>`:'';
+    return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start"><div style="flex:1;min-width:0"><div class="ct">${n}</div><div class="cs">Cód: ${c} · ${b}</div></div><span class="b ${e==='INACTIVO'?'ba1':'bg1'}" style="margin-left:8px;flex-shrink:0">${e}</span></div>${editBtn}</div>`;
+  }).join('');
 };
-window.filterClientes=function(){
-  const q=document.getElementById('cli-search').value.toLowerCase();
-  if(window._clientes)renderClientes(window._clientes.filter(c=>(c['NOMBRE CLIENTE']||'').toLowerCase().includes(q)).slice(0,50));
+window.editProy=function(id,nombre,estado){
+  window._editPID=id;const p=window.Proyectos?.find(x=>x.id===id);
+  document.getElementById('mpe-t').textContent=nombre;
+  document.querySelectorAll('#mpe-est .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===(p?.ESTADO||'ACTIVO'))c.classList.add('on');});
+  document.getElementById('mpe-obs').value=p?.OBSERVACIONES||p?.OBSERVACION||'';
+  document.getElementById('mpe-asesor').value=p?.ASESOR_ASIGNADO||'';
+  openM('m-proy-edit');
+};
+
+// RENDER CLIENTES
+window.renderCliLista=function(list){
+  const el=document.getElementById('cli-list');
+  if(!list||!list.length){el.innerHTML='<div class="em"><div class="em-i">👥</div><div>Sin clientes</div></div>';return;}
+  el.innerHTML=list.map(c=>`<div class="card"><div class="ct">${c['NOMBRE CLIENTE']||''}</div><div class="cs">NIT: ${c['NIT CLIENTE']||''}${c['CELULAR']?' · '+c['CELULAR']:''}</div></div>`).join('');
+};
+
+// RENDER MUESTRAS
+window.renderMuestras=function(){
+  const el=document.getElementById('m-list');const list=window.Muestras||[];
+  const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
+  const fl=list.filter(m=>isA||m.ASESOR===mi);
+  if(!fl.length){el.innerHTML='<div class="em"><div class="em-i">📦</div><div>Sin muestras registradas</div></div>';return;}
+  el.innerHTML=fl.map(m=>{
+    const f=m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0);
+    return `<div class="card">${m.FOTO?`<img src="${m.FOTO}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px">`:''}<div class="ct">${m.PRODUCTO||''}</div><div class="cs">${m.DESCRIPCION||''}</div><div style="font-size:12px;margin-top:4px">Cant: <b>${m.CANTIDAD||1}</b> · ${m.CLIENTE||''}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${m.PROYECTO?' Proy: '+m.PROYECTO+' ·':''} ${m.ASESOR||''} · ${f.toLocaleDateString('es-CO')}</div></div>`;
+  }).join('');
+};
+
+// RENDER ASIGNACIONES
+window.renderAsig=function(){
+  const el=document.getElementById('asig-list');const list=window.Asignaciones||[];
+  const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
+  const fl=list.filter(a=>isA||a.ASESOR===mi);
+  if(!fl.length){el.innerHTML='<div class="em"><div class="em-i">🏗️</div><div>Sin asignaciones</div></div>';return;}
+  const pmap={ALTA:'br1',URGENTE:'br1',NORMAL:'bb1'};
+  el.innerHTML=fl.map(a=>{
+    const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
+    const visitada=window.Actividades?.some(x=>x.PROYECTO===a.PROYECTO&&x.ASESOR===a.ASESOR);
+    return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:4px"><div class="ct" style="flex:1;min-width:0;margin-right:8px">${a.PROYECTO||''}</div><span class="b ${pmap[a.PRIORIDAD]||'bb1'}">${a.PRIORIDAD||'NORMAL'}</span></div><div class="cs">Asesor: ${a.ASESOR||''}</div><div style="font-size:11px;margin-top:4px"><span class="b ${visitada?'bg1':'ba1'}">${visitada?'✅ Visitado':'⏳ Pendiente'}</span></div>${a.OBSERVACION?`<div style="font-size:12px;margin-top:4px;color:var(--muted)">${a.OBSERVACION}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:3px">${f.toLocaleDateString('es-CO')}</div></div>`;
+  }).join('');
+};
+
+// MAP FILTERS
+window.setMF=function(el,tipo){
+  const grupo=tipo==='canal'?document.querySelectorAll('.mfchip[onclick*="canal"]'):document.querySelectorAll('.mfchip[onclick*="imp"]');
+  grupo.forEach(x=>x.classList.remove('on'));el.classList.add('on');
+  window.mapFiltros[tipo]=el.dataset.v||'';
+  renderMap();
 };
 
 // MAPA
-window._mapaIniciado=false;
-window.renderMapa=function(){
-  if(!window._actividades) return;
-  const filtro=document.getElementById('map-asesor-filter').value;
-  const isAdmin=window._currentUser?.tipo==='ADMINISTRADOR';
-  const mi=window._currentUser?.nombre||'';
-  const puntos=window._actividades.filter(a=>{
-    if(!a['UBICACION']&&!a['UBICACIÓN'])return false;
+window.mapaMarkers=[];
+window.renderMap=function(){
+  if(!window.Actividades) return;
+  const filtroA=document.getElementById('mf-asesor').value;
+  const filtroC=window.mapFiltros.canal||'';
+  const filtroI=window.mapFiltros.imp||'';
+  const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
+
+  const puntos=window.Actividades.filter(a=>{
     const ubi=a['UBICACION']||a['UBICACIÓN']||'';
-    const parts=ubi.toString().split(',');
-    if(parts.length<2)return false;
-    if(isNaN(parseFloat(parts[0]))||isNaN(parseFloat(parts[1])))return false;
-    if(filtro&&a.ASESOR!==filtro)return false;
-    if(!isAdmin&&a.ASESOR!==mi)return false;
+    if(!ubi)return false;
+    const p=ubi.toString().split(',');
+    if(p.length<2||isNaN(parseFloat(p[0]))||isNaN(parseFloat(p[1])))return false;
+    if(filtroA&&a.ASESOR!==filtroA)return false;
+    if(filtroC&&a.CANAL!==filtroC)return false;
+    if(filtroI&&a.IMPACTO!==filtroI)return false;
+    if(!isA&&a.ASESOR!==mi)return false;
     return true;
   });
 
-  if(!window._mapaIniciado){
-    const clat=puntos.length?parseFloat((puntos[0]['UBICACION']||puntos[0]['UBICACIÓN']).split(',')[0]):6.2476;
-    const clng=puntos.length?parseFloat((puntos[0]['UBICACION']||puntos[0]['UBICACIÓN']).split(',')[1]):-75.5658;
-    window._leafletMap=L.map('leaflet-map').setView([clat,clng],13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'OSM'}).addTo(window._leafletMap);
-    window._mapaIniciado=true;
+  // Asignaciones no visitadas
+  const asigs=(window.Asignaciones||[]).filter(a=>{
+    const proy=window.Proyectos?.find(p=>p['NOMBRE PROYECTO']===a.PROYECTO);
+    if(!proy||!proy.COORDENADAS)return false;
+    if(!isA&&a.ASESOR!==mi)return false;
+    if(filtroA&&a.ASESOR!==filtroA)return false;
+    return true;
+  });
+
+  if(!window.mapaInited){
+    const cl=puntos.length?parseFloat((puntos[0]['UBICACION']||puntos[0]['UBICACIÓN']||'6.2476,-75.5658').split(',')[0]):6.2476;
+    const cg=puntos.length?parseFloat((puntos[0]['UBICACION']||puntos[0]['UBICACIÓN']||'6.2476,-75.5658').split(',')[1]):-75.5658;
+    window.leafMap=L.map('lmap').setView([cl,cg],13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'OSM'}).addTo(window.leafMap);
+    window.mapaInited=true;
   } else {
-    if(window._mapaMarkers)window._mapaMarkers.forEach(m=>m.remove());
+    window.mapaMarkers.forEach(m=>m.remove());window.mapaMarkers=[];
   }
-  window._mapaMarkers=[];
 
   const lats=[],lngs=[];
+
+  // Asignaciones pendientes (estrella azul)
+  asigs.forEach(a=>{
+    const proy=window.Proyectos?.find(p=>p['NOMBRE PROYECTO']===a.PROYECTO);
+    if(!proy?.COORDENADAS)return;
+    const pts=proy.COORDENADAS.toString().split(',');
+    if(pts.length<2)return;
+    const lat=parseFloat(pts[0]),lng=parseFloat(pts[1]);
+    if(isNaN(lat)||isNaN(lng))return;
+    const visitada=window.Actividades?.some(x=>x.PROYECTO===a.PROYECTO&&x.ASESOR===a.ASESOR);
+    const icon=L.divIcon({html:`<div style="font-size:20px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))">${visitada?'🏗️':'⭐'}</div>`,iconSize:[24,24],className:''});
+    const m=L.marker([lat,lng],{icon});
+    m.bindPopup(`<b>${a.PROYECTO}</b><br>Asesor: ${a.ASESOR}<br>Prioridad: ${a.PRIORIDAD}<br><span style="color:${visitada?'#27AE60':'#E67E22'}">${visitada?'✅ Visitado':'⏳ Pendiente'}</span>`);
+    m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
+  });
+
+  // Actividades visitadas
   puntos.forEach(a=>{
     const ubi=a['UBICACION']||a['UBICACIÓN']||'';
-    const parts=ubi.toString().split(',');
-    const lat=parseFloat(parts[0]),lng=parseFloat(parts[1]);
-    const impactado=!(a.IMPACTO||'').toUpperCase().includes('NO');
+    const pts=ubi.toString().split(',');
+    const lat=parseFloat(pts[0]),lng=parseFloat(pts[1]);
+    const impactado=!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='';
     const color=impactado?'#27AE60':'#E74C3C';
-    const m=L.circleMarker([lat,lng],{radius:9,fillColor:color,color:'#fff',weight:2,fillOpacity:0.9});
+    const esObra=(a.CANAL||'').toUpperCase()==='OBRAS';
+    const icon=L.divIcon({html:`<div style="font-size:18px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))">${esObra?'🏗️':'🔧'}</div><div style="width:8px;height:8px;background:${color};border-radius:50%;border:1px solid #fff;margin:-2px auto 0"></div>`,iconSize:[22,28],className:''});
+    const m=L.marker([lat,lng],{icon});
     const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    m.bindPopup(`<b>${a.PROYECTO||a.CLIENTE||'Sin nombre'}</b><br><i>${a.ASESOR||''}</i><br>${f.toLocaleDateString('es-CO')}<br><span style="color:${color};font-weight:600">${a.IMPACTO||''}</span>${a.OBSERVACION?'<br>'+a.OBSERVACION:''}`);
-    m.addTo(window._leafletMap);
-    window._mapaMarkers.push(m);
-    lats.push(lat);lngs.push(lng);
+    m.bindPopup(`<b>${a.PROYECTO||a.CLIENTE||'—'}</b><br>${a.ASESOR||''}<br>${f.toLocaleDateString('es-CO')}<br><span style="color:${color};font-weight:600">${a.IMPACTO||''}</span>${a.OBSERVACION?'<br><i>'+a.OBSERVACION+'</i>':''}<br><a href="#" onclick="editAct('${a.id}');window.leafMap.closePopup();return false">✏️ Editar impacto</a>`);
+    m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
   });
-  if(lats.length>1)window._leafletMap.fitBounds([[Math.min(...lats),Math.min(...lngs)],[Math.max(...lats),Math.max(...lngs)]],{padding:[40,40]});
+
+  if(lats.length>1)window.leafMap.fitBounds([[Math.min(...lats),Math.min(...lngs)],[Math.max(...lats),Math.max(...lngs)]],{padding:[40,40]});
 };
 
 // DASHBOARD
-window.renderDashboard=function(acts){
-  const total=acts.length;
-  const hoyD=new Date();hoyD.setHours(0,0,0,0);
-  const mesD=new Date();mesD.setDate(1);mesD.setHours(0,0,0,0);
-  const actHoy=acts.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=hoyD;}).length;
-  const actMes=acts.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=mesD;}).length;
-  const imp=acts.filter(a=>!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='').length;
-  document.getElementById('dash-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-num">${actHoy}</div><div class="stat-lbl">Visitas hoy</div></div>
-    <div class="stat-card"><div class="stat-num">${actMes}</div><div class="stat-lbl">Este mes</div></div>
-    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-lbl">Total historico</div></div>
-    <div class="stat-card"><div class="stat-num">${total?Math.round(imp/total*100):0}%</div><div class="stat-lbl">Tasa impacto</div></div>`;
+window.renderDash=function(acts,f1,f2){
+  if(!acts)return;
+  let data=acts;
+  if(f1)data=data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=f1;});
+  if(f2)data=data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f<=f2;});
+  const tot=data.length;
+  const hD=new Date();hD.setHours(0,0,0,0);const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
+  const aH=data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=hD;}).length;
+  const aM=data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=mD;}).length;
+  const imp=data.filter(a=>!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='').length;
+  document.getElementById('d-stats').innerHTML=`<div class="sc"><div class="sn">${aH}</div><div class="sl">Hoy</div></div><div class="sc"><div class="sn">${aM}</div><div class="sl">Este mes</div></div><div class="sc"><div class="sn">${tot}</div><div class="sl">Total</div></div><div class="sc"><div class="sn">${tot?Math.round(imp/tot*100):0}%</div><div class="sl">Impacto</div></div>`;
 
-  const porAsesor={};acts.forEach(a=>{const k=(a.ASESOR||'Sin asignar').split(' ').slice(0,2).join(' ');porAsesor[k]=(porAsesor[k]||0)+1;});
-  const maxA=Math.max(...Object.values(porAsesor),1);
-  document.getElementById('dash-asesores').innerHTML='<div class="dash-bar-title">Visitas por asesor</div>'+Object.entries(porAsesor).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="bar-row"><div class="bar-label" title="${k}">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/maxA*100)}%"></div></div><div class="bar-val">${v}</div></div>`).join('');
+  const pA={};data.forEach(a=>{const k=(a.ASESOR||'Sin asignar').split(' ').slice(0,2).join(' ');pA[k]=(pA[k]||0)+1;});
+  const mxA=Math.max(...Object.values(pA),1);
+  document.getElementById('d-asesores').innerHTML='<div class="dbt">Visitas por asesor</div>'+Object.entries(pA).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="br"><div class="bl" title="${k}">${k}</div><div class="bt"><div class="bf" style="width:${Math.round(v/mxA*100)}%"></div></div><div class="bv">${v}</div></div>`).join('');
 
-  const dias=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);dias.push(d);}
-  const porDia=dias.map(d=>{const next=new Date(d);next.setDate(next.getDate()+1);return{label:d.toLocaleDateString('es-CO',{weekday:'short',day:'numeric'}),cnt:acts.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=d&&f<next;}).length};});
-  const maxD=Math.max(...porDia.map(d=>d.cnt),1);
-  document.getElementById('dash-dias').innerHTML='<div class="dash-bar-title">Actividad diaria</div>'+porDia.map(d=>`<div class="bar-row"><div class="bar-label">${d.label}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(d.cnt/maxD*100)}%"></div></div><div class="bar-val">${d.cnt}</div></div>`).join('');
+  // Canal por asesor (obras vs ferreterias)
+  const pCA={};
+  data.forEach(a=>{const k=(a.ASESOR||'Sin asignar').split(' ').slice(0,2).join(' ');if(!pCA[k])pCA[k]={obras:0,ferr:0};if((a.CANAL||'').toUpperCase()==='OBRAS')pCA[k].obras++;else if((a.CANAL||'').toUpperCase()==='FERRETERIA')pCA[k].ferr++;});
+  document.getElementById('d-canal-asesor').innerHTML='<div class="dbt">Obras 🏗️ vs Ferreterías 🔧 por asesor</div>'+Object.entries(pCA).sort((a,b)=>(b[1].obras+b[1].ferr)-(a[1].obras+a[1].ferr)).map(([k,v])=>`<div class="br"><div class="bl" title="${k}">${k}</div><div style="flex:1;display:flex;gap:4px;font-size:11px;align-items:center"><span style="color:var(--blue)">🏗️${v.obras}</span><span style="color:var(--amber)">🔧${v.ferr}</span></div></div>`).join('');
 
-  const porTipo={};acts.forEach(a=>{const k=a['TIPO CLIENTE']||'Sin tipo';porTipo[k]=(porTipo[k]||0)+1;});
-  document.getElementById('dash-tipos').innerHTML=Object.entries(porTipo).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>`<div class="donut-card"><div class="donut-big" style="color:var(--red)">${v}</div><div class="donut-lbl">${k}</div></div>`).join('');
+  const ds=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);ds.push(d);}
+  const pD=ds.map(d=>{const nx=new Date(d);nx.setDate(nx.getDate()+1);return{l:d.toLocaleDateString('es-CO',{weekday:'short',day:'numeric'}),n:data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=d&&f<nx;}).length};});
+  const mxD=Math.max(...pD.map(d=>d.n),1);
+  document.getElementById('d-dias').innerHTML='<div class="dbt">Actividad diaria</div>'+pD.map(d=>`<div class="br"><div class="bl">${d.l}</div><div class="bt"><div class="bf" style="width:${Math.round(d.n/mxD*100)}%"></div></div><div class="bv">${d.n}</div></div>`).join('');
 
-  const noimpo=total-imp;
-  document.getElementById('dash-impacto').innerHTML=`
-    <div class="donut-card"><div class="donut-big" style="color:#27AE60">${imp}</div><div class="donut-lbl">Impactados</div></div>
-    <div class="donut-card"><div class="donut-big" style="color:#E74C3C">${noimpo}</div><div class="donut-lbl">No impactados</div></div>`;
+  const pT={};data.forEach(a=>{const k=a['TIPO CLIENTE']||'Sin tipo';pT[k]=(pT[k]||0)+1;});
+  document.getElementById('d-tipos').innerHTML=Object.entries(pT).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>`<div class="dc"><div class="dn" style="color:var(--red)">${v}</div><div class="dl">${k}</div></div>`).join('');
 
-  const porCanal={};acts.forEach(a=>{const k=a.CANAL||'Sin canal';porCanal[k]=(porCanal[k]||0)+1;});
-  document.getElementById('dash-canal').innerHTML=Object.entries(porCanal).map(([k,v])=>`<div class="donut-card"><div class="donut-big" style="color:var(--blue)">${v}</div><div class="donut-lbl">${k}</div></div>`).join('');
+  const noI=tot-imp;
+  document.getElementById('d-imp').innerHTML=`<div class="dc"><div class="dn" style="color:#27AE60">${imp}</div><div class="dl">Impactados</div></div><div class="dc"><div class="dn" style="color:#E74C3C">${noI}</div><div class="dl">No impactados</div></div>`;
+
+  const pC={};data.forEach(a=>{const k=a.CANAL||'Sin canal';pC[k]=(pC[k]||0)+1;});
+  document.getElementById('d-canal').innerHTML=Object.entries(pC).map(([k,v])=>`<div class="dc"><div class="dn" style="color:var(--blue)">${v}</div><div class="dl">${k}</div></div>`).join('');
 };
 
-window.showToast=function(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);};
+window.applyDash=function(){
+  const i=document.getElementById('df-ini').value;const f=document.getElementById('df-fin').value;
+  const fi=i?new Date(i):null;const ff=f?new Date(f):null;if(ff)ff.setHours(23,59,59);
+  if(window.Actividades)renderDash(window.Actividades,fi,ff);
+};
+window.clearDash=function(){document.getElementById('df-ini').value='';document.getElementById('df-fin').value='';if(window.Actividades)renderDash(window.Actividades);};
+
+// REPORTE PDF
+window.generarPDF=function(){
+  const ini=document.getElementById('r-ini').value;
+  const fin=document.getElementById('r-fin').value;
+  const asesor=document.getElementById('r-asesor').value;
+  const canal=document.getElementById('r-canal').value;
+  if(!ini||!fin){toast('Selecciona fechas de inicio y fin');return;}
+  const fi=new Date(ini);const ff=new Date(fin);ff.setHours(23,59,59);
+  let data=window.Actividades||[];
+  data=data.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=fi&&f<=ff;});
+  if(asesor)data=data.filter(a=>a.ASESOR===asesor);
+  if(canal)data=data.filter(a=>a.CANAL===canal);
+  if(!data.length){toast('Sin actividades en ese período');return;}
+
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
+  const W=210,M=15;let y=20;
+
+  // Header
+  pdf.setFillColor(192,57,43);pdf.rect(0,0,W,18,'F');
+  pdf.setTextColor(255,255,255);pdf.setFontSize(14);pdf.setFont('helvetica','bold');
+  pdf.text('ACTIVIDAPP — Informe Gerencial',M,12);
+  pdf.setFontSize(9);pdf.setFont('helvetica','normal');
+  pdf.text(`Período: ${ini} al ${fin}${asesor?' | Asesor: '+asesor:''}${canal?' | Canal: '+canal:''}`,M,16);
+  pdf.setTextColor(30,30,30);y=28;
+
+  // Summary
+  const imp=data.filter(a=>!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='').length;
+  const obras=data.filter(a=>(a.CANAL||'').toUpperCase()==='OBRAS').length;
+  const ferr=data.filter(a=>(a.CANAL||'').toUpperCase()==='FERRETERIA').length;
+  pdf.setFillColor(245,245,240);pdf.rect(M,y,W-M*2,18,'F');
+  pdf.setFontSize(10);pdf.setFont('helvetica','bold');
+  pdf.text(`Total visitas: ${data.length}   Impactadas: ${imp}   Obras: ${obras}   Ferreterías: ${ferr}`,M+4,y+7);
+  pdf.setFont('helvetica','normal');pdf.setFontSize(9);
+  pdf.text(`Tasa de impacto: ${data.length?Math.round(imp/data.length*100):0}%`,M+4,y+13);
+  y+=24;
+
+  // Records
+  data.forEach((a,i)=>{
+    if(y>265){pdf.addPage();y=20;}
+    const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
+    const fd=f.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
+    const fh=f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    const impOk=!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='';
+    if(impOk)pdf.setFillColor(234,250,242);else pdf.setFillColor(252,235,235);
+    pdf.rect(M,y,W-M*2,24,'F');
+    pdf.setFontSize(10);pdf.setFont('helvetica','bold');pdf.setTextColor(30,30,30);
+    pdf.text((a.PROYECTO||a.CLIENTE||'Sin nombre').substring(0,45),M+3,y+6);
+    pdf.setFont('helvetica','normal');pdf.setFontSize(9);
+    pdf.text(`Asesor: ${a.ASESOR||'—'} | ${fd} ${fh} | ${a.CANAL||'—'}`,M+3,y+11);
+    pdf.text(`Cliente: ${(a.CLIENTE||'—').substring(0,40)} | Impacto: ${a.IMPACTO||'—'}`,M+3,y+16);
+    if(a.OBSERVACION)pdf.text(`Obs: ${a.OBSERVACION.substring(0,65)}`,M+3,y+21);
+    y+=27;
+  });
+
+  // Footer
+  pdf.setFontSize(8);pdf.setTextColor(150,150,150);
+  pdf.text(`Generado: ${new Date().toLocaleString('es-CO')} | Actividapp`,M,290);
+  pdf.save(`informe_actividapp_${ini}_${fin}.pdf`);
+  toast('✅ PDF generado correctamente');
+};
+
+window.toast=function(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800);};
 </script>
 </body>
 </html>
