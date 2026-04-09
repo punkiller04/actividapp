@@ -622,6 +622,23 @@ window.go=function(id){
   if(id==='dashboard'&&window.Actividades)renderDash(window.Actividades);
 };
 
+// SESSION 6 horas
+const SK='actividapp_v3_session';
+function saveS(cu){try{localStorage.setItem(SK,JSON.stringify({cu,ts:Date.now()}));}catch(e){}}
+function loadS(){try{const s=localStorage.getItem(SK);if(!s)return null;const d=JSON.parse(s);if(Date.now()-d.ts>6*3600*1000){localStorage.removeItem(SK);return null;}return d.cu;}catch(e){return null;}}
+function clearS(){try{localStorage.removeItem(SK);}catch(e){}}
+function applyU(cu){
+  window.CU=cu;
+  document.getElementById('h-up').textContent=cu.nombre.split(' ')[0];
+  const isA=cu.tipo==='ADMINISTRADOR';
+  document.getElementById('h-adm').style.display=isA?'inline':'none';
+  document.getElementById('c-dash').style.display=isA?'block':'none';
+  document.getElementById('c-rep').style.display=isA?'block':'none';
+  document.getElementById('c-asig').style.display=isA?'block':'none';
+}
+// Auto-login al abrir
+(function(){const cu=loadS();if(cu){applyU(cu);go('home');}})();
+
 // LOGIN
 window.doLogin=function(){
   const ced=document.getElementById('l-usr').value;
@@ -630,20 +647,14 @@ window.doLogin=function(){
   if(!ced){err.textContent='Selecciona usuario';err.style.display='block';return;}
   const u=window.Usuarios?.find(x=>x['CEDULA ID']==ced||x.cedula==ced||x.id==ced);
   if(!u){err.textContent='Usuario no encontrado';err.style.display='block';return;}
-  if(pw!==(u['CONTRASEÑA']||u.contrasena||'')){err.textContent='Contraseña incorrecta';err.style.display='block';return;}
+  if(pw!==(u['CONTRASEÑA']||u.contrasena||'')){err.textContent='Contrasena incorrecta';err.style.display='block';return;}
   err.style.display='none';
   const nom=u['NOMBRE EMPLEADO']||u.nombre||'';
   const tipo=u['TIPO']||u.tipo||'ASESOR';
-  window.CU={cedula:ced,nombre:nom,tipo};
-  document.getElementById('h-up').textContent=nom.split(' ')[0];
-  const isA=tipo==='ADMINISTRADOR';
-  document.getElementById('h-adm').style.display=isA?'inline':'none';
-  document.getElementById('c-dash').style.display=isA?'block':'none';
-  document.getElementById('c-rep').style.display=isA?'block':'none';
-  document.getElementById('c-asig').style.display=isA?'block':'none';
-  go('home');
+  const cu={cedula:ced,nombre:nom,tipo};
+  saveS(cu);applyU(cu);go('home');
 };
-window.doLogout=function(){window.CU=null;go('login');};
+window.doLogout=function(){window.CU=null;clearS();go('login');};
 
 // GPS
 function getGPS(){
