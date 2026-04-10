@@ -179,6 +179,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <div class="card" id="c-dash" style="cursor:pointer;display:none" onclick="go('dashboard')"><div class="crow"><div class="cico" style="background:#FEF5E7">📊</div><div class="cbody"><div class="ct">Dashboard</div><div class="cs">Gestión integral del equipo</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" id="c-rep" style="cursor:pointer;display:none" onclick="go('reportes')"><div class="crow"><div class="cico" style="background:#EAF3DE">📄</div><div class="cbody"><div class="ct">Informe PDF</div><div class="cs">Reporte gerencial con fotos</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" id="c-asig-admin" style="cursor:pointer;display:none" onclick="go('asig-admin')"><div class="crow"><div class="cico" style="background:#F5EEF8">🏗️</div><div class="cbody"><div class="ct">Asignar proyectos</div><div class="cs">Gestión técnico de obras</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" id="c-usuarios" style="cursor:pointer;display:none" onclick="go('usuarios')"><div class="crow"><div class="cico" style="background:#EAF5FB">👤</div><div class="cbody"><div class="ct">Usuarios y roles</div><div class="cs">Gestión del equipo</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="dv"></div>
     <button class="bs" style="margin-top:0" onclick="doLogout()">Cerrar sesión</button>
     <div style="height:10px"></div>
@@ -416,9 +417,56 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   </div>
 </div>
 
+
+<!-- ===== USUARIOS ===== -->
+<div class="scr" id="s-usuarios">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Usuarios y Roles</div><button class="tb-act" onclick="openM('m-nuevo-usuario')">+ Nuevo</button></div>
+  <div class="cnt">
+    <div id="usr-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b on"><span class="nb-i">👤</span>Usuarios</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
 </div><!-- /app -->
 
 <!-- MODALES -->
+<div class="mo" id="m-nuevo-usuario"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="mu-title">Nuevo Usuario</div>
+  <input type="hidden" id="mu-id">
+  <div class="f"><label>Nombre completo *</label><input id="mu-nom" placeholder="APELLIDO NOMBRE"></div>
+  <div class="f"><label>Cédula / ID *</label><input id="mu-ced" placeholder="12345678"></div>
+  <div class="f"><label>Contraseña *</label><input id="mu-pw" type="password" placeholder="Mínimo 4 caracteres"></div>
+  <div class="f"><label>Confirmar contraseña</label><input id="mu-pw2" type="password" placeholder="Repite la contraseña"></div>
+  <div class="f"><label>Rol</label>
+    <div class="chips" id="mu-rol">
+      <div class="chip on" data-v="ASESOR">👤 Asesor</div>
+      <div class="chip" data-v="ADMINISTRADOR">★ Administrador</div>
+      <div class="chip" data-v="TECNICO">🔧 Técnico</div>
+    </div>
+  </div>
+  <div class="f"><label>Estado</label>
+    <div class="chips" id="mu-est">
+      <div class="chip on" data-v="ACTIVO">✅ Activo</div>
+      <div class="chip" data-v="INACTIVO">❌ Inactivo</div>
+    </div>
+  </div>
+  <button class="bp" type="button" id="mu-btn" onclick="saveUsuario()">Crear usuario</button>
+  <button class="bs" onclick="closeM('m-nuevo-usuario')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-confirm-del"><div class="md"><div class="md-pull"></div>
+  <div class="mdt">¿Eliminar usuario?</div>
+  <div id="m-confirm-txt" style="font-size:14px;color:var(--muted);margin-bottom:16px"></div>
+  <button class="bp" type="button" style="background:#C0392B" onclick="confirmDeleteUser()">Sí, eliminar</button>
+  <button class="bs" onclick="closeM('m-confirm-del')">Cancelar</button>
+</div></div>
+
 <div class="mo" id="m-cli"><div class="md"><div class="md-pull"></div>
   <div class="mdt">Nuevo Cliente</div>
   <div class="f"><label>NIT / Cédula</label><input id="mc-nit" placeholder="890800148"></div>
@@ -705,6 +753,7 @@ function applyU(cu){
   document.getElementById('c-rep').style.display=isA?'block':'none';
   document.getElementById('c-asig-admin').style.display=isA?'block':'none';
   document.getElementById('act-filter-asesor').style.display=isA?'block':'none';
+  document.getElementById('c-usuarios').style.display=isA?'block':'none';
   const hr=new Date().getHours();
   const gr=hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches';
   document.getElementById('h-greeting').textContent=(hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches')+', '+nom;
@@ -721,6 +770,7 @@ window.go=function(id){
   if(id==='asignaciones')renderAsigLista();
   if(id==='asig-admin')renderAsigAdminLista();
   if(id==='proyectos')fltPL();
+  if(id==='usuarios')renderUsrLista();
 };
 
 // LOGIN — waits for data
@@ -808,7 +858,7 @@ window.removeFoto=function(){document.getElementById('fp-img').style.display='no
 
 // CHIPS
 document.querySelectorAll('#ch-canal .chip').forEach(c=>{c.onclick=function(){document.querySelectorAll('#ch-canal .chip').forEach(x=>x.classList.remove('on'));this.classList.add('on');document.getElementById('fp-proy').style.display=this.dataset.v==='OBRAS'?'block':'none';};});
-['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri','mnp-est','mep-est','ch-fotos'].forEach(id=>{const g=document.getElementById(id);if(!g)return;g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});});
+['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri','mnp-est','mep-est','ch-fotos','mu-rol','mu-est'].forEach(id=>{const g=document.getElementById(id);if(!g)return;g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});});
 
 // MODAL
 window.openM=function(id){document.getElementById(id).classList.add('on');};
@@ -863,7 +913,7 @@ window.renderActs=function(list,tab){
     const cardCls=imp.includes('NO')?'noimp':imp==='IMPACTADO'?'imp':'';
     // FIX 5: foto visible en el registro
     return `<div class="card ${cardCls}">
-      ${a.FOTO?`<div style="width:100%;max-height:220px;overflow:hidden;border-radius:10px;margin-bottom:10px;background:#f0f0f0"><img src="${a.FOTO}" referrerpolicy="no-referrer" style="width:100%;max-height:220px;object-fit:cover;display:block" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`:'' }
+      ${a.FOTO?`<div style="width:100%;max-height:220px;overflow:hidden;border-radius:10px;margin-bottom:10px;background:var(--bg)"><img src="https://wsrv.nl/?url=${encodeURIComponent(a.FOTO)}&w=600&output=jpg" style="width:100%;max-height:220px;object-fit:cover;display:block" loading="lazy" onerror="this.src='${a.FOTO}';this.onerror=()=>this.parentElement.style.display='none'"></div>`:'' }
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px">
         <div style="font-size:14px;font-weight:500;flex:1;min-width:0;margin-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.PROYECTO||a.CLIENTE||'Sin nombre'}</div>
         <span class="b ${bc}" style="flex-shrink:0;cursor:pointer" onclick="editAct('${a.id}')">${a.IMPACTO||a['TIPO DE VISITA']||'—'}</span>
@@ -906,7 +956,7 @@ window.renderMuestras=function(){
   const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
   const fl=list.filter(m=>isA||m.ASESOR===mi);
   if(!fl.length){el.innerHTML='<div class="em"><div class="em-i">📦</div><div>Sin muestras registradas</div></div>';return;}
-  el.innerHTML=fl.map(m=>{const f=m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0);return `<div class="card">${m.FOTO?`<img src="${m.FOTO}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.style.display='none'">`:''}<div class="ct">${m.PRODUCTO||''}</div><div class="cs">${m.DESCRIPCION||''}</div><div style="font-size:12px;margin-top:4px">Cant: <b>${m.CANTIDAD||1}</b>${m.CLIENTE?' · '+m.CLIENTE:''}</div>${m.PROYECTO?`<div style="font-size:11px;color:var(--blue)">🏗️ ${m.PROYECTO}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:3px">${m.ASESOR||''} · ${f.toLocaleDateString('es-CO')}</div></div>`;}).join('');
+  el.innerHTML=fl.map(m=>{const f=m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0);return `<div class="card">${m.FOTO?`<img src="${imgProxy(m.FOTO)}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px" loading="lazy" onerror="this.src=this.src.includes('wsrv')?this.src.replace(/^.*url=/,'').slice(0,-20):'data:,';this.onerror=null" style="width:100%;max-height:140px;object-fit:cover">`:''}<div class="ct">${m.PRODUCTO||''}</div><div class="cs">${m.DESCRIPCION||''}</div><div style="font-size:12px;margin-top:4px">Cant: <b>${m.CANTIDAD||1}</b>${m.CLIENTE?' · '+m.CLIENTE:''}</div>${m.PROYECTO?`<div style="font-size:11px;color:var(--blue)">🏗️ ${m.PROYECTO}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:3px">${m.ASESOR||''} · ${f.toLocaleDateString('es-CO')}</div></div>`;}).join('');
 };
 
 // ASIGNACIONES — FIX 2: asesor ve solo sus asignaciones, no las del admin
@@ -1092,6 +1142,112 @@ window.generarPDF=async function(){
   pdf.save(`informe_${ini}_${fin}.pdf`);toast('✅ PDF descargado');
 };
 
+// ── USUARIOS ──────────────────────────────────────────────
+window.renderUsrLista=function(){
+  const el=document.getElementById('usr-list');if(!window.Usuarios){el.innerHTML='<div class="ld">Cargando...</div>';return;}
+  const roles={ADMINISTRADOR:'ba1',ASESOR:'bg1',TECNICO:'bb1'};
+  el.innerHTML=window.Usuarios.map(u=>{
+    const nom=u['NOMBRE EMPLEADO']||u.nombre||'';
+    const ced=u['CEDULA ID']||u.cedula||u.id||'';
+    const tipo=u['TIPO']||u.tipo||'ASESOR';
+    const est=u.ESTADO||'ACTIVO';
+    const ini=nom.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    return `<div class="card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--rlight);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--rdark);font-size:14px;flex-shrink:0">${ini}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:500">${nom}</div>
+          <div style="font-size:12px;color:var(--muted)">Cédula: ${ced}</div>
+          <div style="margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <span class="b ${roles[tipo]||'bb1'}">${tipo}</span>
+            <span class="b ${est==='ACTIVO'?'bg1':'ba1'}">${est}</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="bg2" onclick="editUsuario('${u.id}')" style="padding:6px 10px;font-size:12px">✏️</button>
+          <button class="bg2" onclick="promptDeleteUser('${u.id}','${nom.replace(/'/g,'')}');" style="padding:6px 10px;font-size:12px;color:var(--red);border-color:var(--red)">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.editUsuario=function(id){
+  const u=window.Usuarios?.find(x=>x.id===id);if(!u)return;
+  document.getElementById('mu-id').value=id;
+  document.getElementById('mu-title').textContent='Editar Usuario';
+  document.getElementById('mu-btn').textContent='Guardar cambios';
+  document.getElementById('mu-nom').value=u['NOMBRE EMPLEADO']||u.nombre||'';
+  document.getElementById('mu-ced').value=u['CEDULA ID']||u.cedula||'';
+  document.getElementById('mu-pw').value='';document.getElementById('mu-pw2').value='';
+  const tipo=u['TIPO']||u.tipo||'ASESOR';
+  document.querySelectorAll('#mu-rol .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===tipo)c.classList.add('on');});
+  const est=u.ESTADO||'ACTIVO';
+  document.querySelectorAll('#mu-est .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===est)c.classList.add('on');});
+  openM('m-nuevo-usuario');
+};
+
+window.saveUsuario=async function(){
+  const id=document.getElementById('mu-id').value;
+  const nom=document.getElementById('mu-nom').value.trim();
+  const ced=document.getElementById('mu-ced').value.trim();
+  const pw=document.getElementById('mu-pw').value;
+  const pw2=document.getElementById('mu-pw2').value;
+  const tipo=document.querySelector('#mu-rol .chip.on')?.dataset.v||'ASESOR';
+  const est=document.querySelector('#mu-est .chip.on')?.dataset.v||'ACTIVO';
+  if(!nom){toast('Ingresa el nombre completo');return;}
+  if(!ced){toast('Ingresa la cédula');return;}
+  if(!id&&!pw){toast('Ingresa una contraseña');return;}
+  if(pw&&pw!==pw2){toast('Las contraseñas no coinciden');return;}
+  if(pw&&pw.length<4){toast('La contraseña debe tener al menos 4 caracteres');return;}
+  try{
+    const docId=id||ced;
+    const existing=window.Usuarios?.find(u=>(u['CEDULA ID']||u.cedula||u.id)===ced);
+    if(!id&&existing){toast('Ya existe un usuario con esa cédula');return;}
+    const data={'NOMBRE EMPLEADO':nom,'CEDULA ID':ced,'TIPO':tipo,'ESTADO':est};
+    if(pw)data['CONTRASEÑA']=pw;
+    if(id){
+      await window.FS.updateDoc(window.FS.doc(window.db,'usuarios',id),data);
+      const u=window.Usuarios?.find(x=>x.id===id);if(u)Object.assign(u,data);
+    } else {
+      await window.FS.setDoc(window.FS.doc(window.db,'usuarios',docId),data);
+      window.Usuarios.push({id:docId,...data});
+    }
+    toast('✅ Usuario '+(id?'actualizado':'creado'));
+    closeM('m-nuevo-usuario');
+    // Reset form
+    ['mu-id','mu-nom','mu-ced','mu-pw','mu-pw2'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('mu-title').textContent='Nuevo Usuario';
+    document.getElementById('mu-btn').textContent='Crear usuario';
+    document.querySelectorAll('#mu-rol .chip').forEach((c,i)=>{c.classList.toggle('on',i===0);});
+    document.querySelectorAll('#mu-est .chip').forEach((c,i)=>{c.classList.toggle('on',i===0);});
+    renderUsrLista();
+    // Refresh asesor selects
+    const asesores=window.Usuarios.filter(u=>(u['TIPO']||u.tipo||'ASESOR')==='ASESOR');
+    ['ma-as','r-a','mep-asesor'].forEach(sid=>{const s=document.getElementById(sid);if(!s)return;const first=s.options[0]?.outerHTML||'';s.innerHTML=first;asesores.forEach(u=>{const o=document.createElement('option');o.value=u['NOMBRE EMPLEADO']||u.nombre||'';o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';s.appendChild(o);});});
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window._deleteUID=null;
+window.promptDeleteUser=function(id,nom){
+  window._deleteUID=id;
+  document.getElementById('m-confirm-txt').textContent='¿Seguro que deseas eliminar a '+nom+'? Esta acción no se puede deshacer.';
+  openM('m-confirm-del');
+};
+window.confirmDeleteUser=async function(){
+  const id=window._deleteUID;if(!id)return;
+  try{
+    // No eliminamos de Firebase, solo marcamos INACTIVO para preservar historial
+    await window.FS.updateDoc(window.FS.doc(window.db,'usuarios',id),{ESTADO:'INACTIVO'});
+    const u=window.Usuarios?.find(x=>x.id===id);if(u)u.ESTADO='INACTIVO';
+    toast('Usuario desactivado (historial preservado)');
+    closeM('m-confirm-del');renderUsrLista();
+  }catch(e){toast('Error: '+e.message);}
+};
+// ── FIN USUARIOS ───────────────────────────────────────────
+
+// Proxy helper para imágenes Firebase (evita CORS)
+function imgProxy(url){if(!url)return '';try{return 'https://wsrv.nl/?url='+encodeURIComponent(url)+'&w=600&output=jpg';}catch(e){return url;}}
 window.toast=function(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800);};
 </script>
 </body>
