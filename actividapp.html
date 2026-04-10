@@ -693,7 +693,7 @@ function applyU(cu){
   document.getElementById('c-asig-admin').style.display=isA?'block':'none';
   document.getElementById('act-filter-asesor').style.display=isA?'block':'none';
   const hr=new Date().getHours();
-  const gr=hr<12?'Buenos días':'hr<18?Buenas tardes':'Buenas noches';
+  const gr=hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches';
   document.getElementById('h-greeting').textContent=(hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches')+', '+nom;
 }
 
