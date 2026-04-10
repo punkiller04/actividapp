@@ -202,11 +202,17 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     </select>
   </div>
   <div class="cnt">
-    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+    <div class="sw" style="margin-bottom:8px"><input id="act-search" placeholder="Buscar cliente o proyecto..." oninput="renderActs(window.Actividades,window.actTab||'hoy')" style="width:100%;padding:9px 12px 9px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
+    <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
       <button class="chip on" id="t-h" onclick="setTab('hoy')">Hoy</button>
       <button class="chip" id="t-s" onclick="setTab('semana')">Semana</button>
       <button class="chip" id="t-m" onclick="setTab('mes')">Mes</button>
       <button class="chip" id="t-t" onclick="setTab('todo')">Todo</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="chip on" id="fi-t" onclick="setImpF('todos')">Todos</button>
+      <button class="chip" id="fi-i" onclick="setImpF('impactado')">🟢 Impactados</button>
+      <button class="chip" id="fi-n" onclick="setImpF('no_impactado')">🔴 No impactados</button>
     </div>
     <div id="act-list"><div class="ld">Cargando...</div></div>
   </div>
@@ -476,7 +482,14 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
 <div class="mo" id="m-asig"><div class="md"><div class="md-pull"></div>
   <div class="mdt">Asignar Proyecto</div>
-  <div class="f"><label>Proyecto</label><div class="sw"><input id="ma-ps" placeholder="Buscar proyecto..." oninput="fltAProy()" style="width:100%;padding:8px 12px 8px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div><select class="sl2" id="ma-pr" size="4"><option value="">Escribe para buscar...</option></select><button class="bg2" style="margin-top:6px;width:100%" onclick="openM('m-nuevo-proy')">+ Crear proyecto nuevo</button></div>
+  <div class="f"><label>Proyecto</label>
+    <div id="ma-proy-sv" class="sv" style="display:none"><span id="ma-proy-sv-t"></span><span class="sv-x" onclick="clearSelAsig()">✕</span></div>
+    <div id="ma-proy-sw">
+      <div class="sw"><input id="ma-ps" placeholder="Buscar proyecto..." oninput="fltAProy()" style="width:100%;padding:8px 12px 8px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
+      <select class="sl2" id="ma-pr" size="4" onchange="selProyAsig()"><option value="">Escribe para buscar...</option></select>
+    </div>
+    <button class="bg2" style="margin-top:6px;width:100%" onclick="openM('m-nuevo-proy')">+ Crear proyecto nuevo</button>
+  </div>
   <div class="f"><label>Asesor</label><select id="ma-as"><option value="">Seleccionar asesor</option></select></div>
   <div class="f"><label>Prioridad</label><div class="chips" id="ma-pri"><div class="chip on" data-v="NORMAL">Normal</div><div class="chip" data-v="ALTA">🔴 Alta</div><div class="chip" data-v="URGENTE">⚡ Urgente</div></div></div>
   <div class="f"><label>Instrucciones</label><textarea id="ma-obs" rows="2" placeholder="¿Qué debe hacer?"></textarea></div>
@@ -657,17 +670,17 @@ window.saveMuestra=async function(){
 };
 
 window.saveAsig=async function(){
-  const proy=document.getElementById('ma-pr').value;const asesor=document.getElementById('ma-as').value;
+  const proy=document.getElementById('ma-pr').value||document.getElementById('ma-proy-sv-t')?.textContent||'';const asesor=document.getElementById('ma-as').value;
   if(!proy||!asesor){toast('Selecciona proyecto y asesor');return;}
   const pri=document.querySelector('#ma-pri .chip.on')?.dataset.v||'NORMAL';
   const obs=document.getElementById('ma-obs').value;
   try{
     // La asignacion se guarda con el asesor destino — NO con el admin
     const data={PROYECTO:proy,ASESOR:asesor,ASIGNADO_POR:window.CU?.nombre||'',PRIORIDAD:pri,INSTRUCCIONES:obs,fecha:FS.Timestamp.now(),ESTADO:'PENDIENTE',COMENTARIO_ASESOR:''};
-    await FS.addDoc(collection(db,'asignaciones'),data);
-    window.Asignaciones.unshift({...data});
+    const ref2Asig=await FS.addDoc(collection(db,'asignaciones'),data);
+    window.Asignaciones.unshift({id:ref2Asig.id,...data});
     toast('✅ Asignado a '+asesor.split(' ')[0]);closeM('m-asig');
-    document.getElementById('ma-ps').value='';document.getElementById('ma-pr').innerHTML='<option value="">Escribe para buscar...</option>';document.getElementById('ma-obs').value='';
+    document.getElementById('ma-ps').value='';document.getElementById('ma-pr').innerHTML='<option value="">Escribe para buscar...</option>';document.getElementById('ma-obs').value='';clearSelAsig();
     refreshStats();renderAsigAdminLista();
   }catch(e){toast('Error: '+e.message);}
 };
@@ -804,6 +817,8 @@ document.querySelectorAll('.mo').forEach(m=>{m.addEventListener('click',function
 
 // SEL VALUE
 window.selProy=function(){const s=document.getElementById('np');const v=s.value;if(!v)return;window._selProy=v;document.getElementById('proy-sv-t').textContent=v;document.getElementById('proy-sv').classList.add('on');document.getElementById('proy-sw').style.display='none';};
+window.selProyAsig=function(){const s=document.getElementById('ma-pr');const v=s.value;if(!v)return;const txt=s.options[s.selectedIndex]?.textContent||v;document.getElementById('ma-proy-sv-t').textContent=txt;document.getElementById('ma-proy-sv').style.display='flex';document.getElementById('ma-proy-sw').style.display='none';};
+window.clearSelAsig=function(){document.getElementById('ma-proy-sv').style.display='none';document.getElementById('ma-proy-sw').style.display='block';document.getElementById('ma-ps').value='';document.getElementById('ma-pr').innerHTML='<option value="">Escribe para buscar...</option>';};
 window.selCli=function(){const s=document.getElementById('nc');const v=s.value;if(!v)return;window._selCli=v;document.getElementById('cli-sv-t').textContent=v;document.getElementById('cli-sv').classList.add('on');document.getElementById('cli-sw').style.display='none';};
 window.clearSel=function(t){if(t==='proy'){window._selProy='';document.getElementById('proy-sv').classList.remove('on');document.getElementById('proy-sw').style.display='block';document.getElementById('np-s').value='';document.getElementById('np').innerHTML='<option value="">Escribe para buscar...</option>';}else{window._selCli='';document.getElementById('cli-sv').classList.remove('on');document.getElementById('cli-sw').style.display='block';document.getElementById('nc-s').value='';document.getElementById('nc').innerHTML='<option value="">Escribe para buscar...</option>';}};
 
@@ -819,16 +834,22 @@ window.fltPL=function(){const q=(document.getElementById('ps')?.value||'').toLow
 window.setPF=function(f){window._proyF=f;['pf-t','pf-a','pf-i'].forEach(id=>document.getElementById(id).classList.remove('on'));const m={todos:'pf-t',activo:'pf-a',inactivo:'pf-i'};document.getElementById(m[f]).classList.add('on');fltPL();};
 
 // RENDER ACTIVIDADES — FIX 1+5: admin ve TODAS las visitas, con filtro por asesor, con fotos
+window._impF='todos';
+window.setImpF=function(f){window._impF=f;['t','i','n'].forEach(x=>document.getElementById('fi-'+x)?.classList.remove('on'));const m={todos:'t',impactado:'i',no_impactado:'n'};document.getElementById('fi-'+m[f])?.classList.add('on');if(window.Actividades)renderActs(window.Actividades,window.actTab||'hoy');};
 window.setTab=function(t){window.actTab=t;['h','s','m','t'].forEach(x=>document.getElementById('t-'+x).classList.remove('on'));const m={hoy:'h',semana:'s',mes:'m',todo:'t'};document.getElementById('t-'+m[t]).classList.add('on');if(window.Actividades)renderActs(window.Actividades,t);};
 window.renderActs=function(list,tab){
   const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
   const filtroAsesor=document.getElementById('act-filter-asesor')?.value||'';
+  const searchQ=(document.getElementById('act-search')?.value||'').toLowerCase().trim();
+  const impF=window._impF||'todos';
   const hD=new Date();hD.setHours(0,0,0,0);const sD=new Date(hD);sD.setDate(sD.getDate()-6);const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
   let fl=list.filter(a=>{
-    // FIX 1: admin ve todo, asesor solo lo suyo
     if(!isA&&a.ASESOR!==mi)return false;
-    // filtro asesor para admin
     if(isA&&filtroAsesor&&a.ASESOR!==filtroAsesor)return false;
+    if(searchQ){const n=(a.PROYECTO||'').toLowerCase();const cl=(a.CLIENTE||'').toLowerCase();if(!n.includes(searchQ)&&!cl.includes(searchQ))return false;}
+    if(impF==='impactado'&&(a.IMPACTO||'').toUpperCase().includes('NO'))return false;
+    if(impF==='no_impactado'&&!(a.IMPACTO||'').toUpperCase().includes('NO'))return false;
+    if(impF==='no_impactado'&&!(a.IMPACTO||''))return false;
     const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
     if(tab==='hoy')return f>=hD;if(tab==='semana')return f>=sD;if(tab==='mes')return f>=mD;return true;
   });
@@ -842,7 +863,7 @@ window.renderActs=function(list,tab){
     const cardCls=imp.includes('NO')?'noimp':imp==='IMPACTADO'?'imp':'';
     // FIX 5: foto visible en el registro
     return `<div class="card ${cardCls}">
-      ${a.FOTO?`<img src="${a.FOTO}" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:10px" loading="lazy" onerror="this.style.display='none'">`:'' }
+      ${a.FOTO?`<div style="width:100%;max-height:220px;overflow:hidden;border-radius:10px;margin-bottom:10px;background:#f0f0f0"><img src="${a.FOTO}" referrerpolicy="no-referrer" style="width:100%;max-height:220px;object-fit:cover;display:block" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`:'' }
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px">
         <div style="font-size:14px;font-weight:500;flex:1;min-width:0;margin-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.PROYECTO||a.CLIENTE||'Sin nombre'}</div>
         <span class="b ${bc}" style="flex-shrink:0;cursor:pointer" onclick="editAct('${a.id}')">${a.IMPACTO||a['TIPO DE VISITA']||'—'}</span>
@@ -885,7 +906,7 @@ window.renderMuestras=function(){
   const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
   const fl=list.filter(m=>isA||m.ASESOR===mi);
   if(!fl.length){el.innerHTML='<div class="em"><div class="em-i">📦</div><div>Sin muestras registradas</div></div>';return;}
-  el.innerHTML=fl.map(m=>{const f=m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0);return `<div class="card">${m.FOTO?`<img src="${m.FOTO}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px" loading="lazy" onerror="this.style.display='none'">`:''}<div class="ct">${m.PRODUCTO||''}</div><div class="cs">${m.DESCRIPCION||''}</div><div style="font-size:12px;margin-top:4px">Cant: <b>${m.CANTIDAD||1}</b>${m.CLIENTE?' · '+m.CLIENTE:''}</div>${m.PROYECTO?`<div style="font-size:11px;color:var(--blue)">🏗️ ${m.PROYECTO}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:3px">${m.ASESOR||''} · ${f.toLocaleDateString('es-CO')}</div></div>`;}).join('');
+  el.innerHTML=fl.map(m=>{const f=m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0);return `<div class="card">${m.FOTO?`<img src="${m.FOTO}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.style.display='none'">`:''}<div class="ct">${m.PRODUCTO||''}</div><div class="cs">${m.DESCRIPCION||''}</div><div style="font-size:12px;margin-top:4px">Cant: <b>${m.CANTIDAD||1}</b>${m.CLIENTE?' · '+m.CLIENTE:''}</div>${m.PROYECTO?`<div style="font-size:11px;color:var(--blue)">🏗️ ${m.PROYECTO}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:3px">${m.ASESOR||''} · ${f.toLocaleDateString('es-CO')}</div></div>`;}).join('');
 };
 
 // ASIGNACIONES — FIX 2: asesor ve solo sus asignaciones, no las del admin
@@ -952,7 +973,7 @@ window.renderMap=function(){
     const p=window.Proyectos?.find(x=>x['NOMBRE PROYECTO']===a.PROYECTO);
     const coords=(p.COORDENADAS||'').toString().split(',');const lat=parseFloat(coords[0]),lng=parseFloat(coords[1]);if(isNaN(lat)||isNaN(lng))return;
     const icon=L.divIcon({html:'<div style="font-size:22px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))">⭐</div>',iconSize:[24,24],className:''});
-    const m=L.marker([lat,lng],{icon});m.bindPopup(`<b>${a.PROYECTO}</b><br>→ ${a.ASESOR}<br><span style="color:orange">⭐ Pendiente</span>`);
+    const m=L.marker([lat,lng],{icon});m.bindPopup(`<b>${a.PROYECTO}</b><br><b>${a.ASESOR}</b><br><span style="color:orange;font-weight:600">⭐ Pendiente</span><br><a href="#" onclick="editAsig('${a.id}');window.leafMap.closePopup();return false" style="color:#C0392B;font-weight:600">✏️ Actualizar estado</a>`);
     m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
   });
   puntos.forEach(a=>{
