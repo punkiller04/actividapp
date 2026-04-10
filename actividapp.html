@@ -114,6 +114,13 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .drf{display:flex;gap:6px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
 .drf input[type=date]{padding:6px 8px;border:0.5px solid var(--brd);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none}
 .drf .bp-sm{padding:6px 12px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer}
+/* RUTA */
+.ruta-card{background:var(--card);border-radius:14px;border:0.5px solid var(--brd);padding:14px;margin-bottom:10px;box-shadow:var(--sh);position:relative}
+.ruta-card.done{opacity:.55;border-left:3px solid var(--green)}
+.ruta-card.active{border-left:3px solid var(--red);box-shadow:0 2px 12px rgba(192,57,43,.15)}
+.ruta-num{width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ruta-num.done{background:var(--green)}
+.ruta-step{display:flex;gap:10px;align-items:center}
 /* LOADING */
 #app-loading{position:fixed;inset:0;background:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;color:#fff;gap:12px}
 #app-loading.hide{display:none}
@@ -179,6 +186,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <div class="card" id="c-dash" style="cursor:pointer;display:none" onclick="go('dashboard')"><div class="crow"><div class="cico" style="background:#FEF5E7">📊</div><div class="cbody"><div class="ct">Dashboard</div><div class="cs">Gestión integral del equipo</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" id="c-rep" style="cursor:pointer;display:none" onclick="go('reportes')"><div class="crow"><div class="cico" style="background:#EAF3DE">📄</div><div class="cbody"><div class="ct">Informe PDF</div><div class="cs">Reporte gerencial con fotos</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" id="c-asig-admin" style="cursor:pointer;display:none" onclick="go('asig-admin')"><div class="crow"><div class="cico" style="background:#F5EEF8">🏗️</div><div class="cbody"><div class="ct">Asignar proyectos</div><div class="cs">Gestión técnico de obras</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('ruta')"><div class="crow"><div class="cico" style="background:#EAF5FB">🗺️</div><div class="cbody"><div class="ct">Ordenar ruta</div><div class="cs">Optimiza tu recorrido del día</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" id="c-usuarios" style="cursor:pointer;display:none" onclick="go('usuarios')"><div class="crow"><div class="cico" style="background:#EAF5FB">👤</div><div class="cbody"><div class="ct">Usuarios y roles</div><div class="cs">Gestión del equipo</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="dv"></div>
     <button class="bs" style="margin-top:0" onclick="doLogout()">Cerrar sesión</button>
@@ -241,7 +249,15 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
         <button class="bg2" style="margin-top:6px;width:100%" onclick="openM('m-nuevo-proy')">+ Crear nuevo proyecto</button>
       </div>
     </div>
-    <div class="f"><label>Tipo de cliente</label><select id="ntc"><option value="">Seleccionar</option><option>CONSTRUCTOR</option><option>FERRETERIA</option><option>DISTRIBUIDOR</option><option>ARQUITECTO</option><option>CONTRATISTA</option></select></div>
+    <div class="f"><label>Tipo de cliente</label><select id="ntc" onchange="onTipoCliChange(this.value)"><option value="">Seleccionar</option><option>CONSTRUCTOR</option><option>FERRETERIA</option><option>DISTRIBUIDOR</option><option>ARQUITECTO</option><option>CONTRATISTA</option></select></div>
+    <div class="f" id="fp-ferr-size" style="display:none">
+      <label>Tamaño ferretería</label>
+      <div class="chips" id="ch-ferr-size">
+        <div class="chip on" data-v="PEQUEÑA">🔹 Pequeña</div>
+        <div class="chip" data-v="MEDIANA">🔶 Mediana</div>
+        <div class="chip" data-v="GRANDE">🔷 Grande</div>
+      </div>
+    </div>
     <div class="f">
       <label>Cliente</label>
       <div id="cli-sv" class="sv"><span id="cli-sv-t"></span><span class="sv-x" onclick="clearSel('cli')">✕</span></div>
@@ -253,7 +269,15 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     </div>
     <div class="f"><label>Tipo de visita</label><div class="chips" id="ch-tv"><div class="chip on" data-v="VISITA">Visita</div><div class="chip" data-v="SEGUIMIENTO">Seguimiento</div><div class="chip" data-v="CIERRE">Cierre</div><div class="chip" data-v="LLAMADA">Llamada</div><div class="chip" data-v="OTRO">Otro</div></div></div>
     <div class="f"><label>Impacto</label><div class="chips" id="ch-imp"><div class="chip on" data-v="IMPACTADO">🟢 Impactado</div><div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div></div></div>
-    <div class="f"><label>Ubicación GPS</label><div class="loc" id="loc-box"><span>📍</span><span id="loc-t">Obteniendo...</span></div></div>
+    <div class="f">
+      <label>Ubicación</label>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <button class="chip on" id="loc-type-gps" onclick="setLocType('gps')" style="flex:1;justify-content:center">📍 GPS actual</button>
+        <button class="chip" id="loc-type-dir" onclick="setLocType('dir')" style="flex:1;justify-content:center">📝 Dirección</button>
+      </div>
+      <div class="loc" id="loc-box"><span>📍</span><span id="loc-t">Obteniendo...</span></div>
+      <input id="loc-dir-input" placeholder="Ej: Calle 50 #40-20, Medellín" style="display:none;width:100%;padding:10px 12px;border:1px solid var(--brd);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none;margin-top:4px" oninput="window.GPS=this.value">
+    </div>
     <div class="f">
       <label>Foto <span style="font-weight:400;color:var(--muted);text-transform:none">(se sube en segundo plano)</span></label>
       <img id="fp-img" class="fpimg">
@@ -417,6 +441,42 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   </div>
 </div>
 
+
+<!-- ===== RUTA ===== -->
+<div class="scr" id="s-ruta">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Ordenar Ruta</div><button class="tb-act" id="btn-iniciar-ruta" onclick="iniciarRuta()" style="display:none">▶ Iniciar</button></div>
+  <div class="cnt" id="ruta-cnt">
+    <div id="ruta-step1">
+      <div class="stl">Selecciona los proyectos a visitar hoy</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Toca para agregar a la ruta. Puedes agregar hasta 10 paradas.</div>
+      <div class="sw" style="margin-bottom:8px"><input id="ruta-search" placeholder="Buscar proyecto o dirección..." oninput="fltRuta()" style="width:100%;padding:9px 12px 9px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
+      <div id="ruta-disponibles"><div class="ld">Cargando proyectos...</div></div>
+    </div>
+    <div id="ruta-step2" style="display:none">
+      <div class="stl">Tu ruta optimizada</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Organizamos las paradas para minimizar el recorrido. Toca cada una para navegar.</div>
+      <div id="ruta-lista"></div>
+      <button class="bs" style="margin-top:4px" onclick="resetRuta()">↩ Cambiar selección</button>
+    </div>
+  </div>
+  <div id="ruta-footer" style="padding:12px 16px;background:var(--card);border-top:0.5px solid var(--brd);display:none">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500" id="ruta-progreso-txt">0 de 0 visitados</div>
+        <div style="height:4px;background:var(--bg);border-radius:2px;margin-top:4px;overflow:hidden"><div id="ruta-progreso-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .4s;width:0%"></div></div>
+      </div>
+      <span id="ruta-pct" style="font-size:18px;font-weight:600;color:var(--green)">0%</span>
+    </div>
+    <button class="bp" id="btn-siguiente-parada" onclick="siguienteParada()">📍 Navegar a siguiente parada</button>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">🗺️</span>Ruta</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
 
 <!-- ===== USUARIOS ===== -->
 <div class="scr" id="s-usuarios">
@@ -624,7 +684,8 @@ window.guardar=async function(){
   if(!cli){toast('Selecciona un cliente');return;}
   btn.disabled=true;btn.innerHTML='<span class="sp"></span>Guardando...';
   try{
-    const d2={ID_VISITA:Math.random().toString(36).substr(2,8),fecha:FS.Timestamp.now(),ASESOR:window.CU?.nombre||'',CANAL:canal,'TIPO CLIENTE':document.getElementById('ntc').value,CLIENTE:cli,PROYECTO:proy,'TIPO DE VISITA':tv,FOTO:'',IMPACTO:imp,OBSERVACION:obs,'UBICACION':ubi};
+    const ferrSize=document.querySelector('#ch-ferr-size .chip.on')?.dataset.v||'';
+    const d2={ID_VISITA:Math.random().toString(36).substr(2,8),fecha:FS.Timestamp.now(),ASESOR:window.CU?.nombre||'',CANAL:canal,'TIPO CLIENTE':document.getElementById('ntc').value,'TAMAÑO FERRETERIA':ferrSize,CLIENTE:cli,PROYECTO:proy,'TIPO DE VISITA':tv,FOTO:'',IMPACTO:imp,OBSERVACION:obs,'UBICACION':ubi};
     const ref2=await FS.addDoc(collection(db,'actividades'),d2);
     window.Actividades.unshift({id:ref2.id,...d2});
     toast('✅ Visita guardada');
@@ -754,6 +815,7 @@ function applyU(cu){
   document.getElementById('c-asig-admin').style.display=isA?'block':'none';
   document.getElementById('act-filter-asesor').style.display=isA?'block':'none';
   document.getElementById('c-usuarios').style.display=isA?'block':'none';
+  startAutoRefresh();
   const hr=new Date().getHours();
   const gr=hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches';
   document.getElementById('h-greeting').textContent=(hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches')+', '+nom;
@@ -771,6 +833,7 @@ window.go=function(id){
   if(id==='asig-admin')renderAsigAdminLista();
   if(id==='proyectos')fltPL();
   if(id==='usuarios')renderUsrLista();
+  if(id==='ruta')initRutaScreen();
 };
 
 // LOGIN — waits for data
@@ -858,7 +921,7 @@ window.removeFoto=function(){document.getElementById('fp-img').style.display='no
 
 // CHIPS
 document.querySelectorAll('#ch-canal .chip').forEach(c=>{c.onclick=function(){document.querySelectorAll('#ch-canal .chip').forEach(x=>x.classList.remove('on'));this.classList.add('on');document.getElementById('fp-proy').style.display=this.dataset.v==='OBRAS'?'block':'none';};});
-['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri','mnp-est','mep-est','ch-fotos','mu-rol','mu-est'].forEach(id=>{const g=document.getElementById(id);if(!g)return;g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});});
+['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri','mnp-est','mep-est','ch-fotos','mu-rol','mu-est','ch-ferr-size'].forEach(id=>{const g=document.getElementById(id);if(!g)return;g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});});
 
 // MODAL
 window.openM=function(id){document.getElementById(id).classList.add('on');};
@@ -986,7 +1049,10 @@ window.renderAsigLista=function(){
       ${a.INSTRUCCIONES?`<div style="font-size:12px;margin-top:7px;padding:6px 8px;background:var(--blight);border-radius:6px;color:var(--blue)">📋 ${a.INSTRUCCIONES}</div>`:''}
       ${a.COMENTARIO_ASESOR?`<div style="font-size:12px;margin-top:5px;padding:6px 8px;background:var(--glight);border-radius:6px;color:var(--green)">💬 ${a.COMENTARIO_ASESOR}</div>`:''}
       <div style="font-size:11px;color:var(--muted);margin-top:6px">${f2.toLocaleDateString('es-CO')}</div>
-      ${a.ESTADO!=='CERRADO'?`<button class="bg2" style="width:100%;margin-top:8px" onclick="editAsig('${a.id}')">✏️ Actualizar estado</button>`:''}
+      <div style="display:flex;gap:6px;margin-top:8px">
+        ${a.ESTADO!=='CERRADO'?`<button class="bg2" style="flex:1" onclick="editAsig('${a.id}')">✏️ Actualizar</button>`:''}
+        ${(()=>{const p=window.Proyectos?.find(x=>x['NOMBRE PROYECTO']===a.PROYECTO);const dir=p?.DIRECCION||p?.COORDENADAS||'';return dir?`<button class="bg2" style="flex:1;color:var(--blue);border-color:var(--blue)" onclick="navegarA('${dir}')">🧭 Navegar</button>`:''})()}
+      </div>
     </div>`;
   }).join('');
 };
@@ -1245,6 +1311,199 @@ window.confirmDeleteUser=async function(){
   }catch(e){toast('Error: '+e.message);}
 };
 // ── FIN USUARIOS ───────────────────────────────────────────
+
+// ── TIPO UBICACIÓN ───────────────────────────────────────
+window.setLocType=function(t){
+  document.getElementById('loc-type-gps').classList.toggle('on',t==='gps');
+  document.getElementById('loc-type-dir').classList.toggle('on',t==='dir');
+  document.getElementById('loc-box').style.display=t==='gps'?'flex':'none';
+  document.getElementById('loc-dir-input').style.display=t==='dir'?'block':'none';
+  if(t==='gps'){window.GPS='';getGPS();}else{window.GPS=document.getElementById('loc-dir-input').value||'';}
+};
+window.onTipoCliChange=function(val){document.getElementById('fp-ferr-size').style.display=val==='FERRETERIA'?'block':'none';};
+
+// ── ASIGNACION — botón navegar ────────────────────────────
+window.navegarA=function(dir){
+  if(!dir){toast('Sin dirección disponible');return;}
+  const url='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(dir)+'&travelmode=driving';
+  window.open(url,'_blank');
+};
+
+// ── AUTO-REFRESH para admin (cada 10 min) ─────────────────
+let _refreshTimer=null;
+function startAutoRefresh(){
+  if(_refreshTimer)clearInterval(_refreshTimer);
+  if(window.CU?.tipo==='ADMINISTRADOR'){
+    _refreshTimer=setInterval(async()=>{
+      try{
+        const as=await window.FS.getDocs(window.FS.query(window.FS.collection(window.db,'actividades'),window.FS.orderBy('fecha','desc')));
+        window.Actividades=[];as.forEach(d=>window.Actividades.push({id:d.id,...d.data()}));
+        const asg=await window.FS.getDocs(window.FS.query(window.FS.collection(window.db,'asignaciones'),window.FS.orderBy('fecha','desc')));
+        window.Asignaciones=[];asg.forEach(d=>window.Asignaciones.push({id:d.id,...d.data()}));
+        refreshStats();
+        const cur=document.querySelector('.scr.on')?.id?.replace('s-','');
+        if(cur==='actividades')renderActs(window.Actividades,window.actTab||'hoy');
+        if(cur==='dashboard')renderDash(window.Actividades);
+        toast('🔄 Datos actualizados');
+      }catch(e){}
+    },10*60*1000);
+  }
+}
+
+// ── MÓDULO RUTA ───────────────────────────────────────────
+window._rutaSeleccionados=[];
+window._rutaOrdenada=[];
+window._rutaActual=0;
+
+window.initRutaScreen=function(){
+  window._rutaSeleccionados=[];
+  renderRutaDisponibles();
+  document.getElementById('ruta-step1').style.display='block';
+  document.getElementById('ruta-step2').style.display='none';
+  document.getElementById('ruta-footer').style.display='none';
+  document.getElementById('btn-iniciar-ruta').style.display='none';
+};
+
+window.fltRuta=function(){
+  const q=document.getElementById('ruta-search').value.toLowerCase().trim();
+  renderRutaDisponibles(q);
+};
+
+window.renderRutaDisponibles=function(q){
+  const el=document.getElementById('ruta-disponibles');
+  const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
+  // Combinar asignaciones + proyectos
+  let items=[];
+  // Primero asignaciones del asesor
+  (window.Asignaciones||[]).filter(a=>isA||a.ASESOR===mi).filter(a=>a.ESTADO!=='CERRADO').forEach(a=>{
+    const p=window.Proyectos?.find(x=>x['NOMBRE PROYECTO']===a.PROYECTO);
+    const dir=p?.DIRECCION||p?.COORDENADAS||'';
+    items.push({nombre:a.PROYECTO,dir,tipo:'asignacion',prioridad:a.PRIORIDAD,coords:p?.COORDENADAS||''});
+  });
+  // Luego proyectos activos
+  (window.Proyectos||[]).filter(p=>(p.ESTADO||'ACTIVO')!=='INACTIVO').forEach(p=>{
+    const n=p['NOMBRE PROYECTO']||'';
+    if(!items.find(i=>i.nombre===n))items.push({nombre:n,dir:p.DIRECCION||p.COORDENADAS||'',tipo:'proyecto',prioridad:'NORMAL',coords:p.COORDENADAS||''});
+  });
+  if(q)items=items.filter(i=>i.nombre.toLowerCase().includes(q)||i.dir.toLowerCase().includes(q));
+  items=items.slice(0,40);
+  if(!items.length){el.innerHTML='<div class="em"><div class="em-i">🏗️</div><div>Sin proyectos disponibles</div></div>';return;}
+  el.innerHTML=items.map((item,i)=>{
+    const sel=window._rutaSeleccionados.find(x=>x.nombre===item.nombre);
+    const selIdx=window._rutaSeleccionados.findIndex(x=>x.nombre===item.nombre);
+    return `<div class="card" onclick="toggleRutaItem(${JSON.stringify(item).replace(/"/g,'&quot;')})" style="cursor:pointer;border-left:3px solid ${sel?'var(--red)':'var(--brd)'}">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:28px;height:28px;border-radius:50%;background:${sel?'var(--red)':'var(--bg)'};color:${sel?'#fff':'var(--muted)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0">${sel?selIdx+1:'+'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.nombre}</div>
+          <div style="font-size:11px;color:var(--muted)">${item.dir||'Sin dirección'} · ${item.tipo==='asignacion'?'📌 Asignado':'🏗️ Proyecto'}</div>
+        </div>
+        ${item.prioridad!=='NORMAL'?`<span class="b br1" style="flex-shrink:0">${item.prioridad}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  const n=window._rutaSeleccionados.length;
+  document.getElementById('btn-iniciar-ruta').style.display=n>0?'block':'none';
+  document.getElementById('btn-iniciar-ruta').textContent=`▶ Optimizar ruta (${n})`;
+};
+
+window.toggleRutaItem=function(item){
+  const idx=window._rutaSeleccionados.findIndex(x=>x.nombre===item.nombre);
+  if(idx>=0)window._rutaSeleccionados.splice(idx,1);
+  else if(window._rutaSeleccionados.length<10)window._rutaSeleccionados.push(item);
+  else{toast('Máximo 10 paradas');return;}
+  renderRutaDisponibles(document.getElementById('ruta-search').value.toLowerCase().trim());
+};
+
+window.iniciarRuta=function(){
+  if(!window._rutaSeleccionados.length){toast('Selecciona al menos una parada');return;}
+  // Optimizar: si tenemos GPS ordenar por distancia desde posición actual (nearest neighbor)
+  const items=[...window._rutaSeleccionados];
+  // Ordenar: urgentes primero, luego por distancia si hay coords, sino mantener orden
+  items.sort((a,b)=>{
+    const pri={URGENTE:0,ALTA:1,NORMAL:2};
+    return (pri[a.prioridad]||2)-(pri[b.prioridad]||2);
+  });
+  // Si tenemos GPS, ordenar los de misma prioridad por distancia
+  if(window.GPS){
+    const [myLat,myLng]=window.GPS.split(',').map(parseFloat);
+    if(!isNaN(myLat)&&!isNaN(myLng)){
+      // Simple nearest-neighbor greedy
+      const withCoords=items.filter(i=>i.coords);const noCoords=items.filter(i=>!i.coords);
+      let ordered=[];let remaining=[...withCoords];let curLat=myLat,curLng=myLng;
+      while(remaining.length){
+        let best=null,bestD=Infinity,bestIdx=0;
+        remaining.forEach((it,i)=>{
+          const [lat,lng]=it.coords.toString().split(',').map(parseFloat);
+          if(isNaN(lat))return;
+          const d=Math.pow(lat-curLat,2)+Math.pow(lng-curLng,2);
+          if(d<bestD){bestD=d;best=it;bestIdx=i;}
+        });
+        if(best){ordered.push(best);remaining.splice(bestIdx,1);const [lat,lng]=best.coords.toString().split(',').map(parseFloat);curLat=lat;curLng=lng;}
+        else break;
+      }
+      items.length=0;items.push(...ordered,...noCoords);
+    }
+  }
+  window._rutaOrdenada=items.map((it,i)=>({...it,done:false,orden:i+1}));
+  window._rutaActual=0;
+  document.getElementById('ruta-step1').style.display='none';
+  document.getElementById('ruta-step2').style.display='block';
+  document.getElementById('ruta-footer').style.display='block';
+  document.getElementById('btn-iniciar-ruta').style.display='none';
+  renderRutaOrdenada();
+};
+
+window.renderRutaOrdenada=function(){
+  const el=document.getElementById('ruta-lista');
+  const total=window._rutaOrdenada.length;
+  const done=window._rutaOrdenada.filter(x=>x.done).length;
+  document.getElementById('ruta-progreso-txt').textContent=done+' de '+total+' visitados';
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('ruta-progreso-bar').style.width=pct+'%';
+  document.getElementById('ruta-pct').textContent=pct+'%';
+  el.innerHTML=window._rutaOrdenada.map((it,i)=>`<div class="ruta-card ${it.done?'done':i===window._rutaActual?'active':''}">
+    <div class="ruta-step">
+      <div class="ruta-num ${it.done?'done':''}">${it.done?'✓':it.orden}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.nombre}</div>
+        <div style="font-size:11px;color:var(--muted)">${it.dir||'Sin dirección'}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        ${it.dir?`<button class="bg2" onclick="navegarA('${it.dir}')" style="padding:6px 8px;font-size:12px" title="Navegar">🧭</button>`:''}
+        ${!it.done?`<button class="bg2" onclick="marcarVisitada(${i})" style="padding:6px 8px;font-size:12px;color:var(--green);border-color:var(--green)" title="Marcar visitada">✅</button>`:''}
+      </div>
+    </div>
+  </div>`).join('');
+};
+
+window.marcarVisitada=function(i){
+  window._rutaOrdenada[i].done=true;
+  // Avanzar al siguiente no visitado
+  window._rutaActual=window._rutaOrdenada.findIndex((x,idx)=>!x.done&&idx>i);
+  if(window._rutaActual===-1)window._rutaActual=window._rutaOrdenada.length;
+  renderRutaOrdenada();
+  const done=window._rutaOrdenada.filter(x=>x.done).length;
+  if(done===window._rutaOrdenada.length)toast('🎉 ¡Ruta completada!');
+};
+
+window.siguienteParada=function(){
+  const siguiente=window._rutaOrdenada.find((x,i)=>!x.done);
+  if(!siguiente){toast('¡Todas las paradas visitadas!');return;}
+  const dir=siguiente.dir||siguiente.nombre;
+  navegarA(dir);
+};
+
+window.resetRuta=function(){
+  window._rutaSeleccionados=[];window._rutaOrdenada=[];window._rutaActual=0;
+  document.getElementById('ruta-step1').style.display='block';
+  document.getElementById('ruta-step2').style.display='none';
+  document.getElementById('ruta-footer').style.display='none';
+  document.getElementById('btn-iniciar-ruta').style.display='none';
+  renderRutaDisponibles();
+};
+
+// ── ADD startAutoRefresh to applyU ───────────────────────
 
 // Proxy helper para imágenes Firebase (evita CORS)
 function imgProxy(url){if(!url)return '';try{return 'https://wsrv.nl/?url='+encodeURIComponent(url)+'&w=600&output=jpg';}catch(e){return url;}}
