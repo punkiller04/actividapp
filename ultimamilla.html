@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#1A3C5E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Última Milla">
+<title>Última Milla</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --navy:#1A3C5E;--navy2:#14304F;--navyL:#EBF2F9;
+  --green:#219653;--glight:#E8F5EE;
+  --amber:#D4800A;--alight:#FEF3E2;
+  --red:#C0392B;--rlight:#FAECE7;
+  --blue:#2471A3;--blight:#EAF4FB;
+  --gray:#64748B;--bg:#F0F4F8;--card:#FFF;--text:#1A1A2E;--muted:#64748B;--brd:#E2E8F0;
+  --sh:0 1px 4px rgba(0,0,0,.07),0 0 0 0.5px rgba(0,0,0,.04)
+}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--card);overflow:hidden}
+.scr{display:none;flex-direction:column;height:100%;overflow:hidden}.scr.on{display:flex}
+/* TOP BAR */
+.tb{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;min-height:54px;flex-shrink:0}
+.tb-t{font-size:16px;font-weight:600;flex:1}.tb-bk{font-size:24px;cursor:pointer;line-height:1}
+.tb-act{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;touch-action:manipulation}
+/* CONTENT */
+.cnt{flex:1;overflow-y:auto;padding:16px;background:var(--bg)}.cnt::-webkit-scrollbar{width:0}
+/* NAV */
+.nb{display:flex;background:var(--card);border-top:0.5px solid var(--brd);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+.nb-b{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 3px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:9px;font-family:'DM Sans',sans-serif;touch-action:manipulation}
+.nb-b.on{color:var(--navy)}.nb-i{font-size:19px;line-height:1}
+/* CARDS */
+.card{background:var(--card);border-radius:14px;border:0.5px solid var(--brd);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.card.revision{border-left:3px solid var(--amber)}
+.card.asignado{border-left:3px solid var(--blue)}
+.card.en-ruta{border-left:3px solid var(--navy)}
+.card.entregado{border-left:3px solid var(--green)}
+.card.fallido{border-left:3px solid var(--red)}
+/* BADGES */
+.b{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.bg1{background:var(--glight);color:#145A32}.ba1{background:var(--alight);color:#7E5109}
+.br1{background:var(--rlight);color:var(--red)}.bb1{background:var(--blight);color:var(--blue)}
+.bn1{background:var(--navyL);color:var(--navy)}
+/* FORMS */
+.f{margin-bottom:13px}
+.f label{font-size:11px;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.f input,.f select,.f textarea{width:100%;padding:10px 12px;border:1px solid var(--brd);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none;transition:border-color .15s;-webkit-appearance:none}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--navy)}.f textarea{resize:none}
+/* BTNS */
+.bp{background:var(--navy);color:#fff;border:none;border-radius:11px;padding:14px;width:100%;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;touch-action:manipulation}
+.bp:disabled{background:#ccc}
+.bp.green{background:var(--green)}.bp.amber{background:var(--amber)}.bp.red{background:var(--red)}
+.bs{background:transparent;color:var(--navy);border:1.5px solid var(--navy);border-radius:11px;padding:12px;width:100%;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px}
+.bg2{background:transparent;color:var(--muted);border:0.5px solid var(--brd);border-radius:9px;padding:8px 12px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;touch-action:manipulation}
+/* CHIPS */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 12px;border-radius:20px;font-size:12px;border:0.5px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;user-select:none}
+.chip.on{background:var(--navyL);color:var(--navy);border-color:var(--navy)}
+/* STAT */
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.sc{background:var(--card);border-radius:12px;padding:12px;border:0.5px solid var(--brd);text-align:center;box-shadow:var(--sh)}
+.sn{font-size:22px;font-weight:600;color:var(--navy);line-height:1}.sl{font-size:10px;color:var(--muted);margin-top:3px}
+/* MISC */
+.fa{border:1.5px dashed var(--brd);border-radius:11px;padding:16px;text-align:center;cursor:pointer}
+.fpimg{width:100%;max-height:160px;object-fit:cover;border-radius:10px;margin-bottom:8px;display:none}
+#fotoEntrega,#fotoPrueba{display:none}
+.lw{flex:1;display:flex;flex-direction:column;justify-content:center;padding:28px;background:var(--card)}
+.em{text-align:center;padding:32px 16px;color:var(--muted)}.em-i{font-size:36px;margin-bottom:10px}
+.ld{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+.stl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;margin-top:4px}
+.dv{height:0.5px;background:var(--brd);margin:10px 0}
+.fab{position:fixed;bottom:76px;right:calc(50% - 224px);width:52px;height:52px;background:var(--navy);border-radius:50%;border:none;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 14px rgba(26,60,94,.4);z-index:10;display:flex;align-items:center;justify-content:center}
+@media(max-width:480px){.fab{right:14px}}
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:rgba(26,26,46,.95);color:#fff;padding:10px 18px;border-radius:22px;font-size:13px;z-index:300;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;max-width:88vw;text-align:center}
+.toast.on{opacity:1}
+.sp{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.mo.on{display:flex}
+.md{background:var(--card);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.md-pull{width:40px;height:4px;background:var(--brd);border-radius:2px;margin:0 auto 14px}
+.mdt{font-size:16px;font-weight:600;margin-bottom:14px}
+/* MAP */
+#um-map-cnt{flex:1;position:relative}#um-map{width:100%;height:100%}
+.map-overlay{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.95);border-radius:12px;padding:10px 14px;font-size:11px;z-index:999;box-shadow:var(--sh);line-height:1.9;max-width:200px}
+/* LOADING */
+#app-loading{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;color:#fff;gap:12px}
+#app-loading.hide{display:none}
+/* RUTA CONDUCTOR */
+.parada-card{background:var(--card);border-radius:14px;border:0.5px solid var(--brd);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.parada-card.activa{border-left:4px solid var(--navy);box-shadow:0 2px 12px rgba(26,60,94,.15)}
+.parada-card.hecha{opacity:.55;border-left:4px solid var(--green)}
+.parada-num{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.parada-num.hecha{background:var(--green)}
+/* STATUS TIMELINE */
+.timeline{padding:8px 0}
+.tl-item{display:flex;gap:10px;align-items:start;padding-bottom:12px;position:relative}
+.tl-item:not(:last-child)::after{content:'';position:absolute;left:10px;top:22px;width:2px;height:calc(100% - 12px);background:var(--brd)}
+.tl-dot{width:22px;height:22px;border-radius:50%;background:var(--brd);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;z-index:1}
+.tl-dot.done{background:var(--navy)}
+.tl-text{flex:1;padding-top:2px}
+.tl-title{font-size:13px;font-weight:500}.tl-sub{font-size:11px;color:var(--muted)}
+/* TABLERO */
+.kanban{display:flex;gap:0;overflow-x:auto;flex:1;padding:0;background:var(--bg)}
+.kanban::-webkit-scrollbar{height:0}
+.kanban-col{min-width:72vw;max-width:280px;background:var(--bg);padding:12px;flex-shrink:0}
+.kanban-h{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.kanban-cnt{font-size:11px;background:var(--brd);border-radius:10px;padding:2px 7px;color:var(--text)}
+</style>
+</head>
+<body>
+
+<div id="app-loading">
+  <div style="width:64px;height:64px;background:rgba(255,255,255,.15);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px">🚚</div>
+  <div style="font-size:16px;font-weight:600">Última Milla</div>
+  <div style="font-size:13px;opacity:.7">Cargando...</div>
+</div>
+
+<div id="app">
+
+<!-- LOGIN -->
+<div class="scr" id="s-login">
+  <div class="lw">
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="font-size:48px;margin-bottom:10px">🚚</div>
+      <div style="font-size:22px;font-weight:600;color:var(--navy)">Última Milla</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px">Gestión de entregas</div>
+    </div>
+    <div class="f"><label>Usuario</label><select id="l-usr"><option value="">— Seleccionar —</option></select></div>
+    <div class="f"><label>Contraseña</label><input type="password" id="l-pw" placeholder="••••••••"></div>
+    <button class="bp" type="button" onclick="doLogin()">Iniciar Sesión</button>
+    <div id="l-err" style="color:var(--red);font-size:13px;text-align:center;margin-top:10px;display:none"></div>
+    <div style="text-align:center;margin-top:20px">
+      <a href="actividapp.html" style="font-size:12px;color:var(--muted)">← Volver a Actividapp</a>
+    </div>
+  </div>
+</div>
+
+<!-- HOME ASESOR / GENERAL -->
+<div class="scr" id="s-home">
+  <div class="tb">
+    <div class="tb-t" id="h-greeting">Última Milla</div>
+    <span id="h-rol" style="background:rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;font-size:11px"></span>
+  </div>
+  <div class="cnt">
+    <div class="sg" id="home-stats">
+      <div class="sc"><div class="sn" id="st-rev">0</div><div class="sl">En revisión</div></div>
+      <div class="sc"><div class="sn" id="st-asig">0</div><div class="sl">Asignados</div></div>
+      <div class="sc"><div class="sn" id="st-ent">0</div><div class="sl">Entregados</div></div>
+    </div>
+    <div class="stl">Acciones</div>
+    <!-- Asesor: crear PVC -->
+    <div class="card" id="c-nuevo-pvc" style="cursor:pointer" onclick="go('nuevo-pvc')"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:11px;background:var(--navyL);display:flex;align-items:center;justify-content:center;font-size:18px">📦</div><div><div style="font-size:14px;font-weight:500">Nueva entrega</div><div style="font-size:12px;color:var(--muted)">Registrar PVC de pedido</div></div><span style="margin-left:auto;color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('mis-pvc')"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:11px;background:var(--glight);display:flex;align-items:center;justify-content:center;font-size:18px">📋</div><div><div style="font-size:14px;font-weight:500">Mis pedidos</div><div style="font-size:12px;color:var(--muted)" id="h-mis-pvc-sub">Ver estado de mis PVC</div></div><span style="margin-left:auto;color:var(--muted);font-size:20px">›</span></div></div>
+    <!-- Jefe bodega -->
+    <div class="card" id="c-tablero" style="cursor:pointer;display:none" onclick="go('tablero')"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:11px;background:var(--alight);display:flex;align-items:center;justify-content:center;font-size:18px">📊</div><div><div style="font-size:14px;font-weight:500">Tablero de pedidos</div><div style="font-size:12px;color:var(--muted)">Asignar y gestionar rutas</div></div><span style="margin-left:auto;color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" id="c-vehiculos" style="cursor:pointer;display:none" onclick="go('vehiculos')"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:11px;background:var(--blight);display:flex;align-items:center;justify-content:center;font-size:18px">🚛</div><div><div style="font-size:14px;font-weight:500">Vehículos</div><div style="font-size:12px;color:var(--muted)">Gestionar flota</div></div><span style="margin-left:auto;color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" id="c-usuarios-um" style="cursor:pointer;display:none" onclick="go('usuarios-um')"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:11px;background:var(--navyL);display:flex;align-items:center;justify-content:center;font-size:18px">👥</div><div><div style="font-size:14px;font-weight:500">Usuarios</div><div style="font-size:12px;color:var(--muted)">Conductores y bodega</div></div><span style="margin-left:auto;color:var(--muted);font-size:20px">›</span></div></div>
+    <!-- Conductor -->
+    <div class="card" id="c-mi-ruta" style="cursor:pointer;display:none" onclick="go('mi-ruta')"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:11px;background:var(--navyL);display:flex;align-items:center;justify-content:center;font-size:18px">🗺️</div><div><div style="font-size:14px;font-weight:500">Mi ruta de hoy</div><div style="font-size:12px;color:var(--muted)" id="h-ruta-sub">Ver entregas asignadas</div></div><span style="margin-left:auto;color:var(--muted);font-size:20px">›</span></div></div>
+    <!-- Admin/Bodega: mapa general -->
+    <div class="card" id="c-mapa-um" style="cursor:pointer;display:none" onclick="go('mapa-um')"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:11px;background:var(--plight,#F5EEF8);display:flex;align-items:center;justify-content:center;font-size:18px">🗺️</div><div><div style="font-size:14px;font-weight:500">Mapa de entregas</div><div style="font-size:12px;color:var(--muted)">Ver todas las rutas</div></div><span style="margin-left:auto;color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="dv"></div>
+    <button class="bs" style="margin-top:0" onclick="doLogout()">Cerrar sesión</button>
+  </div>
+  <div class="nb" id="home-nb">
+    <button class="nb-b on" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('mis-pvc')"><span class="nb-i">📋</span>Pedidos</button>
+    <button class="nb-b" id="nb-tablero" style="display:none" onclick="go('tablero')"><span class="nb-i">📊</span>Tablero</button>
+    <button class="nb-b" id="nb-mi-ruta" style="display:none" onclick="go('mi-ruta')"><span class="nb-i">🗺️</span>Mi ruta</button>
+    <button class="nb-b" id="nb-mapa" style="display:none" onclick="go('mapa-um')"><span class="nb-i">📍</span>Mapa</button>
+  </div>
+</div>
+
+<!-- NUEVO PVC -->
+<div class="scr" id="s-nuevo-pvc">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Nueva Entrega</div></div>
+  <div class="cnt">
+    <div class="f"><label>Número PVC (factura) *</label><input id="pvc-num" placeholder="Ej: PVC-2024-001" style="text-transform:uppercase"></div>
+    <div class="f"><label>Nombre del destinatario *</label><input id="pvc-contacto" placeholder="Nombre completo"></div>
+    <div class="f"><label>Celular de contacto *</label><input id="pvc-cel" type="tel" placeholder="300 000 0000"></div>
+    <div class="f"><label>Dirección de entrega *</label><input id="pvc-dir" placeholder="Calle 50 #40-20, Medellín"></div>
+    <div class="f">
+      <label>Coordenadas GPS (opcional)</label>
+      <div style="display:flex;gap:8px">
+        <input id="pvc-coords" placeholder="6.2476, -75.5658" style="flex:1;padding:10px 12px;border:1px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none">
+        <button class="bg2" onclick="captureGPSPVC()" style="white-space:nowrap;padding:10px 12px">📍 GPS</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Pega coordenadas de Google Maps o toca GPS para usar tu ubicación actual</div>
+    </div>
+    <div class="f"><label>Descripción del pedido</label><textarea id="pvc-desc" rows="2" placeholder="Contenido del paquete, instrucciones especiales..."></textarea></div>
+    <div class="f"><label>Peso / Bultos</label><input id="pvc-peso" placeholder="Ej: 2 bultos, 15 kg"></div>
+    <button class="bp" type="button" onclick="guardarPVC()">📦 Registrar pedido</button>
+    <button class="bs" onclick="go('home')">Cancelar</button>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- MIS PVC -->
+<div class="scr" id="s-mis-pvc">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Mis Pedidos</div></div>
+  <div class="cnt">
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="chip on" id="mp-t" onclick="setMPFilter('todos')">Todos</button>
+      <button class="chip" id="mp-r" onclick="setMPFilter('REVISION')">⏳ Revisión</button>
+      <button class="chip" id="mp-a" onclick="setMPFilter('ASIGNADO')">🔵 Asignado</button>
+      <button class="chip" id="mp-e" onclick="setMPFilter('ENTREGADO')">✅ Entregado</button>
+    </div>
+    <div id="mis-pvc-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b on"><span class="nb-i">📋</span>Pedidos</button>
+    <button class="nb-b" id="nb2-tablero" style="display:none" onclick="go('tablero')"><span class="nb-i">📊</span>Tablero</button>
+    <button class="nb-b" id="nb2-mi-ruta" style="display:none" onclick="go('mi-ruta')"><span class="nb-i">🗺️</span>Mi ruta</button>
+    <button class="nb-b" id="nb2-mapa" style="display:none" onclick="go('mapa-um')"><span class="nb-i">📍</span>Mapa</button>
+  </div>
+</div>
+
+<!-- TABLERO BODEGA -->
+<div class="scr" id="s-tablero">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Tablero de Pedidos</div></div>
+  <div class="kanban" id="kanban-board"></div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('mis-pvc')"><span class="nb-i">📋</span>Pedidos</button>
+    <button class="nb-b on"><span class="nb-i">📊</span>Tablero</button>
+    <button class="nb-b" onclick="go('mapa-um')"><span class="nb-i">📍</span>Mapa</button>
+    <button class="nb-b" onclick="go('vehiculos')"><span class="nb-i">🚛</span>Flota</button>
+  </div>
+</div>
+
+<!-- MI RUTA CONDUCTOR -->
+<div class="scr" id="s-mi-ruta">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Mi Ruta</div><span id="ruta-vehiculo" style="background:rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;font-size:11px"></span></div>
+  <div class="cnt" id="mi-ruta-cnt">
+    <div id="ruta-progreso-wrap" style="margin-bottom:12px;background:var(--card);border-radius:12px;padding:12px;border:0.5px solid var(--brd)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:500" id="ruta-prog-txt">Cargando ruta...</div>
+        <div style="font-size:14px;font-weight:600;color:var(--navy)" id="ruta-pct">0%</div>
+      </div>
+      <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden"><div id="ruta-prog-bar" style="height:100%;background:var(--navy);border-radius:3px;transition:width .4s;width:0%"></div></div>
+    </div>
+    <div id="mi-ruta-lista"><div class="ld">Cargando entregas...</div></div>
+  </div>
+  <div style="padding:12px 16px;background:var(--card);border-top:0.5px solid var(--brd);flex-shrink:0">
+    <button class="bp" onclick="navegarSiguiente()">🧭 Navegar a siguiente entrega</button>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('mis-pvc')"><span class="nb-i">📋</span>Pedidos</button>
+    <button class="nb-b on"><span class="nb-i">🗺️</span>Mi ruta</button>
+    <button class="nb-b" onclick="go('mapa-um')"><span class="nb-i">📍</span>Mapa</button>
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+  </div>
+</div>
+
+<!-- MAPA ENTREGAS -->
+<div class="scr" id="s-mapa-um">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Mapa de Entregas</div></div>
+  <div style="padding:8px 10px;background:var(--card);border-bottom:0.5px solid var(--brd);display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
+    <select id="mapa-veh-filter" onchange="renderMapaUM()" style="font-size:12px;border:0.5px solid var(--brd);border-radius:8px;padding:5px 8px;background:var(--card);outline:none;font-family:'DM Sans',sans-serif"><option value="">Todos los vehículos</option></select>
+    <span class="chip on" data-g="est" data-v="" onclick="setMapFilter(this)">Todos</span>
+    <span class="chip" data-g="est" data-v="ASIGNADO" onclick="setMapFilter(this)">🔵 Asignado</span>
+    <span class="chip" data-g="est" data-v="EN RUTA" onclick="setMapFilter(this)">🚚 En ruta</span>
+    <span class="chip" data-g="est" data-v="ENTREGADO" onclick="setMapFilter(this)">✅ Entregado</span>
+  </div>
+  <div id="um-map-cnt"><div id="um-map"></div>
+    <div class="map-overlay">
+      <div>🔵 Asignado</div><div>🚚 En ruta</div><div>✅ Entregado</div><div>❌ Fallido</div>
+    </div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('mis-pvc')"><span class="nb-i">📋</span>Pedidos</button>
+    <button class="nb-b" id="nb3-tablero" style="display:none" onclick="go('tablero')"><span class="nb-i">📊</span>Tablero</button>
+    <button class="nb-b on"><span class="nb-i">📍</span>Mapa</button>
+    <button class="nb-b" id="nb3-mi-ruta" style="display:none" onclick="go('mi-ruta')"><span class="nb-i">🗺️</span>Ruta</button>
+  </div>
+</div>
+
+<!-- VEHÍCULOS -->
+<div class="scr" id="s-vehiculos">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Flota de Vehículos</div><button class="tb-act" onclick="openM('m-vehiculo')">+ Agregar</button></div>
+  <div class="cnt"><div id="veh-list"><div class="ld">Cargando...</div></div></div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('tablero')"><span class="nb-i">📊</span>Tablero</button>
+    <button class="nb-b on"><span class="nb-i">🚛</span>Flota</button>
+    <button class="nb-b" onclick="go('mapa-um')"><span class="nb-i">📍</span>Mapa</button>
+    <button class="nb-b" onclick="go('usuarios-um')"><span class="nb-i">👥</span>Usuarios</button>
+  </div>
+</div>
+
+<!-- USUARIOS UM -->
+<div class="scr" id="s-usuarios-um">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Usuarios</div><button class="tb-act" onclick="openM('m-usuario-um')">+ Nuevo</button></div>
+  <div class="cnt"><div id="usr-um-list"><div class="ld">Cargando...</div></div></div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('tablero')"><span class="nb-i">📊</span>Tablero</button>
+    <button class="nb-b" onclick="go('vehiculos')"><span class="nb-i">🚛</span>Flota</button>
+    <button class="nb-b on"><span class="nb-i">👥</span>Usuarios</button>
+    <button class="nb-b" onclick="go('mapa-um')"><span class="nb-i">📍</span>Mapa</button>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- MODALES -->
+<div class="mo" id="m-asignar-pvc"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="m-asig-pvc-t">Asignar PVC</div>
+  <input type="hidden" id="m-asig-pvc-id">
+  <div class="f"><label>Vehículo / Ruta</label><select id="m-asig-veh"><option value="">Seleccionar vehículo</option></select></div>
+  <div class="f"><label>Observación (opcional)</label><textarea id="m-asig-obs" rows="2" placeholder="Instrucciones para el conductor..."></textarea></div>
+  <button class="bp" type="button" onclick="confirmarAsignacion()">Asignar pedido</button>
+  <button class="bs" onclick="closeM('m-asignar-pvc')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-entregar"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="m-entregar-t">Registrar Entrega</div>
+  <input type="hidden" id="m-entregar-id">
+  <div class="f"><label>Estado</label>
+    <div class="chips" id="ch-entrega-est">
+      <div class="chip on" data-v="ENTREGADO">✅ Entregado</div>
+      <div class="chip" data-v="FALLIDO">❌ No entregado</div>
+    </div>
+  </div>
+  <div class="f"><label>Foto de evidencia *</label>
+    <img id="foto-entrega-prev" class="fpimg">
+    <div class="fa" onclick="document.getElementById('fotoEntrega').click()"><div style="font-size:22px">📷</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Foto obligatoria</div></div>
+    <input type="file" id="fotoEntrega" accept="image/*" capture="environment" onchange="prevFotoE(this)">
+  </div>
+  <div class="f"><label>Observación</label><textarea id="m-entregar-obs" rows="2" placeholder="Recibió el pedido, novedades..."></textarea></div>
+  <button class="bp green" type="button" onclick="confirmarEntrega()">Confirmar entrega</button>
+  <button class="bs" onclick="closeM('m-entregar')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-vehiculo"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="m-veh-t">Nuevo Vehículo</div>
+  <input type="hidden" id="m-veh-id">
+  <div class="f"><label>Placa *</label><input id="v-placa" placeholder="ABC-123" style="text-transform:uppercase"></div>
+  <div class="f"><label>Descripción</label><input id="v-desc" placeholder="Camión, Moto, Furgón..."></div>
+  <div class="f"><label>Conductor asignado</label><select id="v-conductor"><option value="">Sin asignar</option></select></div>
+  <div class="f"><label>Estado</label>
+    <div class="chips" id="ch-veh-est">
+      <div class="chip on" data-v="ACTIVO">✅ Activo</div>
+      <div class="chip" data-v="INACTIVO">❌ Inactivo</div>
+    </div>
+  </div>
+  <button class="bp" type="button" onclick="saveVehiculo()">Guardar vehículo</button>
+  <button class="bs" onclick="closeM('m-vehiculo')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-usuario-um"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="m-usr-um-t">Nuevo Usuario</div>
+  <input type="hidden" id="uu-id">
+  <div class="f"><label>Nombre completo *</label><input id="uu-nom" placeholder="APELLIDO NOMBRE"></div>
+  <div class="f"><label>Cédula / ID *</label><input id="uu-ced" placeholder="12345678"></div>
+  <div class="f"><label>Contraseña *</label><input id="uu-pw" type="password" placeholder="Mínimo 4 caracteres"></div>
+  <div class="f"><label>Rol</label>
+    <div class="chips" id="ch-usr-rol">
+      <div class="chip on" data-v="ASESOR">📦 Asesor</div>
+      <div class="chip" data-v="JEFE_BODEGA">🏭 Jefe Bodega</div>
+      <div class="chip" data-v="CONDUCTOR">🚚 Conductor</div>
+      <div class="chip" data-v="ADMINISTRADOR">★ Admin</div>
+    </div>
+  </div>
+  <button class="bp" type="button" onclick="saveUsuarioUM()">Crear usuario</button>
+  <button class="bs" onclick="closeM('m-usuario-um')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-detalle-pvc"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="m-det-t">Detalle del Pedido</div>
+  <div id="m-det-body"></div>
+  <button class="bs" onclick="closeM('m-detalle-pvc')">Cerrar</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore,collection,addDoc,getDocs,query,orderBy,where,Timestamp,doc,setDoc,updateDoc,onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage,ref,uploadBytes,getDownloadURL }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+// MISMA base de datos que Actividapp
+const FC={apiKey:"AIzaSyACsrCsWCYQxMeXVMMtIfF_49HitqQLmlM",authDomain:"actividapp-31a3a.firebaseapp.com",projectId:"actividapp-31a3a",storageBucket:"actividapp-31a3a.firebasestorage.app",messagingSenderId:"909431542048",appId:"1:909431542048:web:04860ec57338a867990745"};
+const fa=initializeApp(FC);const db=getFirestore(fa);const st=getStorage(fa);
+window.db=db;window.st=st;
+window.FS={collection,addDoc,getDocs,query,orderBy,where,Timestamp,doc,setDoc,updateDoc,onSnapshot,ref,uploadBytes,getDownloadURL};
+
+async function loadAll(){
+  try{
+    // USUARIOS de última milla (colección separada)
+    const us=await getDocs(collection(db,'um_usuarios'));
+    window.UMUsuarios=[];
+    const lsel=document.getElementById('l-usr');
+    lsel.innerHTML='<option value="">— Seleccionar —</option>';
+    if(us.empty){
+      // Crear admin por defecto si no hay usuarios
+      const admin={nombre:'ADMINISTRADOR',cedula:'admin',contrasena:'admin123',rol:'ADMINISTRADOR',estado:'ACTIVO'};
+      await setDoc(doc(db,'um_usuarios','admin'),admin);
+      window.UMUsuarios.push({id:'admin',...admin});
+      const o=document.createElement('option');o.value='admin';o.textContent='ADMINISTRADOR';lsel.appendChild(o);
+    } else {
+      us.forEach(d=>{const u={id:d.id,...d.data()};window.UMUsuarios.push(u);if(u.estado!=='INACTIVO'){const o=document.createElement('option');o.value=d.id;o.textContent=u.nombre||'';lsel.appendChild(o);}});
+    }
+
+    // VEHÍCULOS
+    const vs=await getDocs(collection(db,'um_vehiculos'));
+    window.UMVehiculos=[];vs.forEach(d=>window.UMVehiculos.push({id:d.id,...d.data()}));
+    renderVehiculos();
+
+    // PVCs — escuchar en tiempo real
+    const q=query(collection(db,'um_pvcs'),orderBy('fecha','desc'));
+    window._unsubPVC=onSnapshot(q,snap=>{
+      window.PVCs=[];snap.forEach(d=>window.PVCs.push({id:d.id,...d.data()}));
+      refreshStats();renderMisPVC();
+      if(window.CU?.rol==='JEFE_BODEGA'||window.CU?.rol==='ADMINISTRADOR')renderTablero();
+      if(window.CU?.rol==='CONDUCTOR')renderMiRuta();
+    });
+
+    window._dataReady=true;
+    const cu=loadS();
+    if(cu&&!window.CU){applyU(cu);go('home');}
+    else if(!window.CU){go('login');}
+  }catch(e){console.error('loadAll error:',e);}
+  finally{document.getElementById('app-loading').classList.add('hide');}
+}
+window.loadAll=loadAll;
+loadAll();
+
+// GUARDAR PVC
+window.guardarPVC=async function(){
+  const num=document.getElementById('pvc-num').value.trim().toUpperCase();
+  const contacto=document.getElementById('pvc-contacto').value.trim();
+  const cel=document.getElementById('pvc-cel').value.trim();
+  const dir=document.getElementById('pvc-dir').value.trim();
+  if(!num||!contacto||!cel||!dir){toast('Completa todos los campos obligatorios');return;}
+  const coords=document.getElementById('pvc-coords').value.trim();
+  const desc=document.getElementById('pvc-desc').value;
+  const peso=document.getElementById('pvc-peso').value;
+  // Validar PVC único
+  if(window.PVCs?.find(p=>p.pvc===num)){toast('Ya existe un PVC con ese número');return;}
+  try{
+    const data={pvc:num,contacto,celular:cel,direccion:dir,coordenadas:coords,descripcion:desc,peso,asesor:window.CU?.nombre||'',estado:'REVISION',fecha:Timestamp.now(),historial:[{estado:'REVISION',fecha:new Date().toISOString(),usuario:window.CU?.nombre||''}]};
+    await addDoc(collection(db,'um_pvcs'),data);
+    toast('✅ PVC '+num+' registrado en revisión');
+    ['pvc-num','pvc-contacto','pvc-cel','pvc-dir','pvc-coords','pvc-desc','pvc-peso'].forEach(id=>document.getElementById(id).value='');
+    setTimeout(()=>go('mis-pvc'),700);
+  }catch(e){toast('Error: '+e.message);}
+};
+
+// ASIGNAR PVC A VEHÍCULO
+window.confirmarAsignacion=async function(){
+  const id=document.getElementById('m-asig-pvc-id').value;
+  const vehId=document.getElementById('m-asig-veh').value;
+  const obs=document.getElementById('m-asig-obs').value;
+  if(!vehId){toast('Selecciona un vehículo');return;}
+  const veh=window.UMVehiculos?.find(v=>v.id===vehId);
+  try{
+    const p=window.PVCs?.find(x=>x.id===id);
+    const hist=[...(p?.historial||[]),{estado:'ASIGNADO',fecha:new Date().toISOString(),usuario:window.CU?.nombre||'',vehiculo:veh?.placa||vehId,obs}];
+    await updateDoc(doc(db,'um_pvcs',id),{estado:'ASIGNADO',vehiculo:veh?.placa||vehId,vehiculoId:vehId,conductor:veh?.conductor||'',obsAsignacion:obs,historial:hist});
+    toast('✅ PVC asignado a '+veh?.placa);closeM('m-asignar-pvc');
+  }catch(e){toast('Error: '+e.message);}
+};
+
+// CONFIRMAR ENTREGA
+window.confirmarEntrega=async function(){
+  const id=document.getElementById('m-entregar-id').value;
+  const est=document.querySelector('#ch-entrega-est .chip.on')?.dataset.v||'ENTREGADO';
+  const obs=document.getElementById('m-entregar-obs').value;
+  const fi=document.getElementById('fotoEntrega');
+  if(!fi.files[0]){toast('La foto es obligatoria para confirmar');return;}
+  const btn=document.querySelector('#m-entregar .bp.green');
+  btn.disabled=true;btn.innerHTML='<span class="sp"></span>Guardando...';
+  try{
+    let fotoURL='';
+    const sr=FS.ref(st,'um_entregas/'+Date.now());
+    await FS.uploadBytes(sr,fi.files[0]);
+    fotoURL=await FS.getDownloadURL(sr);
+    const p=window.PVCs?.find(x=>x.id===id);
+    const hist=[...(p?.historial||[]),{estado:est,fecha:new Date().toISOString(),usuario:window.CU?.nombre||'',foto:fotoURL,obs}];
+    await updateDoc(doc(db,'um_pvcs',id),{estado:est,fotoEntrega:fotoURL,obsEntrega:obs,historial:hist,fechaEntrega:Timestamp.now()});
+    toast(est==='ENTREGADO'?'✅ Entrega confirmada':'❌ No entrega registrada');
+    closeM('m-entregar');
+    fi.value='';document.getElementById('foto-entrega-prev').style.display='none';
+    document.getElementById('foto-entrega-prev').src='';
+  }catch(e){toast('Error: '+e.message);}
+  btn.disabled=false;btn.innerHTML='Confirmar entrega';
+};
+
+window.saveVehiculo=async function(){
+  const placa=document.getElementById('v-placa').value.trim().toUpperCase();
+  if(!placa){toast('Ingresa la placa');return;}
+  const id=document.getElementById('m-veh-id').value||placa.replace(/[^A-Z0-9]/g,'');
+  const est=document.querySelector('#ch-veh-est .chip.on')?.dataset.v||'ACTIVO';
+  const data={placa,descripcion:document.getElementById('v-desc').value,conductor:document.getElementById('v-conductor').value,estado:est};
+  try{
+    await setDoc(doc(db,'um_vehiculos',id),data);
+    const ex=window.UMVehiculos?.find(v=>v.id===id);
+    if(ex)Object.assign(ex,data);else window.UMVehiculos.push({id,...data});
+    toast('✅ Vehículo guardado');closeM('m-vehiculo');renderVehiculos();
+    // Update selects
+    poblarVehiculoSelects();
+    ['v-placa','v-desc'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('m-veh-id').value='';
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveUsuarioUM=async function(){
+  const nom=document.getElementById('uu-nom').value.trim();
+  const ced=document.getElementById('uu-ced').value.trim();
+  const pw=document.getElementById('uu-pw').value;
+  const rol=document.querySelector('#ch-usr-rol .chip.on')?.dataset.v||'ASESOR';
+  if(!nom||!ced){toast('Nombre y cédula son obligatorios');return;}
+  if(!document.getElementById('uu-id').value&&!pw){toast('Ingresa una contraseña');return;}
+  try{
+    const data={nombre:nom,cedula:ced,rol,estado:'ACTIVO'};
+    if(pw)data.contrasena=pw;
+    const id=document.getElementById('uu-id').value||ced;
+    await setDoc(doc(db,'um_usuarios',id),data);
+    const ex=window.UMUsuarios?.find(u=>u.id===id);
+    if(ex)Object.assign(ex,data);else window.UMUsuarios.push({id,...data});
+    toast('✅ Usuario creado');closeM('m-usuario-um');renderUsuariosUM();
+    ['uu-nom','uu-ced','uu-pw'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('uu-id').value='';
+    poblarConductorSelect();
+    // Reload login list
+    const lsel=document.getElementById('l-usr');lsel.innerHTML='<option value="">— Seleccionar —</option>';
+    window.UMUsuarios.filter(u=>u.estado!=='INACTIVO').forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.nombre||'';lsel.appendChild(o);});
+  }catch(e){toast('Error: '+e.message);}
+};
+</script>
+
+<script>
+window.GPS='';window.mapUMInited=false;window.mapUMMarkers=[];window.mapUMFiltro='';
+
+// SESSION
+const SK='ultimamilla_v1';
+function saveS(cu){try{localStorage.setItem(SK,JSON.stringify({cu,ts:Date.now()}));}catch(e){}}
+function loadS(){try{const s=localStorage.getItem(SK);if(!s)return null;const d=JSON.parse(s);if(Date.now()-d.ts>8*3600*1000){localStorage.removeItem(SK);return null;}return d.cu;}catch(e){return null;}}
+function clearS(){try{localStorage.removeItem(SK);}catch(e){}}
+
+function applyU(cu){
+  window.CU=cu;
+  const isAdmin=cu.rol==='ADMINISTRADOR';const isBodega=cu.rol==='JEFE_BODEGA'||isAdmin;const isConductor=cu.rol==='CONDUCTOR';
+  const nom=cu.nombre?.split(' ')[0]||'';
+  const hr=new Date().getHours();
+  document.getElementById('h-greeting').textContent=(hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches')+', '+nom;
+  document.getElementById('h-rol').textContent={ADMINISTRADOR:'★ Admin',JEFE_BODEGA:'🏭 Bodega',CONDUCTOR:'🚚 Conductor',ASESOR:'📦 Asesor'}[cu.rol]||cu.rol;
+  // Mostrar cards según rol
+  document.getElementById('c-tablero').style.display=isBodega?'block':'none';
+  document.getElementById('c-vehiculos').style.display=isBodega?'block':'none';
+  document.getElementById('c-usuarios-um').style.display=isBodega?'block':'none';
+  document.getElementById('c-mi-ruta').style.display=isConductor?'block':'none';
+  document.getElementById('c-mapa-um').style.display=isBodega?'block':'none';
+  document.getElementById('c-nuevo-pvc').style.display=isConductor?'none':'block';
+  // Navbars
+  ['nb-tablero','nb2-tablero','nb3-tablero'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isBodega?'flex':'none';});
+  ['nb-mi-ruta','nb2-mi-ruta','nb3-mi-ruta'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isConductor?'flex':'none';});
+  ['nb-mapa','nb2-mapa','nb3-mapa'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isBodega?'flex':'none';});
+  poblarVehiculoSelects();poblarConductorSelect();
+}
+
+window.go=function(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  if(id==='mis-pvc')renderMisPVC();
+  if(id==='tablero')renderTablero();
+  if(id==='mi-ruta')renderMiRuta();
+  if(id==='mapa-um')setTimeout(renderMapaUM,300);
+  if(id==='vehiculos')renderVehiculos();
+  if(id==='usuarios-um')renderUsuariosUM();
+};
+
+window.doLogin=function(){
+  if(!window._dataReady){toast('Cargando, espera...');return;}
+  const id=document.getElementById('l-usr').value;const pw=document.getElementById('l-pw').value;
+  const err=document.getElementById('l-err');
+  if(!id){err.textContent='Selecciona un usuario';err.style.display='block';return;}
+  const u=window.UMUsuarios?.find(x=>x.id===id);
+  if(!u){err.textContent='Usuario no encontrado';err.style.display='block';return;}
+  if(pw!==(u.contrasena||'')){err.textContent='Contraseña incorrecta';err.style.display='block';return;}
+  err.style.display='none';
+  const cu={id,nombre:u.nombre||'',rol:u.rol||'ASESOR'};
+  saveS(cu);applyU(cu);go('home');
+};
+window.doLogout=function(){window.CU=null;clearS();if(window._unsubPVC)window._unsubPVC();go('login');};
+
+// GPS
+window.captureGPSPVC=function(){
+  if(!navigator.geolocation){toast('GPS no disponible');return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    const c=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);
+    document.getElementById('pvc-coords').value=c;toast('📍 Coordenadas capturadas');
+  },()=>toast('No se pudo obtener GPS'));
+};
+
+// STATS
+function refreshStats(){
+  if(!window.PVCs)return;
+  const isA=window.CU?.rol==='ADMINISTRADOR'||window.CU?.rol==='JEFE_BODEGA';
+  const mi=window.CU?.nombre||'';
+  const lista=isA?window.PVCs:window.PVCs.filter(p=>p.asesor===mi||p.conductor===mi||p.vehiculo===window.CU?.vehiculo);
+  document.getElementById('st-rev').textContent=lista.filter(p=>p.estado==='REVISION').length;
+  document.getElementById('st-asig').textContent=lista.filter(p=>p.estado==='ASIGNADO'||p.estado==='EN RUTA').length;
+  document.getElementById('st-ent').textContent=lista.filter(p=>p.estado==='ENTREGADO').length;
+  const misPVC=window.PVCs.filter(p=>p.asesor===mi);
+  document.getElementById('h-mis-pvc-sub').textContent=misPVC.length+' pedidos registrados';
+  const miRuta=window.PVCs.filter(p=>p.conductor===mi&&(p.estado==='ASIGNADO'||p.estado==='EN RUTA'));
+  document.getElementById('h-ruta-sub').textContent=miRuta.length+' entregas pendientes';
+  // Vehículo filter for mapa
+  const vf=document.getElementById('mapa-veh-filter');if(vf){vf.innerHTML='<option value="">Todos los vehículos</option>';(window.UMVehiculos||[]).forEach(v=>{const o=document.createElement('option');o.value=v.placa;o.textContent=v.placa+' · '+(v.descripcion||'');vf.appendChild(o);});}
+}
+
+// MIS PVCs
+window._mpFilter='todos';
+window.setMPFilter=function(f){window._mpFilter=f;['t','r','a','e'].forEach(x=>document.getElementById('mp-'+x)?.classList.remove('on'));const m={todos:'t',REVISION:'r',ASIGNADO:'a',ENTREGADO:'e'};document.getElementById('mp-'+m[f])?.classList.add('on');renderMisPVC();};
+window.renderMisPVC=function(){
+  const el=document.getElementById('mis-pvc-list');if(!window.PVCs||!window.CU)return;
+  const isA=window.CU.rol==='ADMINISTRADOR'||window.CU.rol==='JEFE_BODEGA';const mi=window.CU.nombre;
+  let lista=isA?window.PVCs:window.PVCs.filter(p=>p.asesor===mi);
+  const f=window._mpFilter;
+  if(f!=='todos')lista=lista.filter(p=>p.estado===f||(f==='ASIGNADO'&&p.estado==='EN RUTA'));
+  if(!lista.length){el.innerHTML='<div class="em"><div class="em-i">📦</div><div>Sin pedidos en este filtro</div></div>';return;}
+  const estMap={REVISION:{cls:'revision',icon:'⏳',b:'ba1',txt:'Revisión'},ASIGNADO:{cls:'asignado',icon:'🔵',b:'bb1',txt:'Asignado'},ENTREGADO:{cls:'entregado',icon:'✅',b:'bg1',txt:'Entregado'},'EN RUTA':{cls:'en-ruta',icon:'🚚',b:'bn1',txt:'En ruta'},FALLIDO:{cls:'fallido',icon:'❌',b:'br1',txt:'No entregado'}};
+  el.innerHTML=lista.map(p=>{
+    const e=estMap[p.estado]||{cls:'',icon:'📦',b:'ba1',txt:p.estado};
+    const f2=p.fecha?.toDate?p.fecha.toDate():new Date(p.fecha||0);
+    return `<div class="card ${e.cls}" onclick="verDetallePVC('${p.id}')" style="cursor:pointer">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+        <div style="font-size:15px;font-weight:600">${p.pvc||'—'}</div>
+        <span class="b ${e.b}">${e.icon} ${e.txt}</span>
+      </div>
+      <div style="font-size:13px;color:var(--text)">${p.contacto||''}</div>
+      <div style="font-size:12px;color:var(--muted)">${p.direccion||''}</div>
+      ${p.vehiculo?`<div style="font-size:11px;color:var(--blue);margin-top:4px">🚛 ${p.vehiculo}${p.conductor?' · '+p.conductor.split(' ')[0]:''}</div>`:''}
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">${f2.toLocaleDateString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})} · ${p.asesor?.split(' ')[0]||''}</div>
+    </div>`;
+  }).join('');
+};
+
+window.verDetallePVC=function(id){
+  const p=window.PVCs?.find(x=>x.id===id);if(!p)return;
+  const e={REVISION:'⏳ Revisión',ASIGNADO:'🔵 Asignado',ENTREGADO:'✅ Entregado','EN RUTA':'🚚 En ruta',FALLIDO:'❌ No entregado'};
+  const f=p.fecha?.toDate?p.fecha.toDate():new Date(p.fecha||0);
+  document.getElementById('m-det-t').textContent='PVC: '+p.pvc;
+  document.getElementById('m-det-body').innerHTML=`
+    <div class="timeline">
+      ${(p.historial||[{estado:p.estado,fecha:f.toISOString(),usuario:p.asesor}]).map(h=>`<div class="tl-item"><div class="tl-dot done">●</div><div class="tl-text"><div class="tl-title">${e[h.estado]||h.estado}</div><div class="tl-sub">${new Date(h.fecha).toLocaleDateString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})} · ${h.usuario||''}</div>${h.obs?`<div class="tl-sub">${h.obs}</div>`:''}</div></div>`).join('')}
+    </div>
+    <div class="dv"></div>
+    <div style="font-size:13px;display:grid;grid-template-columns:auto 1fr;gap:6px 12px">
+      <span style="color:var(--muted)">Contacto</span><span>${p.contacto||'—'}</span>
+      <span style="color:var(--muted)">Celular</span><a href="tel:${p.celular}" style="color:var(--navy)">${p.celular||'—'}</a>
+      <span style="color:var(--muted)">Dirección</span><span>${p.direccion||'—'}</span>
+      ${p.descripcion?`<span style="color:var(--muted)">Desc.</span><span>${p.descripcion}</span>`:''}
+      ${p.peso?`<span style="color:var(--muted)">Peso</span><span>${p.peso}</span>`:''}
+      ${p.vehiculo?`<span style="color:var(--muted)">Vehículo</span><span>🚛 ${p.vehiculo}</span>`:''}
+    </div>
+    ${p.fotoEntrega?`<img src="https://wsrv.nl/?url=${encodeURIComponent(p.fotoEntrega)}&w=500" style="width:100%;border-radius:10px;margin-top:12px" loading="lazy">`:'' }
+    ${p.coordenadas?`<button class="bg2" style="width:100%;margin-top:12px;color:var(--navy)" onclick="navegarDir('${p.coordenadas||p.direccion}')">🧭 Navegar a este punto</button>`:`<button class="bg2" style="width:100%;margin-top:12px;color:var(--navy)" onclick="navegarDir('${p.direccion}')">🧭 Navegar</button>`}
+    ${(window.CU?.rol==='JEFE_BODEGA'||window.CU?.rol==='ADMINISTRADOR')&&p.estado==='REVISION'?`<button class="bp amber" style="margin-top:8px" onclick="abrirAsignar('${p.id}','${p.pvc}')">📌 Asignar a vehículo</button>`:''}
+    ${window.CU?.rol==='CONDUCTOR'&&(p.estado==='ASIGNADO'||p.estado==='EN RUTA')?`<button class="bp green" style="margin-top:8px" onclick="abrirEntregar('${p.id}','${p.pvc}')">✅ Registrar entrega</button>`:''}
+  `;
+  openM('m-detalle-pvc');
+};
+
+// TABLERO KANBAN
+window.renderTablero=function(){
+  const el=document.getElementById('kanban-board');if(!window.PVCs)return;
+  const cols=[{key:'REVISION',icon:'⏳',label:'Revisión'},{key:'ASIGNADO',icon:'🔵',label:'Asignado'},{key:'EN RUTA',icon:'🚚',label:'En ruta'},{key:'ENTREGADO',icon:'✅',label:'Entregado'},{key:'FALLIDO',icon:'❌',label:'Fallido'}];
+  el.innerHTML=cols.map(col=>{
+    const items=window.PVCs.filter(p=>p.estado===col.key);
+    return `<div class="kanban-col">
+      <div class="kanban-h">${col.icon} ${col.label}<span class="kanban-cnt">${items.length}</span></div>
+      ${items.length?items.map(p=>`<div class="card" onclick="verDetallePVC('${p.id}')" style="cursor:pointer;margin-bottom:8px;padding:10px">
+        <div style="font-size:13px;font-weight:600">${p.pvc||'—'}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${p.contacto||''}</div>
+        <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.direccion||''}</div>
+        ${p.vehiculo?`<div style="font-size:10px;color:var(--blue);margin-top:3px">🚛 ${p.vehiculo}</div>`:''}
+        ${col.key==='REVISION'?`<button class="bg2" style="width:100%;margin-top:6px;font-size:11px;padding:5px;color:var(--amber);border-color:var(--amber)" onclick="event.stopPropagation();abrirAsignar('${p.id}','${p.pvc}')">📌 Asignar</button>`:''}
+      </div>`).join(''):'<div style="font-size:12px;color:var(--muted);text-align:center;padding:12px">Vacío</div>'}
+    </div>`;
+  }).join('');
+};
+
+// MI RUTA CONDUCTOR
+window.renderMiRuta=function(){
+  const el=document.getElementById('mi-ruta-lista');if(!window.PVCs||!window.CU)return;
+  const mi=window.CU.nombre;const veh=window.CU.vehiculo||'';
+  let lista=window.PVCs.filter(p=>p.conductor===mi&&(p.estado==='ASIGNADO'||p.estado==='EN RUTA'));
+  // Mostrar placa vehículo
+  const myVeh=window.UMVehiculos?.find(v=>v.conductor===mi);
+  document.getElementById('ruta-vehiculo').textContent=myVeh?'🚛 '+myVeh.placa:'';
+  // Optimizar ruta por coordenadas
+  lista=optimizarRuta(lista);
+  const total=lista.length;
+  const hechas=lista.filter(p=>p.estado==='ENTREGADO').length;
+  const pct=total?Math.round(hechas/total*100):0;
+  document.getElementById('ruta-prog-txt').textContent=hechas+' de '+total+' entregados';
+  document.getElementById('ruta-prog-bar').style.width=pct+'%';
+  document.getElementById('ruta-pct').textContent=pct+'%';
+  if(!lista.length){el.innerHTML='<div class="em"><div class="em-i">🎉</div><div>Sin entregas pendientes</div></div>';return;}
+  el.innerHTML=lista.map((p,i)=>{const activa=p.estado!=='ENTREGADO';return `<div class="parada-card ${activa&&i===lista.findIndex(x=>x.estado!=='ENTREGADO')?'activa':''}">
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="parada-num ${!activa?'hecha':''}">${!activa?'✓':i+1}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:600">${p.pvc||'—'}</div>
+        <div style="font-size:13px">${p.contacto||''}</div>
+        <div style="font-size:12px;color:var(--muted)">${p.direccion||''}</div>
+        ${p.celular?`<a href="tel:${p.celular}" style="font-size:12px;color:var(--navy)">📞 ${p.celular}</a>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <button class="bg2" onclick="navegarDir('${p.coordenadas||p.direccion}')" style="padding:6px 8px;font-size:12px;color:var(--navy)">🧭</button>
+        ${activa?`<button class="bg2" onclick="abrirEntregar('${p.id}','${p.pvc}')" style="padding:6px 8px;font-size:12px;color:var(--green);border-color:var(--green)">✅</button>`:''}
+      </div>
+    </div>
+  </div>`;}).join('');
+};
+
+function optimizarRuta(lista){
+  if(!window.GPS||lista.length<=1)return lista;
+  const [myLat,myLng]=window.GPS.split(',').map(parseFloat);
+  if(isNaN(myLat))return lista;
+  const withCoords=lista.filter(p=>p.coordenadas);const noCoords=lista.filter(p=>!p.coordenadas);
+  let ordered=[];let remaining=[...withCoords];let curLat=myLat,curLng=myLng;
+  while(remaining.length){
+    let best=null,bestD=Infinity,bestIdx=0;
+    remaining.forEach((it,i)=>{const[lat,lng]=it.coordenadas.toString().split(',').map(parseFloat);if(isNaN(lat))return;const d=Math.pow(lat-curLat,2)+Math.pow(lng-curLng,2);if(d<bestD){bestD=d;best=it;bestIdx=i;}});
+    if(best){ordered.push(best);remaining.splice(bestIdx,1);const[lat,lng]=best.coordenadas.toString().split(',').map(parseFloat);curLat=lat;curLng=lng;}else break;
+  }
+  return [...ordered,...noCoords];
+}
+
+window.navegarSiguiente=function(){
+  if(!window.PVCs||!window.CU)return;
+  const mi=window.CU.nombre;
+  const next=window.PVCs.find(p=>p.conductor===mi&&p.estado==='ASIGNADO');
+  if(!next){toast('Sin entregas pendientes');return;}
+  navegarDir(next.coordenadas||next.direccion);
+};
+
+window.navegarDir=function(dir){
+  if(!dir){toast('Sin dirección');return;}
+  const url='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(dir)+'&travelmode=driving';
+  window.open(url,'_blank');
+};
+
+// MAPA
+window.setMapFilter=function(el){const g=el.dataset.g;document.querySelectorAll(`.chip[data-g="${g}"]`).forEach(x=>x.classList.remove('on'));el.classList.add('on');window.mapUMFiltro=el.dataset.v||'';renderMapaUM();};
+window.renderMapaUM=function(){
+  if(!window.PVCs)return;
+  const fVeh=document.getElementById('mapa-veh-filter')?.value||'';
+  const fEst=window.mapUMFiltro||'';
+  let puntos=window.PVCs.filter(p=>{
+    if(!p.coordenadas)return false;const pts=p.coordenadas.toString().split(',');
+    if(pts.length<2||isNaN(parseFloat(pts[0]))||isNaN(parseFloat(pts[1])))return false;
+    if(fVeh&&p.vehiculo!==fVeh)return false;
+    if(fEst&&p.estado!==fEst)return false;
+    return true;
+  });
+  if(!window.mapUMInited){
+    const cl=puntos.length?parseFloat(puntos[0].coordenadas.split(',')[0]):6.2476;
+    const cg=puntos.length?parseFloat(puntos[0].coordenadas.split(',')[1]):-75.5658;
+    window.leafMapUM=L.map('um-map').setView([cl,cg],13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(window.leafMapUM);
+    window.mapUMInited=true;
+  } else {window.mapUMMarkers.forEach(m=>m.remove());window.mapUMMarkers=[];}
+  const colMap={REVISION:'#E67E22',ASIGNADO:'#2471A3','EN RUTA':'#1A3C5E',ENTREGADO:'#219653',FALLIDO:'#C0392B'};
+  const numMap={REVISION:'⏳',ASIGNADO:'📦','EN RUTA':'🚚',ENTREGADO:'✅',FALLIDO:'❌'};
+  const lats=[],lngs=[];
+  puntos.forEach((p,i)=>{
+    const pts=p.coordenadas.toString().split(',');const lat=parseFloat(pts[0]),lng=parseFloat(pts[1]);
+    const color=colMap[p.estado]||'#888';const ico=numMap[p.estado]||'📦';
+    const num=puntos.filter(x=>x.vehiculo===p.vehiculo&&(x.estado==='ASIGNADO'||x.estado==='EN RUTA')).findIndex(x=>x.id===p.id)+1;
+    const icon=L.divIcon({html:`<div style="background:${color};border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35);color:#fff;font-weight:700">${(p.estado==='ASIGNADO'||p.estado==='EN RUTA')&&num>0?num:ico}</div>`,iconSize:[32,32],iconAnchor:[16,16],className:''});
+    const m=L.marker([lat,lng],{icon});
+    m.bindPopup(`<b>${p.pvc||'—'}</b><br>${p.contacto||''}<br><span style="color:var(--muted)">${p.direccion||''}</span><br>${p.vehiculo?'🚛 '+p.vehiculo:''}${p.conductor?'<br>'+p.conductor.split(' ')[0]:''}<br><span style="color:${color};font-weight:600">${numMap[p.estado]||''} ${p.estado}</span><br><a href="#" onclick="verDetallePVC('${p.id}');window.leafMapUM.closePopup();return false" style="color:#1A3C5E;font-weight:600">📋 Ver detalle</a>`);
+    m.addTo(window.leafMapUM);window.mapUMMarkers.push(m);lats.push(lat);lngs.push(lng);
+  });
+  if(lats.length>1)window.leafMapUM.fitBounds([[Math.min(...lats),Math.min(...lngs)],[Math.max(...lats),Math.max(...lngs)]],{padding:[40,40]});
+};
+
+// VEHÍCULOS
+window.renderVehiculos=function(){
+  const el=document.getElementById('veh-list');if(!el)return;
+  if(!window.UMVehiculos?.length){el.innerHTML='<div class="em"><div class="em-i">🚛</div><div>Sin vehículos registrados</div></div>';return;}
+  el.innerHTML=window.UMVehiculos.map(v=>{
+    const pvcCount=(window.PVCs||[]).filter(p=>p.vehiculo===v.placa&&(p.estado==='ASIGNADO'||p.estado==='EN RUTA')).length;
+    return `<div class="card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:12px;background:var(--navyL);display:flex;align-items:center;justify-content:center;font-size:22px">🚛</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:600">${v.placa||'—'}</div><div style="font-size:12px;color:var(--muted)">${v.descripcion||''}</div>${v.conductor?`<div style="font-size:12px;color:var(--navy)">👤 ${v.conductor}</div>`:''}</div>
+        <div style="text-align:right"><span class="b ${v.estado==='ACTIVO'?'bg1':'ba1'}">${v.estado||'ACTIVO'}</span>${pvcCount>0?`<div style="font-size:11px;color:var(--blue);margin-top:4px">📦 ${pvcCount} pendientes</div>`:''}</div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="bg2" style="flex:1" onclick="editVehiculo('${v.id}')">✏️ Editar</button>
+        <button class="bg2" style="flex:1;color:var(--navy)" onclick="renderRutaVehiculo('${v.placa}')">🗺️ Ver ruta</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.editVehiculo=function(id){
+  const v=window.UMVehiculos?.find(x=>x.id===id);if(!v)return;
+  document.getElementById('m-veh-id').value=id;
+  document.getElementById('m-veh-t').textContent='Editar Vehículo';
+  document.getElementById('v-placa').value=v.placa||'';
+  document.getElementById('v-desc').value=v.descripcion||'';
+  document.getElementById('v-conductor').value=v.conductor||'';
+  document.querySelectorAll('#ch-veh-est .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===(v.estado||'ACTIVO'))c.classList.add('on');});
+  openM('m-vehiculo');
+};
+
+window.renderRutaVehiculo=function(placa){
+  window.mapUMFiltro='';document.querySelector('.chip[data-v=""]')?.classList.add('on');
+  const sf=document.getElementById('mapa-veh-filter');if(sf)sf.value=placa;
+  go('mapa-um');setTimeout(renderMapaUM,400);
+};
+
+// USUARIOS
+window.renderUsuariosUM=function(){
+  const el=document.getElementById('usr-um-list');if(!el)return;
+  if(!window.UMUsuarios?.length){el.innerHTML='<div class="em"><div class="em-i">👥</div><div>Sin usuarios</div></div>';return;}
+  const rolMap={ADMINISTRADOR:{b:'bn1',ico:'★'},JEFE_BODEGA:{b:'ba1',ico:'🏭'},CONDUCTOR:{b:'bb1',ico:'🚚'},ASESOR:{b:'bg1',ico:'📦'}};
+  el.innerHTML=window.UMUsuarios.map(u=>{
+    const rm=rolMap[u.rol]||{b:'ba1',ico:'👤'};const ini=(u.nombre||'U').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    return `<div class="card"><div style="display:flex;align-items:center;gap:12px">
+      <div style="width:42px;height:42px;border-radius:50%;background:var(--navyL);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--navy);font-size:13px;flex-shrink:0">${ini}</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:500">${u.nombre||''}</div><div style="font-size:12px;color:var(--muted)">Cédula: ${u.cedula||u.id||''}</div><span class="b ${rm.b}">${rm.ico} ${u.rol||''}</span></div>
+      <button class="bg2" onclick="editUsuarioUM('${u.id}')" style="padding:8px 10px">✏️</button>
+    </div></div>`;
+  }).join('');
+};
+
+window.editUsuarioUM=function(id){
+  const u=window.UMUsuarios?.find(x=>x.id===id);if(!u)return;
+  document.getElementById('uu-id').value=id;
+  document.getElementById('m-usr-um-t').textContent='Editar Usuario';
+  document.getElementById('uu-nom').value=u.nombre||'';
+  document.getElementById('uu-ced').value=u.cedula||id;
+  document.getElementById('uu-pw').value='';
+  document.querySelectorAll('#ch-usr-rol .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===(u.rol||'ASESOR'))c.classList.add('on');});
+  openM('m-usuario-um');
+};
+
+// ASIGNAR / ENTREGAR
+window.abrirAsignar=function(id,pvc){
+  document.getElementById('m-asig-pvc-id').value=id;
+  document.getElementById('m-asig-pvc-t').textContent='Asignar PVC: '+pvc;
+  document.getElementById('m-asig-obs').value='';
+  closeM('m-detalle-pvc');openM('m-asignar-pvc');
+};
+window.abrirEntregar=function(id,pvc){
+  document.getElementById('m-entregar-id').value=id;
+  document.getElementById('m-entregar-t').textContent='Entrega PVC: '+pvc;
+  document.getElementById('m-entregar-obs').value='';
+  document.getElementById('foto-entrega-prev').style.display='none';
+  document.getElementById('fotoEntrega').value='';
+  document.querySelectorAll('#ch-entrega-est .chip').forEach((c,i)=>c.classList.toggle('on',i===0));
+  closeM('m-detalle-pvc');openM('m-entregar');
+  // Marcar EN RUTA si era ASIGNADO
+  const p=window.PVCs?.find(x=>x.id===id);
+  if(p&&p.estado==='ASIGNADO'){try{window.FS.updateDoc(window.FS.doc(window.db,'um_pvcs',id),{estado:'EN RUTA'});}catch(e){}}
+};
+
+window.prevFotoE=function(inp){if(inp.files&&inp.files[0]){const r=new FileReader();r.onload=e=>{const i=document.getElementById('foto-entrega-prev');i.src=e.target.result;i.style.display='block';};r.readAsDataURL(inp.files[0]);}};
+
+// HELPERS
+function poblarVehiculoSelects(){
+  const s=document.getElementById('m-asig-veh');if(!s)return;
+  s.innerHTML='<option value="">Seleccionar vehículo</option>';
+  (window.UMVehiculos||[]).filter(v=>v.estado!=='INACTIVO').forEach(v=>{const o=document.createElement('option');o.value=v.id;o.textContent=v.placa+' — '+(v.descripcion||'')+(v.conductor?' ('+v.conductor.split(' ')[0]+')':'');s.appendChild(o);});
+}
+function poblarConductorSelect(){
+  const s=document.getElementById('v-conductor');if(!s)return;
+  s.innerHTML='<option value="">Sin asignar</option>';
+  (window.UMUsuarios||[]).filter(u=>u.rol==='CONDUCTOR'&&u.estado!=='INACTIVO').forEach(u=>{const o=document.createElement('option');o.value=u.nombre||'';o.textContent=u.nombre||'';s.appendChild(o);});
+}
+window.poblarVehiculoSelects=poblarVehiculoSelects;window.poblarConductorSelect=poblarConductorSelect;
+
+// CHIPS
+['ch-entrega-est','ch-veh-est','ch-usr-rol'].forEach(id=>{const g=document.getElementById(id);if(!g)return;g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});});
+
+// MODAL
+window.openM=function(id){document.getElementById(id).classList.add('on');};
+window.closeM=function(id){document.getElementById(id).classList.remove('on');};
+document.querySelectorAll('.mo').forEach(m=>{m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});});
+
+// GPS conductor en background
+setInterval(()=>{if(navigator.geolocation&&window.CU?.rol==='CONDUCTOR'){navigator.geolocation.getCurrentPosition(p=>{window.GPS=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);},()=>{});}},30000);
+
+window.toast=function(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800);};
+</script>
+</body>
+</html>
