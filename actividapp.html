@@ -100,7 +100,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .dn{font-size:26px;font-weight:600}.dl{font-size:11px;color:var(--muted);margin-top:2px}
 /* MAP */
 #mc{flex:1;position:relative}#lmap{width:100%;height:100%}
-.mleg{position:absolute;bottom:60px;left:10px;background:rgba(255,255,255,.96);border-radius:12px;padding:9px 12px;font-size:11px;z-index:999;box-shadow:var(--sh);line-height:2}
+.mleg{position:absolute;bottom:60px;left:10px;background:rgba(255,255,255,.9);border-radius:12px;padding:9px 12px;font-size:11px;z-index:10;box-shadow:var(--sh);line-height:2;pointer-events:none}
 .mfi{background:var(--card);padding:7px 10px;border-bottom:0.5px solid var(--brd);flex-shrink:0;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
 .mfc{padding:4px 9px;border-radius:20px;font-size:11px;border:0.5px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;white-space:nowrap;touch-action:manipulation}
 .mfc.on{background:var(--rlight);color:var(--rdark);border-color:var(--red)}
@@ -984,6 +984,7 @@ window.renderActs=function(list,tab){
       <div style="font-size:12px;color:var(--muted)">${a.CLIENTE||''}${a.CANAL?' · '+a.CANAL:''}</div>
       <div style="font-size:11px;color:var(--muted);margin-top:3px">${fd} ${fh}${a.ASESOR?' · <b>'+a.ASESOR.split(' ')[0]+'</b>':''}</div>
       ${a.OBSERVACION?`<div style="font-size:12px;margin-top:5px;padding:6px 8px;background:var(--bg);border-radius:6px">${a.OBSERVACION}</div>`:''}
+      ${window.CU?.tipo==='ADMINISTRADOR'?`<div style="display:flex;gap:6px;margin-top:8px"><button class="bg2" style="flex:1" onclick="event.stopPropagation();editAct('${a.id}')">✏️ Editar</button><button class="bg2" style="flex:1;color:var(--red);border-color:var(--red)" onclick="event.stopPropagation();confirmarElimAct('${a.id}','${(a.PROYECTO||a.CLIENTE||'').replace(/'/g,'')}')">🗑️ Eliminar</button></div>`:''}
     </div>`;
   }).join('');
 };
@@ -1052,7 +1053,8 @@ window.renderAsigLista=function(){
       <div style="display:flex;gap:6px;margin-top:8px">
         ${a.ESTADO!=='CERRADO'?`<button class="bg2" style="flex:1" onclick="editAsig('${a.id}')">✏️ Actualizar</button>`:''}
         ${(()=>{const p=window.Proyectos?.find(x=>x['NOMBRE PROYECTO']===a.PROYECTO);const dir=p?.DIRECCION||p?.COORDENADAS||'';return dir?`<button class="bg2" style="flex:1;color:var(--blue);border-color:var(--blue)" onclick="navegarA('${dir}')">🧭 Navegar</button>`:''})()}
-      </div>
+
+        ${window.CU?.tipo==='ADMINISTRADOR'?`<button class="bg2" style="color:var(--red);border-color:var(--red);padding:8px 12px;margin-top:4px" onclick="confirmarElimAsig('${a.id}','${(a.PROYECTO||'').replace(/'/g,'')}')">🗑️ Eliminar</button>`:''}        </div>
     </div>`;
   }).join('');
 };
@@ -1061,7 +1063,7 @@ window.renderAsigAdminLista=function(){
   const el=document.getElementById('asig-admin-list');if(!window.Asignaciones)return;
   if(!window.Asignaciones.length){el.innerHTML='<div class="em"><div class="em-i">🏗️</div><div>Sin asignaciones creadas</div></div>';return;}
   const pri={ALTA:'br1',URGENTE:'br1',NORMAL:'bb1'};const sc={PENDIENTE:'ba1',VISITADO:'bg1',CERRADO:'b'};
-  el.innerHTML=window.Asignaciones.map(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px"><div class="ct" style="flex:1;min-width:0;margin-right:8px">${a.PROYECTO||'—'}</div><span class="b ${pri[a.PRIORIDAD||'NORMAL']||'bb1'}">${a.PRIORIDAD||''}</span></div><div style="font-size:12px;color:var(--muted)">→ ${a.ASESOR||''}</div><div style="margin-top:5px"><span class="b ${sc[a.ESTADO||'PENDIENTE']||'ba1'}">${a.ESTADO||'PENDIENTE'}</span></div>${a.COMENTARIO_ASESOR?`<div style="font-size:12px;margin-top:4px;color:var(--green)">💬 ${a.COMENTARIO_ASESOR}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:4px">${f.toLocaleDateString('es-CO')}</div></div>`;}).join('');
+  el.innerHTML=window.Asignaciones.map(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px"><div class="ct" style="flex:1;min-width:0;margin-right:8px">${a.PROYECTO||'—'}</div><span class="b ${pri[a.PRIORIDAD||'NORMAL']||'bb1'}">${a.PRIORIDAD||''}</span></div><div style="font-size:12px;color:var(--muted)">→ ${a.ASESOR||''}</div><div style="margin-top:5px"><span class="b ${sc[a.ESTADO||'PENDIENTE']||'ba1'}">${a.ESTADO||'PENDIENTE'}</span></div>${a.COMENTARIO_ASESOR?`<div style="font-size:12px;margin-top:4px;color:var(--green)">💬 ${a.COMENTARIO_ASESOR}</div>`:''}<div style="font-size:11px;color:var(--muted);margin-top:4px">${f.toLocaleDateString('es-CO')}</div><button class="bg2" style="margin-top:8px;width:100%;color:var(--red);border-color:var(--red)" onclick="confirmarElimAsig('${a.id}','${(a.PROYECTO||'').replace(/'/g,'')}')">🗑️ Eliminar asignación</button></div>`;}).join('');
 };
 
 // MAPA
@@ -1088,8 +1090,11 @@ window.renderMap=function(){
   (window.Asignaciones||[]).filter(a=>{if(!isA&&a.ASESOR!==mi)return false;if(fA&&a.ASESOR!==fA)return false;if(a.ESTADO==='CERRADO')return false;const p=window.Proyectos?.find(x=>x['NOMBRE PROYECTO']===a.PROYECTO);return p&&p.COORDENADAS;}).forEach(a=>{
     const p=window.Proyectos?.find(x=>x['NOMBRE PROYECTO']===a.PROYECTO);
     const coords=(p.COORDENADAS||'').toString().split(',');const lat=parseFloat(coords[0]),lng=parseFloat(coords[1]);if(isNaN(lat)||isNaN(lng))return;
-    const icon=L.divIcon({html:'<div style="font-size:22px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))">⭐</div>',iconSize:[24,24],className:''});
-    const m=L.marker([lat,lng],{icon});m.bindPopup(`<b>${a.PROYECTO}</b><br><b>${a.ASESOR}</b><br><span style="color:orange;font-weight:600">⭐ Pendiente</span><br><a href="#" onclick="editAsig('${a.id}');window.leafMap.closePopup();return false" style="color:#C0392B;font-weight:600">✏️ Actualizar estado</a>`);
+    const aEst=a.ESTADO||'PENDIENTE';
+    const aIco=aEst==='VISITADO'?'✅':aEst==='CERRADO'?'🔒':'⭐';
+    const aBg=aEst==='VISITADO'?'#27AE60':aEst==='CERRADO'?'#888':'#F39C12';
+    const icon=L.divIcon({html:`<div style="background:${aBg};border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)">${aIco}</div>`,iconSize:[28,28],iconAnchor:[14,14],className:''});
+    const m=L.marker([lat,lng],{icon});m.bindPopup(`<b>${a.PROYECTO}</b><br><b>${a.ASESOR}</b><br><span style="font-weight:600;color:${aBg}">${aEst}</span><br><a href="#" onclick="editAsig('${a.id}');window.leafMap.closePopup();return false" style="color:#C0392B;font-weight:600">✏️ Actualizar estado</a>`);
     m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
   });
   puntos.forEach(a=>{
@@ -1504,6 +1509,38 @@ window.resetRuta=function(){
 };
 
 // ── ADD startAutoRefresh to applyU ───────────────────────
+
+// ── ELIMINAR ACTIVIDAD (solo admin) ─────────────────────────
+window.confirmarElimAct=function(id,nombre){
+  if(!confirm('¿Eliminar la visita a "'+nombre+'"? Esta acción no se puede deshacer.'))return;
+  eliminarAct(id);
+};
+window.eliminarAct=async function(id){
+  try{
+    const {deleteDoc,doc}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    await deleteDoc(doc(window.db,'actividades',id));
+    window.Actividades=window.Actividades.filter(x=>x.id!==id);
+    toast('🗑️ Visita eliminada');
+    renderActs(window.Actividades,window.actTab||'hoy');
+    refreshStats();
+  }catch(e){toast('Error: '+e.message);}
+};
+
+// ── ELIMINAR ASIGNACIÓN (solo admin) ───────────────────────
+window.confirmarElimAsig=function(id,nombre){
+  if(!confirm('¿Eliminar la asignación "'+nombre+'"? Esta acción no se puede deshacer.'))return;
+  eliminarAsig(id);
+};
+window.eliminarAsig=async function(id){
+  try{
+    const {deleteDoc,doc}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    await deleteDoc(doc(window.db,'asignaciones',id));
+    window.Asignaciones=window.Asignaciones.filter(x=>x.id!==id);
+    toast('🗑️ Asignación eliminada');
+    renderAsigLista();renderAsigAdminLista();
+    refreshStats();
+  }catch(e){toast('Error: '+e.message);}
+};
 
 // Proxy helper para imágenes Firebase (evita CORS)
 function imgProxy(url){if(!url)return '';try{return 'https://wsrv.nl/?url='+encodeURIComponent(url)+'&w=600&output=jpg';}catch(e){return url;}}
