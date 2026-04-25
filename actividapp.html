@@ -124,6 +124,1057 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 /* LOADING */
 #app-loading{position:fixed;inset:0;background:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;color:#fff;gap:12px}
 #app-loading.hide{display:none}
+/* FERRETERIAS CERCANAS */
+.ferr-card{background:var(--card);border-radius:14px;border:0.5px solid var(--brd);padding:14px;margin-bottom:10px;box-shadow:var(--sh);cursor:pointer;display:flex;gap:12px;align-items:center}
+.ferr-num{width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ferr-body{flex:1;min-width:0}
+.ferr-name{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ferr-dist{font-size:12px;color:var(--muted);margin-top:2px}
+.ferr-addr{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ferr-btns{display:flex;gap:6px;flex-shrink:0;flex-direction:column}
+.fc-loading{text-align:center;padding:32px 16px;color:var(--muted)}
+.fc-loading .fc-ani{font-size:36px;animation:bounce .8s infinite alternate}
+@keyframes bounce{0%{transform:translateY(0)}100%{transform:translateY(-8px)}}
+.load-A{width:64px;height:64px;background:rgba(255,255,255,.2);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700}
+/* CRUCE / INSIGHT CARDS */
+.insight{background:linear-gradient(135deg,#C0392B,#922B21);border-radius:14px;padding:14px;margin-bottom:10px;color:#fff}
+.insight-t{font-size:13px;font-weight:600;margin-bottom:4px}
+.insight-s{font-size:12px;opacity:.85}
+/* PROGRESS BAR */
+.prog-wrap{height:6px;background:rgba(255,255,255,.25);border-radius:3px;margin-top:8px;overflow:hidden}
+.prog-bar{height:100%;background:#fff;border-radius:3px;transition:width .4s}
+</style>
+</head>
+<body>
+
+<div id="app-loading">
+  <div class="load-A">A</div>
+  <div style="font-size:16px;font-weight:600">Actividapp</div>
+  <div style="font-size:13px;opacity:.7">Conectando...</div>
+</div>
+
+<div id="app">
+
+<!-- ===== LOGIN ===== -->
+<div class="scr" id="s-login">
+  <div class="lw">
+    <div style="text-align:center;margin-bottom:32px">
+      <div class="lic">A</div>
+      <div style="font-size:22px;font-weight:600">Actividapp</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px">Seguimiento Comercial</div>
+    </div>
+    <div class="f"><label>Usuario</label><select id="l-usr"><option value="">— Seleccionar —</option></select></div>
+    <div class="f"><label>Contraseña</label><input type="password" id="l-pw" placeholder="••••••••"></div>
+    <button class="bp" id="btn-login" type="button" onclick="doLogin()">Iniciar Sesión</button>
+    <div id="l-err" style="color:var(--red);font-size:13px;text-align:center;margin-top:10px;display:none"></div>
+  </div>
+</div>
+
+<!-- ===== HOME ===== -->
+<div class="scr" id="s-home">
+  <div class="tb">
+    <div class="tb-t" id="h-greeting">Actividapp</div>
+    <span class="up" id="h-up"></span>
+    <span class="adm" id="h-adm" style="display:none">★</span>
+  </div>
+  <div class="cnt">
+    <!-- Stats -->
+    <div class="sg" id="home-stats">
+      <div class="sc"><div class="sn" id="st-h">0</div><div class="sl">Visitas hoy</div></div>
+      <div class="sc"><div class="sn" id="st-m">0</div><div class="sl">Este mes</div></div>
+      <div class="sc"><div class="sn" id="st-imp">0%</div><div class="sl">Tasa impacto</div></div>
+      <div class="sc"><div class="sn" id="st-a">0</div><div class="sl">Asignaciones</div></div>
+    </div>
+    <!-- Insights cruce de datos (solo admin) -->
+    <div id="home-insights" style="display:none"></div>
+    <div class="stl">Módulos</div>
+    <div class="card" style="cursor:pointer" onclick="go('nueva')"><div class="crow"><div class="cico" style="background:var(--rlight)">📝</div><div class="cbody"><div class="ct">Nueva visita</div><div class="cs">Registrar actividad comercial</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('actividades')"><div class="crow"><div class="cico" style="background:var(--glight)">📋</div><div class="cbody"><div class="ct">Actividades</div><div class="cs" id="act-sub">Historial de visitas</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('proyectos')"><div class="crow"><div class="cico" style="background:var(--blight)">🏗️</div><div class="cbody"><div class="ct">Proyectos</div><div class="cs" id="proy-sub">Ver y gestionar proyectos</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('asignaciones')"><div class="crow"><div class="cico" style="background:var(--alight)">📌</div><div class="cbody"><div class="ct">Asignaciones</div><div class="cs" id="asig-sub">Proyectos pendientes</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('mapa')"><div class="crow"><div class="cico" style="background:var(--plight)">🗺️</div><div class="cbody"><div class="ct">Mapa de cobertura</div><div class="cs">Zonas visitadas con GPS</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('muestras')"><div class="crow"><div class="cico" style="background:#F0FFF4">📦</div><div class="cbody"><div class="ct">Muestras</div><div class="cs">Productos entregados</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('ferreterias')"><div class="crow"><div class="cico" style="background:#FDEBD0">🔍</div><div class="cbody"><div class="ct">Ferreterías cercanas</div><div class="cs">Las 10 más cercanas a tu ubicación</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" id="c-dash" style="cursor:pointer;display:none" onclick="go('dashboard')"><div class="crow"><div class="cico" style="background:#FEF5E7">📊</div><div class="cbody"><div class="ct">Dashboard</div><div class="cs">Gestión integral del equipo</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" id="c-rep" style="cursor:pointer;display:none" onclick="go('reportes')"><div class="crow"><div class="cico" style="background:#EAF3DE">📄</div><div class="cbody"><div class="ct">Informe PDF</div><div class="cs">Reporte gerencial con fotos</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" id="c-asig-admin" style="cursor:pointer;display:none" onclick="go('asig-admin')"><div class="crow"><div class="cico" style="background:#F5EEF8">🏗️</div><div class="cbody"><div class="ct">Asignar proyectos</div><div class="cs">Gestión técnico de obras</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('ruta')"><div class="crow"><div class="cico" style="background:#EAF5FB">🗺️</div><div class="cbody"><div class="ct">Ordenar ruta</div><div class="cs">Optimiza tu recorrido del día</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" id="c-usuarios" style="cursor:pointer;display:none" onclick="go('usuarios')"><div class="crow"><div class="cico" style="background:#EAF5FB">👤</div><div class="cbody"><div class="ct">Usuarios y roles</div><div class="cs">Gestión del equipo</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="dv"></div>
+    <button class="bs" style="margin-top:0" onclick="doLogout()">Cerrar sesión</button>
+    <div style="height:10px"></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b on" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- ===== ACTIVIDADES ===== -->
+<div class="scr" id="s-actividades">
+  <div class="tb">
+    <span class="tb-bk" onclick="go('home')">‹</span>
+    <div class="tb-t">Actividades</div>
+    <select id="act-filter-asesor" onchange="renderActs(window.Actividades,window.actTab||'hoy')" style="display:none;font-size:12px;background:rgba(255,255,255,.2);border:none;color:#fff;font-family:'DM Sans',sans-serif;border-radius:8px;padding:4px 8px;max-width:130px;outline:none">
+      <option value="">Todos</option>
+    </select>
+  </div>
+  <div class="cnt">
+    <div class="sw" style="margin-bottom:8px"><input id="act-search" placeholder="Buscar cliente o proyecto..." oninput="renderActs(window.Actividades,window.actTab||'hoy')" style="width:100%;padding:9px 12px 9px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
+    <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+      <button class="chip on" id="t-h" onclick="setTab('hoy')">Hoy</button>
+      <button class="chip" id="t-s" onclick="setTab('semana')">Semana</button>
+      <button class="chip" id="t-m" onclick="setTab('mes')">Mes</button>
+      <button class="chip" id="t-t" onclick="setTab('todo')">Todo</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="chip on" id="fi-t" onclick="setImpF('todos')">Todos</button>
+      <button class="chip" id="fi-i" onclick="setImpF('impactado')">🟢 Impactados</button>
+      <button class="chip" id="fi-n" onclick="setImpF('no_impactado')">🔴 No impactados</button>
+    </div>
+    <div id="act-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <button class="fab" onclick="go('nueva')">+</button>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b on"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- ===== NUEVA VISITA ===== -->
+<div class="scr" id="s-nueva">
+  <div class="tb"><span class="tb-bk" onclick="go('actividades')">‹</span><div class="tb-t">Nueva Visita</div></div>
+  <div class="cnt">
+    <div class="f"><label>Canal</label><div class="chips" id="ch-canal"><div class="chip on" data-v="OBRAS">🏗️ Obras</div><div class="chip" data-v="FERRETERIA">🔧 Ferretería</div></div></div>
+    <div class="f" id="fp-proy">
+      <label>Proyecto</label>
+      <div id="proy-sv" class="sv"><span id="proy-sv-t"></span><span class="sv-x" onclick="clearSel('proy')">✕</span></div>
+      <div id="proy-sw">
+        <div class="sw"><input id="np-s" placeholder="Buscar proyecto..." oninput="fltProy()" style="width:100%;padding:10px 12px 10px 32px;border:1px solid var(--brd);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
+        <select class="sl2" id="np" size="4" onchange="selProy()"><option value="">Escribe para buscar...</option></select>
+        <button class="bg2" style="margin-top:6px;width:100%" onclick="openM('m-nuevo-proy')">+ Crear nuevo proyecto</button>
+      </div>
+    </div>
+    <div class="f"><label>Tipo de cliente</label><select id="ntc" onchange="onTipoCliChange(this.value)"><option value="">Seleccionar</option><option>CONSTRUCTOR</option><option>FERRETERIA</option><option>DISTRIBUIDOR</option><option>ARQUITECTO</option><option>CONTRATISTA</option></select></div>
+    <div class="f" id="fp-ferr-size" style="display:none">
+      <label>Tamaño ferretería</label>
+      <div class="chips" id="ch-ferr-size">
+        <div class="chip on" data-v="PEQUEÑA">🔹 Pequeña</div>
+        <div class="chip" data-v="MEDIANA">🔶 Mediana</div>
+        <div class="chip" data-v="GRANDE">🔷 Grande</div>
+      </div>
+    </div>
+    <div class="f">
+      <label>Cliente</label>
+      <div id="cli-sv" class="sv"><span id="cli-sv-t"></span><span class="sv-x" onclick="clearSel('cli')">✕</span></div>
+      <div id="cli-sw">
+        <div class="sw"><input id="nc-s" placeholder="Buscar cliente..." oninput="fltCli()" style="width:100%;padding:10px 12px 10px 32px;border:1px solid var(--brd);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
+        <select class="sl2" id="nc" size="4" onchange="selCli()"><option value="">Escribe para buscar...</option></select>
+        <button class="bg2" style="margin-top:6px;width:100%" onclick="openM('m-cli')">+ Crear nuevo cliente</button>
+      </div>
+    </div>
+    <div class="f"><label>Tipo de visita</label><div class="chips" id="ch-tv"><div class="chip on" data-v="VISITA">Visita</div><div class="chip" data-v="SEGUIMIENTO">Seguimiento</div><div class="chip" data-v="CIERRE">Cierre</div><div class="chip" data-v="LLAMADA">Llamada</div><div class="chip" data-v="OTRO">Otro</div></div></div>
+    <div class="f"><label>Impacto</label><div class="chips" id="ch-imp"><div class="chip on" data-v="IMPACTADO">🟢 Impactado</div><div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div></div></div>
+    <div class="f">
+      <label>Ubicación</label>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <button class="chip on" id="loc-type-gps" onclick="setLocType('gps')" style="flex:1;justify-content:center">📍 GPS actual</button>
+        <button class="chip" id="loc-type-dir" onclick="setLocType('dir')" style="flex:1;justify-content:center">📝 Dirección</button>
+      </div>
+      <div class="loc" id="loc-box"><span>📍</span><span id="loc-t">Obteniendo...</span></div>
+      <input id="loc-dir-input" placeholder="Ej: Calle 50 #40-20, Medellín" style="display:none;width:100%;padding:10px 12px;border:1px solid var(--brd);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none;margin-top:4px" oninput="window.GPS=this.value">
+    </div>
+    <div class="f">
+      <label>Foto <span style="font-weight:400;color:var(--muted);text-transform:none">(se sube en segundo plano)</span></label>
+      <img id="fp-img" class="fpimg">
+      <div class="fa" onclick="document.getElementById('fileInput').click()"><div style="font-size:22px">📷</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Toca para adjuntar</div></div>
+      <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="prvFoto(this,'fp-img');document.getElementById('btn-rf').style.display='block'">
+      <button class="bg2" id="btn-rf" style="width:100%;margin-top:6px;display:none" onclick="removeFoto()">✕ Quitar foto</button>
+    </div>
+    <div class="f"><label>Observación</label><textarea id="n-obs" rows="3" placeholder="Notas de la visita..."></textarea></div>
+    <button class="bp" id="btn-g" type="button" onclick="guardar()">Guardar Visita</button>
+    <button class="bs" onclick="go('actividades')">Cancelar</button>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- ===== PROYECTOS ===== -->
+<div class="scr" id="s-proyectos">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Proyectos</div><button class="tb-act" onclick="openM('m-nuevo-proy')">+ Nuevo</button></div>
+  <div class="cnt">
+    <div class="sw" style="margin-bottom:8px"><input id="ps" placeholder="Buscar proyecto..." oninput="fltPL()" style="width:100%;padding:10px 12px 10px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="chip on" id="pf-t" onclick="setPF('todos')">Todos</button>
+      <button class="chip" id="pf-a" onclick="setPF('activo')">Activos</button>
+      <button class="chip" id="pf-i" onclick="setPF('inactivo')">Inactivos</button>
+    </div>
+    <div id="proy-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- ===== ASIGNACIONES ===== -->
+<div class="scr" id="s-asignaciones">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Mis Asignaciones</div></div>
+  <div class="cnt">
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="chip on" id="af-p" onclick="setAsigF('pendiente')">Pendientes</button>
+      <button class="chip" id="af-v" onclick="setAsigF('visitado')">Visitados</button>
+      <button class="chip" id="af-t" onclick="setAsigF('todo')">Todos</button>
+    </div>
+    <div id="asig-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b on"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- ===== ASIG ADMIN ===== -->
+<div class="scr" id="s-asig-admin">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Asignar Proyectos</div><button class="tb-act" onclick="openM('m-asig')">+ Asignar</button></div>
+  <div class="cnt">
+    <div id="asig-admin-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">🏗️</span>Asignar</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- ===== MAPA ===== -->
+<div class="scr" id="s-mapa">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Mapa de Cobertura</div></div>
+  <div class="mfi">
+    <select id="mf-a" onchange="renderMap()" style="font-size:11px;border:0.5px solid var(--brd);border-radius:8px;padding:4px 6px;background:var(--card);font-family:'DM Sans',sans-serif;outline:none"><option value="">Todos</option></select>
+    <span class="mfc on" data-g="canal" data-v="" onclick="setMF(this)">Todos</span>
+    <span class="mfc" data-g="canal" data-v="OBRAS" onclick="setMF(this)">🏗️</span>
+    <span class="mfc" data-g="canal" data-v="FERRETERIA" onclick="setMF(this)">🔧</span>
+    <span class="mfc on" data-g="imp" data-v="" onclick="setMF(this)">Imp.</span>
+    <span class="mfc" data-g="imp" data-v="IMPACTADO" onclick="setMF(this)">🟢</span>
+    <span class="mfc" data-g="imp" data-v="NO IMPACTADO" onclick="setMF(this)">🔴</span>
+    <span class="mfc on" data-g="tam" data-v="" onclick="setMF(this)">Tamaño</span>
+    <span class="mfc" data-g="tam" data-v="PEQUEÑA" onclick="setMF(this)">🔹Peq</span>
+    <span class="mfc" data-g="tam" data-v="MEDIANA" onclick="setMF(this)">🔶Med</span>
+    <span class="mfc" data-g="tam" data-v="GRANDE" onclick="setMF(this)">🔷Gde</span>
+  </div>
+  <div id="mc"><div id="lmap"></div>
+    <div class="mleg">
+      <div>🏗️🟢 Obra impactada &nbsp; 🏗️🔴 No impactada</div>
+      <div>🔧🟢 Ferret. impactada &nbsp; 🔧🔴 No impactada</div>
+      <div>⭐ Asignado pendiente</div>
+    </div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b on"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- ===== MUESTRAS ===== -->
+<div class="scr" id="s-muestras">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Muestras</div><button class="tb-act" onclick="openM('m-muestra')">+ Nueva</button></div>
+  <div class="cnt"><div id="m-list"><div class="ld">Cargando...</div></div></div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b on"><span class="nb-i">📦</span>Muestras</button>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="scr" id="s-dashboard">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Dashboard Integral</div></div>
+  <div class="cnt">
+    <div class="drf">
+      <input type="date" id="df-i"><span style="font-size:12px;color:var(--muted)">a</span>
+      <input type="date" id="df-f">
+      <button class="bp-sm" onclick="applyDash()">Filtrar</button>
+      <button onclick="clearDash()" style="background:transparent;color:var(--muted);border:0.5px solid var(--brd);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer">✕</button>
+    </div>
+    <div class="stl">Resumen</div><div class="sg" id="d-stats"></div>
+    <div class="stl">Cruce: Asignados vs Visitados</div><div class="dbw" id="d-cruce"></div>
+    <div class="stl">Visitas por asesor</div><div class="dbw" id="d-asesores"></div>
+    <div class="stl">Obras vs Ferreterías por asesor</div><div class="dbw" id="d-canal-a"></div>
+    <div class="stl">Últimos 7 días</div><div class="dbw" id="d-dias"></div>
+    <div class="stl">Tipo de cliente</div><div class="dw" id="d-tipos"></div>
+    <div class="stl">Impacto</div><div class="dw" id="d-imp"></div>
+    <div class="stl">Muestras por asesor</div><div class="dbw" id="d-muestras"></div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">📊</span>Dashboard</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- ===== REPORTES ===== -->
+<div class="scr" id="s-reportes">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Informe Gerencial</div></div>
+  <div class="cnt">
+    <div class="card">
+      <div class="stl" style="margin-top:0">Período</div>
+      <div class="f"><label>Fecha inicio</label><input type="date" id="r-i"></div>
+      <div class="f"><label>Fecha fin</label><input type="date" id="r-f"></div>
+      <div class="f"><label>Asesor</label><select id="r-a"><option value="">Todos</option></select></div>
+      <div class="f"><label>Canal</label><select id="r-c"><option value="">Todos</option><option value="OBRAS">Obras</option><option value="FERRETERIA">Ferretería</option></select></div>
+      <div class="f"><label>Fotos en PDF</label><div class="chips" id="ch-fotos"><div class="chip on" data-v="si">✅ Con fotos</div><div class="chip" data-v="no">Sin fotos</div></div></div>
+      <button class="bp" type="button" onclick="generarPDF()">📄 Descargar PDF</button>
+    </div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b on"><span class="nb-i">📄</span>PDF</button>
+  </div>
+</div>
+
+
+<!-- ===== RUTA ===== -->
+<div class="scr" id="s-ruta">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Ordenar Ruta</div><button class="tb-act" id="btn-iniciar-ruta" onclick="iniciarRuta()" style="display:none">▶ Iniciar</button></div>
+  <div class="cnt" id="ruta-cnt">
+    <div id="ruta-step1">
+      <div class="stl">Selecciona los proyectos a visitar hoy</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Toca para agregar a la ruta. Puedes agregar hasta 10 paradas.</div>
+      <div class="sw" style="margin-bottom:8px"><input id="ruta-search" placeholder="Buscar proyecto o dirección..." oninput="fltRuta()" style="width:100%;padding:9px 12px 9px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
+      <div id="ruta-disponibles"><div class="ld">Cargando proyectos...</div></div>
+    </div>
+    <div id="ruta-step2" style="display:none">
+      <div class="stl">Tu ruta optimizada</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Organizamos las paradas para minimizar el recorrido. Toca cada una para navegar.</div>
+      <div id="ruta-lista"></div>
+      <button class="bs" style="margin-top:4px" onclick="resetRuta()">↩ Cambiar selección</button>
+    </div>
+  </div>
+  <div id="ruta-footer" style="padding:12px 16px;background:var(--card);border-top:0.5px solid var(--brd);display:none">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500" id="ruta-progreso-txt">0 de 0 visitados</div>
+        <div style="height:4px;background:var(--bg);border-radius:2px;margin-top:4px;overflow:hidden"><div id="ruta-progreso-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .4s;width:0%"></div></div>
+      </div>
+      <span id="ruta-pct" style="font-size:18px;font-weight:600;color:var(--green)">0%</span>
+    </div>
+    <button class="bp" id="btn-siguiente-parada" onclick="siguienteParada()">📍 Navegar a siguiente parada</button>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">🗺️</span>Ruta</button>
+    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- ===== USUARIOS ===== -->
+<div class="scr" id="s-usuarios">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Usuarios y Roles</div><button class="tb-act" onclick="openM('m-nuevo-usuario')">+ Nuevo</button></div>
+  <div class="cnt">
+    <div id="usr-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b on"><span class="nb-i">👤</span>Usuarios</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+
+<!-- ===== FERRETERÍAS CERCANAS ===== -->
+<div class="scr" id="s-ferreterias">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Ferreterías Cercanas</div><button class="tb-a" id="btn-refresh-ferr" onclick="buscarFerreterias()">🔄 Actualizar</button></div>
+  <div class="cnt">
+    <div id="ferr-status" style="background:var(--navyL,var(--blight));border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--blue);display:flex;align-items:center;gap:8px">
+      <span>📍</span><span id="ferr-status-txt">Obteniendo tu ubicación...</span>
+    </div>
+    <!-- Filtro tipo -->
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="chip on" id="ft-todas" onclick="setFerrTab('todas')">🔧 Todas</button>
+      <button class="chip" id="ft-ferreteria" onclick="setFerrTab('ferreteria')">Ferretería</button>
+      <button class="chip" id="ft-materiales" onclick="setFerrTab('materiales')">Materiales</button>
+      <button class="chip" id="ft-construccion" onclick="setFerrTab('construccion')">Construcción</button>
+    </div>
+    <div id="ferr-lista"><div class="fc-loading"><div class="fc-ani">🔍</div><div style="margin-top:10px">Buscando ferreterías cerca de ti...</div></div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">🔍</span>Cercanas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- MODALES -->
+<div class="mo" id="m-nuevo-usuario"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="mu-title">Nuevo Usuario</div>
+  <input type="hidden" id="mu-id">
+  <div class="f"><label>Nombre completo *</label><input id="mu-nom" placeholder="APELLIDO NOMBRE"></div>
+  <div class="f"><label>Cédula / ID *</label><input id="mu-ced" placeholder="12345678"></div>
+  <div class="f"><label>Contraseña *</label><input id="mu-pw" type="password" placeholder="Mínimo 4 caracteres"></div>
+  <div class="f"><label>Confirmar contraseña</label><input id="mu-pw2" type="password" placeholder="Repite la contraseña"></div>
+  <div class="f"><label>Rol</label>
+    <div class="chips" id="mu-rol">
+      <div class="chip on" data-v="ASESOR">👤 Asesor</div>
+      <div class="chip" data-v="ADMINISTRADOR">★ Administrador</div>
+      <div class="chip" data-v="TECNICO">🔧 Técnico</div>
+    </div>
+  </div>
+  <div class="f"><label>Estado</label>
+    <div class="chips" id="mu-est">
+      <div class="chip on" data-v="ACTIVO">✅ Activo</div>
+      <div class="chip" data-v="INACTIVO">❌ Inactivo</div>
+    </div>
+  </div>
+  <button class="bp" type="button" id="mu-btn" onclick="saveUsuario()">Crear usuario</button>
+  <button class="bs" onclick="closeM('m-nuevo-usuario')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-confirm-del"><div class="md"><div class="md-pull"></div>
+  <div class="mdt">¿Eliminar usuario?</div>
+  <div id="m-confirm-txt" style="font-size:14px;color:var(--muted);margin-bottom:16px"></div>
+  <button class="bp" type="button" style="background:#C0392B" onclick="confirmDeleteUser()">Sí, eliminar</button>
+  <button class="bs" onclick="closeM('m-confirm-del')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-cli"><div class="md"><div class="md-pull"></div>
+  <div class="mdt">Nuevo Cliente</div>
+  <div class="f"><label>NIT / Cédula <span style="font-weight:400;color:var(--muted);text-transform:none">(opcional — se genera ID automático)</span></label><input id="mc-nit" placeholder="Dejar vacío para ID automático"></div>
+  <div class="f"><label>Nombre *</label><input id="mc-nom" placeholder="Nombre empresa o persona"></div>
+  <div class="f"><label>Encargado</label><input id="mc-enc" placeholder="Nombre del contacto"></div>
+  <div class="f"><label>Celular</label><input id="mc-cel" type="tel" placeholder="300 000 0000"></div>
+  <button class="bp" type="button" onclick="saveCli()">Guardar cliente</button>
+  <button class="bs" onclick="closeM('m-cli')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-nuevo-proy"><div class="md"><div class="md-pull"></div>
+  <div class="mdt">Nuevo Proyecto</div>
+  <div class="f"><label>Nombre del proyecto *</label><input id="mnp-nom" placeholder="Nombre del proyecto"></div>
+  <div class="f"><label>Dirección</label><input id="mnp-dir" placeholder="Dirección"></div>
+  <div class="f"><label>Barrio / Zona</label><input id="mnp-bar" placeholder="Barrio"></div>
+  <div class="f"><label>NIT cliente</label><input id="mnp-nit" placeholder="NIT"></div>
+  <div class="f"><label>Canal</label><select id="mnp-canal"><option value="OBRAS">Obras</option><option value="FERRETERIA">Ferretería</option></select></div>
+  <div class="f"><label>Estado</label><div class="chips" id="mnp-est"><div class="chip on" data-v="ACTIVO">✅ Activo</div><div class="chip" data-v="INACTIVO">❌ Inactivo</div></div></div>
+  <div class="f"><label>Observaciones</label><textarea id="mnp-obs" rows="2" placeholder="Notas..."></textarea></div>
+  <button class="bp" type="button" onclick="saveNuevoProy()">Crear proyecto</button>
+  <button class="bs" onclick="closeM('m-nuevo-proy')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-edit-proy"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="mep-t">Editar Proyecto</div>
+  <div class="f"><label>Estado</label><div class="chips" id="mep-est"><div class="chip on" data-v="ACTIVO">✅ Activo</div><div class="chip" data-v="INACTIVO">❌ Inactivo</div></div></div>
+  <div class="f"><label>Observaciones</label><textarea id="mep-obs" rows="2"></textarea></div>
+  <div class="f"><label>Asesor asignado</label><select id="mep-asesor"><option value="">Sin asignar</option></select></div>
+  <button class="bp" type="button" onclick="saveEditProy()">Guardar cambios</button>
+  <button class="bs" onclick="closeM('m-edit-proy')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-act-edit"><div class="md"><div class="md-pull"></div>
+  <div class="mdt">Editar Actividad</div>
+  <div class="f"><label>Impacto</label><div class="chips" id="mae-imp"><div class="chip on" data-v="IMPACTADO">🟢 Impactado</div><div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div></div></div>
+  <div class="f"><label>Tipo de visita</label><select id="mae-tv"><option>VISITA</option><option>SEGUIMIENTO</option><option>CIERRE</option><option>LLAMADA</option><option>OTRO</option></select></div>
+  <div class="f"><label>Observación</label><textarea id="mae-obs" rows="3"></textarea></div>
+  <button class="bp" type="button" onclick="saveAct()">Guardar</button>
+  <button class="bs" onclick="closeM('m-act-edit')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-asig-edit"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="mae2-t">Actualizar Asignación</div>
+  <div class="f"><label>Estado</label><div class="chips" id="mae2-est"><div class="chip on" data-v="PENDIENTE">⏳ Pendiente</div><div class="chip" data-v="VISITADO">✅ Visitado</div><div class="chip" data-v="CERRADO">🔒 Cerrado</div></div></div>
+  <div class="f"><label>Comentario</label><textarea id="mae2-obs" rows="3" placeholder="¿Qué encontraste?"></textarea></div>
+  <button class="bp" type="button" onclick="saveAsigEdit()">Guardar</button>
+  <button class="bs" onclick="closeM('m-asig-edit')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-muestra"><div class="md"><div class="md-pull"></div>
+  <div class="mdt">Nueva Muestra</div>
+  <div class="f"><label>Producto *</label><input id="mm-p" placeholder="Ej: Porcelana Blanca 33x33"></div>
+  <div class="f"><label>Descripción</label><textarea id="mm-d" rows="2" placeholder="Detalles..."></textarea></div>
+  <div class="f"><label>Cantidad</label><input id="mm-c" type="number" min="1" value="1"></div>
+  <div class="f"><label>Cliente</label><div class="sw"><input id="mm-cs" placeholder="Buscar cliente..." oninput="fltMCli()" style="width:100%;padding:8px 12px 8px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div><select class="sl2" id="mm-cl" size="3"><option value="">Escribe para buscar...</option></select></div>
+  <div class="f"><label>Proyecto (opcional)</label><div class="sw"><input id="mm-ps" placeholder="Buscar proyecto..." oninput="fltMProy()" style="width:100%;padding:8px 12px 8px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div><select class="sl2" id="mm-pr" size="3"><option value="">Escribe para buscar...</option></select></div>
+  <div class="f"><label>Foto (opcional)</label><img id="mm-img" class="fpimg"><div class="fa" onclick="document.getElementById('fileInputM').click()"><div style="font-size:20px">📷</div><div style="font-size:12px;color:var(--muted)">Adjuntar foto</div></div><input type="file" id="fileInputM" accept="image/*" capture="environment" onchange="prvFoto(this,'mm-img')"></div>
+  <button class="bp" type="button" onclick="saveMuestra()">Guardar muestra</button>
+  <button class="bs" onclick="closeM('m-muestra')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-asig"><div class="md"><div class="md-pull"></div>
+  <div class="mdt">Asignar Proyecto</div>
+  <div class="f"><label>Proyecto</label>
+    <div id="ma-proy-sv" class="sv" style="display:none"><span id="ma-proy-sv-t"></span><span class="sv-x" onclick="clearSelAsig()">✕</span></div>
+    <div id="ma-proy-sw">
+      <div class="sw"><input id="ma-ps" placeholder="Buscar proyecto..." oninput="fltAProy()" style="width:100%;padding:8px 12px 8px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
+      <select class="sl2" id="ma-pr" size="4" onchange="selProyAsig()"><option value="">Escribe para buscar...</option></select>
+    </div>
+    <button class="bg2" style="margin-top:6px;width:100%" onclick="openM('m-nuevo-proy')">+ Crear proyecto nuevo</button>
+  </div>
+  <div class="f"><label>Asesor</label><select id="ma-as"><option value="">Seleccionar asesor</option></select></div>
+  <div class="f"><label>Prioridad</label><div class="chips" id="ma-pri"><div class="chip on" data-v="NORMAL">Normal</div><div class="chip" data-v="ALTA">🔴 Alta</div><div class="chip" data-v="URGENTE">⚡ Urgente</div></div></div>
+  <div class="f"><label>Instrucciones</label><textarea id="ma-obs" rows="2" placeholder="¿Qué debe hacer?"></textarea></div>
+  <button class="bp" type="button" onclick="saveAsig()">Asignar</button>
+  <button class="bs" onclick="closeM('m-asig')">Cancelar</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore,collection,addDoc,getDocs,query,orderBy,Timestamp,doc,setDoc,updateDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage,ref,uploadBytes,getDownloadURL }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const FC={apiKey:"AIzaSyACsrCsWCYQxMeXVMMtIfF_49HitqQLmlM",authDomain:"actividapp-31a3a.firebaseapp.com",projectId:"actividapp-31a3a",storageBucket:"actividapp-31a3a.firebasestorage.app",messagingSenderId:"909431542048",appId:"1:909431542048:web:04860ec57338a867990745"};
+const fa=initializeApp(FC);
+const db=getFirestore(fa);const st=getStorage(fa);
+window.db=db;window.st=st;
+window.FS={collection,addDoc,getDocs,query,orderBy,Timestamp,doc,setDoc,updateDoc,ref,uploadBytes,getDownloadURL};
+
+async function loadAll(){
+  try{
+    // USUARIOS
+    const us=await getDocs(collection(db,'usuarios'));
+    window.Usuarios=[];
+    const lsel=document.getElementById('l-usr');
+    lsel.innerHTML='<option value="">— Seleccionar —</option>';
+    us.forEach(d=>{const u={id:d.id,...d.data()};window.Usuarios.push(u);const o=document.createElement('option');o.value=u['CEDULA ID']||u.cedula||d.id;o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';lsel.appendChild(o);});
+    const asesores=window.Usuarios.filter(u=>(u['TIPO']||u.tipo||'ASESOR')==='ASESOR');
+    ['ma-as','r-a','mep-asesor'].forEach(id=>{const s=document.getElementById(id);if(!s)return;const first=s.options[0]?.outerHTML||'';s.innerHTML=first;asesores.forEach(u=>{const o=document.createElement('option');o.value=u['NOMBRE EMPLEADO']||u.nombre||'';o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';s.appendChild(o);});});
+    // Asesor filter en actividades (admin)
+    const afs=document.getElementById('act-filter-asesor');
+    afs.innerHTML='<option value="">Todos los asesores</option>';
+    asesores.forEach(u=>{const o=document.createElement('option');o.value=u['NOMBRE EMPLEADO']||u.nombre||'';o.textContent=(u['NOMBRE EMPLEADO']||u.nombre||'').split(' ')[0];afs.appendChild(o);});
+
+    // PROYECTOS
+    const ps=await getDocs(collection(db,'proyectos'));
+    window.Proyectos=[];ps.forEach(d=>window.Proyectos.push({id:d.id,...d.data()}));
+    document.getElementById('proy-sub').textContent=window.Proyectos.length.toLocaleString()+' proyectos';
+    renderProyLista(window.Proyectos.slice(0,60));
+
+    // CLIENTES
+    const cs=await getDocs(collection(db,'clientes'));
+    window.Clientes=[];cs.forEach(d=>window.Clientes.push({id:d.id,...d.data()}));
+
+    // ACTIVIDADES
+    const as=await getDocs(query(collection(db,'actividades'),orderBy('fecha','desc')));
+    window.Actividades=[];as.forEach(d=>window.Actividades.push({id:d.id,...d.data()}));
+
+    // MUESTRAS
+    const ms=await getDocs(query(collection(db,'muestras'),orderBy('fecha','desc')));
+    window.Muestras=[];ms.forEach(d=>window.Muestras.push({id:d.id,...d.data()}));
+    renderMuestras();
+
+    // ASIGNACIONES
+    const asg=await getDocs(query(collection(db,'asignaciones'),orderBy('fecha','desc')));
+    window.Asignaciones=[];asg.forEach(d=>window.Asignaciones.push({id:d.id,...d.data()}));
+
+    // POST-LOAD
+    window._dataReady=true;
+    const cu=loadS();
+    if(cu&&!window.CU){applyU(cu);go('home');}
+    else if(!window.CU){go('login');}
+    refreshStats();
+
+  }catch(e){console.error('loadAll error:',e);}
+  finally{document.getElementById('app-loading').classList.add('hide');}
+}
+window.loadAll=loadAll;
+loadAll();
+
+// GUARDAR VISITA
+window.guardar=async function(){
+  const btn=document.getElementById('btn-g');
+  const canal=document.querySelector('#ch-canal .chip.on')?.dataset.v||'OBRAS';
+  const proy=window._selProy||'';const cli=window._selCli||'';
+  const tv=document.querySelector('#ch-tv .chip.on')?.dataset.v||'VISITA';
+  const imp=document.querySelector('#ch-imp .chip.on')?.dataset.v||'IMPACTADO';
+  const obs=document.getElementById('n-obs').value;const ubi=window.GPS||'';
+  if(canal==='OBRAS'&&!proy){toast('Selecciona un proyecto');return;}
+  if(!cli){toast('Selecciona un cliente');return;}
+  btn.disabled=true;btn.innerHTML='<span class="sp"></span>Guardando...';
+  try{
+    const ferrSize=document.querySelector('#ch-ferr-size .chip.on')?.dataset.v||'';
+    const d2={ID_VISITA:Math.random().toString(36).substr(2,8),fecha:FS.Timestamp.now(),ASESOR:window.CU?.nombre||'',CANAL:canal,'TIPO CLIENTE':document.getElementById('ntc').value,'TAMAÑO FERRETERIA':ferrSize,CLIENTE:cli,PROYECTO:proy,'TIPO DE VISITA':tv,FOTO:'',IMPACTO:imp,OBSERVACION:obs,'UBICACION':ubi};
+    const ref2=await FS.addDoc(collection(db,'actividades'),d2);
+    window.Actividades.unshift({id:ref2.id,...d2});
+    toast('✅ Visita guardada');
+    const fi=document.getElementById('fileInput');
+    if(fi.files[0]){(async()=>{try{const sr=FS.ref(st,'fotos/'+Date.now());await FS.uploadBytes(sr,fi.files[0]);const url=await FS.getDownloadURL(sr);await FS.updateDoc(FS.doc(db,'actividades',ref2.id),{FOTO:url});const a=window.Actividades.find(x=>x.id===ref2.id);if(a)a.FOTO=url;}catch(e){}})();}
+    window._selProy='';window._selCli='';clearSel('proy');clearSel('cli');
+    document.getElementById('n-obs').value='';removeFoto();window.GPS='';getGPS();
+    refreshStats();renderActs(window.Actividades,window.actTab||'hoy');
+    setTimeout(()=>go('actividades'),600);
+  }catch(e){toast('Error: '+e.message);}
+  btn.disabled=false;btn.innerHTML='Guardar Visita';
+};
+
+window.saveNuevoProy=async function(){
+  const nom=document.getElementById('mnp-nom').value.trim();if(!nom){toast('Ingresa el nombre');return;}
+  const est=document.querySelector('#mnp-est .chip.on')?.dataset.v||'ACTIVO';
+  const data={'NOMBRE PROYECTO':nom,'DIRECCION':document.getElementById('mnp-dir').value,'BARRIO':document.getElementById('mnp-bar').value,'NIT':document.getElementById('mnp-nit').value,'CANAL':document.getElementById('mnp-canal').value,'ESTADO':est,'OBSERVACIONES':document.getElementById('mnp-obs').value};
+  try{
+    const r2=FS.doc(collection(db,'proyectos'));
+    await FS.setDoc(r2,data);
+    window.Proyectos.unshift({id:r2.id,...data});
+    toast('✅ Proyecto creado');closeM('m-nuevo-proy');
+    // Auto-select if coming from nueva visita
+    window._selProy=nom;
+    document.getElementById('proy-sv-t').textContent=nom;
+    document.getElementById('proy-sv').classList.add('on');
+    document.getElementById('proy-sw').style.display='none';
+    renderProyLista(window.Proyectos.slice(0,60));
+    document.getElementById('proy-sub').textContent=window.Proyectos.length.toLocaleString()+' proyectos';
+    ['mnp-nom','mnp-dir','mnp-bar','mnp-nit','mnp-obs'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveEditProy=async function(){
+  const id=window._editPID;if(!id)return;
+  const est=document.querySelector('#mep-est .chip.on')?.dataset.v||'ACTIVO';
+  try{
+    await FS.updateDoc(FS.doc(db,'proyectos',id),{ESTADO:est,OBSERVACIONES:document.getElementById('mep-obs').value,ASESOR_ASIGNADO:document.getElementById('mep-asesor').value});
+    const p=window.Proyectos?.find(x=>x.id===id);if(p){p.ESTADO=est;p.OBSERVACIONES=document.getElementById('mep-obs').value;p.ASESOR_ASIGNADO=document.getElementById('mep-asesor').value;}
+    toast('✅ Proyecto actualizado');closeM('m-edit-proy');fltPL();
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveCli=async function(){
+  const nom=document.getElementById('mc-nom').value.trim();if(!nom){toast('Ingresa el nombre');return;}
+  const nit=document.getElementById('mc-nit').value.trim();
+  // Auto-ID si no hay NIT: CLI_ + timestamp
+  const autoId=nit||('CLI_'+Date.now());
+  const data={'NIT CLIENTE':nit||'','NOMBRE CLIENTE':nom,'PERSONA ENCARGADA':document.getElementById('mc-enc').value.trim(),'CELULAR':document.getElementById('mc-cel').value.trim(),'AUTO_ID':!nit};
+  try{
+    const r2=FS.doc(db,'clientes',autoId);
+    await FS.setDoc(r2,data);window.Clientes.unshift({id:r2.id,...data});
+    window._selCli=nom;document.getElementById('cli-sv-t').textContent=nom;
+    document.getElementById('cli-sv').classList.add('on');document.getElementById('cli-sw').style.display='none';
+    toast('✅ Cliente creado');closeM('m-cli');
+    ['mc-nit','mc-nom','mc-enc','mc-cel'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveAct=async function(){
+  const id=window._editAID;if(!id)return;
+  const imp=document.querySelector('#mae-imp .chip.on')?.dataset.v||'IMPACTADO';
+  const tv=document.getElementById('mae-tv').value;const obs=document.getElementById('mae-obs').value;
+  try{
+    await FS.updateDoc(FS.doc(db,'actividades',id),{IMPACTO:imp,'TIPO DE VISITA':tv,OBSERVACION:obs});
+    const a=window.Actividades?.find(x=>x.id===id);if(a){a.IMPACTO=imp;a['TIPO DE VISITA']=tv;a.OBSERVACION=obs;}
+    toast('✅ Actualizado');closeM('m-act-edit');renderActs(window.Actividades,window.actTab||'todo');renderMap();
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveAsigEdit=async function(){
+  const id=window._editAsigID;if(!id)return;
+  const est=document.querySelector('#mae2-est .chip.on')?.dataset.v||'PENDIENTE';
+  const obs=document.getElementById('mae2-obs').value;
+  try{
+    await FS.updateDoc(FS.doc(db,'asignaciones',id),{ESTADO:est,COMENTARIO_ASESOR:obs});
+    const a=window.Asignaciones?.find(x=>x.id===id);if(a){a.ESTADO=est;a.COMENTARIO_ASESOR=obs;}
+    toast('✅ Actualizado');closeM('m-asig-edit');renderAsigLista();renderAsigAdminLista();
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveMuestra=async function(){
+  const p=document.getElementById('mm-p').value.trim();if(!p){toast('Ingresa el producto');return;}
+  try{
+    let foto='';const fi=document.getElementById('fileInputM');
+    if(fi.files[0]){try{const sr=FS.ref(st,'muestras/'+Date.now());await FS.uploadBytes(sr,fi.files[0]);foto=await FS.getDownloadURL(sr);}catch(e){}}
+    const data={PRODUCTO:p,DESCRIPCION:document.getElementById('mm-d').value,CANTIDAD:parseInt(document.getElementById('mm-c').value)||1,CLIENTE:document.getElementById('mm-cl').value,PROYECTO:document.getElementById('mm-pr').value,FOTO:foto,ASESOR:window.CU?.nombre||'',fecha:FS.Timestamp.now(),ESTADO:'ENTREGADA'};
+    await FS.addDoc(collection(db,'muestras'),data);window.Muestras.unshift({...data});
+    toast('✅ Muestra registrada');closeM('m-muestra');renderMuestras();
+    ['mm-p','mm-d','mm-cs','mm-ps'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('mm-c').value='1';fi.value='';document.getElementById('mm-img').style.display='none';
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.saveAsig=async function(){
+  const proy=document.getElementById('ma-pr').value||document.getElementById('ma-proy-sv-t')?.textContent||'';const asesor=document.getElementById('ma-as').value;
+  if(!proy||!asesor){toast('Selecciona proyecto y asesor');return;}
+  const pri=document.querySelector('#ma-pri .chip.on')?.dataset.v||'NORMAL';
+  const obs=document.getElementById('ma-obs').value;
+  try{
+    // La asignacion se guarda con el asesor destino — NO con el admin
+    const data={PROYECTO:proy,ASESOR:asesor,ASIGNADO_POR:window.CU?.nombre||'',PRIORIDAD:pri,INSTRUCCIONES:obs,fecha:FS.Timestamp.now(),ESTADO:'PENDIENTE',COMENTARIO_ASESOR:''};
+    const ref2Asig=await FS.addDoc(collection(db,'asignaciones'),data);
+    window.Asignaciones.unshift({id:ref2Asig.id,...data});
+    toast('✅ Asignado a '+asesor.split(' ')[0]);closeM('m-asig');
+    document.getElementById('ma-ps').value='';document.getElementById('ma-pr').innerHTML='<option value="">Escribe para buscar...</option>';document.getElementById('ma-obs').value='';clearSelAsig();
+    refreshStats();renderAsigAdminLista();
+  }catch(e){toast('Error: '+e.message);}
+};
+</script>
+
+<script>
+window.GPS='';window.actTab='hoy';window._editAID=null;window._editAsigID=null;window._editPID=null;
+window._selProy='';window._selCli='';window.mapFiltros={canal:'',imp:'',tam:''};window.mapaInited=false;
+
+// SESSION 6h
+const SK='actividapp_v6';
+function saveS(cu){try{localStorage.setItem(SK,JSON.stringify({cu,ts:Date.now()}));}catch(e){}}
+function loadS(){try{const s=localStorage.getItem(SK);if(!s)return null;const d=JSON.parse(s);if(Date.now()-d.ts>6*3600*1000){localStorage.removeItem(SK);return null;}return d.cu;}catch(e){return null;}}
+function clearS(){try{localStorage.removeItem(SK);}catch(e){}}
+function applyU(cu){
+  window.CU=cu;
+  const isA=cu.tipo==='ADMINISTRADOR';
+  const nom=cu.nombre.split(' ')[0];
+  document.getElementById('h-up').textContent=nom;
+  document.getElementById('h-adm').style.display=isA?'inline':'none';
+  document.getElementById('c-dash').style.display=isA?'block':'none';
+  document.getElementById('c-rep').style.display=isA?'block':'none';
+  document.getElementById('c-asig-admin').style.display=isA?'block':'none';
+  document.getElementById('act-filter-asesor').style.display=isA?'block':'none';
+  document.getElementById('c-usuarios').style.display=isA?'block':'none';
+  startAutoRefresh();
+  const hr=new Date().getHours();
+  const gr=hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches';
+  document.getElementById('h-greeting').textContent=(hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches')+', '+nom;
+}
+
+// NAV
+window.go=function(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  if(id==='nueva')getGPS();
+  if(id==='mapa')setTimeout(renderMap,300);
+  if(id==='actividades'&&window.Actividades)renderActs(window.Actividades,window.actTab||'hoy');
+  if(id==='dashboard'&&window.Actividades)renderDash(window.Actividades);
+  if(id==='asignaciones')renderAsigLista();
+  if(id==='asig-admin')renderAsigAdminLista();
+  if(id==='proyectos')fltPL();
+  if(id==='usuarios')renderUsrLista();
+  if(id==='ruta')initRutaScreen();
+  if(id==='ferreterias')initFerreterias();
+};
+
+// LOGIN — waits for data
+window.doLogin=function(){
+  if(!window._dataReady){toast('Cargando datos, espera un momento...');return;}
+  const ced=document.getElementById('l-usr').value;const pw=document.getElementById('l-pw').value;
+  const err=document.getElementById('l-err');
+  if(!ced){err.textContent='Selecciona un usuario';err.style.display='block';return;}
+  const u=window.Usuarios?.find(x=>x['CEDULA ID']==ced||x.cedula==ced||x.id==ced);
+  if(!u){err.textContent='Usuario no encontrado';err.style.display='block';return;}
+  if(pw!==(u['CONTRASEÑA']||u.contrasena||'')){err.textContent='Contraseña incorrecta';err.style.display='block';return;}
+  err.style.display='none';
+  const nom=u['NOMBRE EMPLEADO']||u.nombre||'';const tipo=u['TIPO']||u.tipo||'ASESOR';
+  const cu={cedula:ced,nombre:nom,tipo};
+  saveS(cu);applyU(cu);go('home');
+};
+window.doLogout=function(){window.CU=null;clearS();go('login');};
+
+// STATS
+function refreshStats(){
+  if(!window.Actividades||!window.CU)return;
+  const isA=window.CU.tipo==='ADMINISTRADOR';const mi=window.CU.nombre;
+  const hD=new Date();hD.setHours(0,0,0,0);const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
+  // FIX 8: para admin sumar TODOS los asesores (no admin)
+  const actsFiltradas=isA
+    ? window.Actividades.filter(a=>a.ASESOR&&!window.Usuarios.find(u=>(u['NOMBRE EMPLEADO']||u.nombre)===a.ASESOR&&(u['TIPO']||u.tipo)==='ADMINISTRADOR'))
+    : window.Actividades.filter(a=>a.ASESOR===mi);
+  let h=0,m=0,imp=0;
+  actsFiltradas.forEach(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);if(f>=hD)h++;if(f>=mD)m++;if(!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='')imp++;});
+  document.getElementById('st-h').textContent=h;
+  document.getElementById('st-m').textContent=m;
+  document.getElementById('st-imp').textContent=(actsFiltradas.length?Math.round(imp/actsFiltradas.length*100):0)+'%';
+  const misAsig=window.Asignaciones?.filter(a=>isA?true:a.ASESOR===mi&&a.ESTADO!=='CERRADO')||[];
+  document.getElementById('st-a').textContent=misAsig.length;
+  document.getElementById('act-sub').textContent=actsFiltradas.length.toLocaleString()+' visitas totales';
+  // Map asesor filter
+  const mf=document.getElementById('mf-a');mf.innerHTML='<option value="">Todos</option>';
+  [...new Set(window.Actividades.map(a=>a.ASESOR).filter(Boolean))].forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a.split(' ')[0];mf.appendChild(o);});
+  // Admin insights
+  if(isA){
+    renderInsights();renderDash(window.Actividades);
+  }
+}
+
+// INSIGHTS (admin home)
+function renderInsights(){
+  const el=document.getElementById('home-insights');if(!el)return;
+  el.style.display='block';
+  const acts=window.Actividades||[];const asigs=window.Asignaciones||[];const muestras=window.Muestras||[];
+  const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
+  const actsM=acts.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=mD;});
+  const imp=actsM.filter(a=>!(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='').length;
+  const pendAsig=asigs.filter(a=>a.ESTADO==='PENDIENTE').length;
+  const muestrasM=muestras.filter(a=>{const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);return f>=mD;}).length;
+  // Asesor más activo
+  const pA={};actsM.forEach(a=>{if(a.ASESOR)pA[a.ASESOR]=(pA[a.ASESOR]||0)+1;});
+  const topAsesor=Object.entries(pA).sort((a,b)=>b[1]-a[1])[0];
+  const pct=actsM.length?Math.round(imp/actsM.length*100):0;
+  el.innerHTML=`
+    <div class="stl">Resumen del mes</div>
+    <div class="insight">
+      <div class="insight-t">📊 ${actsM.length} visitas este mes · ${pct}% impacto</div>
+      <div class="insight-s">${imp} impactadas · ${actsM.length-imp} no impactadas · ${muestrasM} muestras</div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%"></div></div>
+    </div>
+    ${pendAsig>0?`<div class="insight" style="background:linear-gradient(135deg,#E67E22,#CA6F1E)"><div class="insight-t">📌 ${pendAsig} asignaciones pendientes de visitar</div><div class="insight-s">Revisa el módulo de asignaciones</div></div>`:''}
+    ${topAsesor?`<div class="insight" style="background:linear-gradient(135deg,#219653,#1A7A42)"><div class="insight-t">🏆 Asesor más activo: ${topAsesor[0].split(' ')[0]}</div><div class="insight-s">${topAsesor[1]} visitas este mes</div></div>`:''}
+  `;
+}
+
+// GPS — FIX 7: mensaje claro si no hay ubicación
+function getGPS(){
+  const el=document.getElementById('loc-t');const box=document.getElementById('loc-box');
+  if(!navigator.geolocation){el.textContent='GPS no disponible en este dispositivo';box.className='loc warn';return;}
+  el.textContent='Obteniendo ubicación...';box.className='loc';
+  navigator.geolocation.getCurrentPosition(
+    p=>{window.GPS=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);el.textContent=window.GPS+' ✓';box.className='loc';},
+    ()=>{window.GPS='';el.textContent='Su ubicación no está disponible. Por favor active la ubicación o contáctese con el administrador.';box.className='loc warn';},
+    {timeout:12000,enableHighAccuracy:true}
+  );
+}
+
+window.prvFoto=function(inp,id){if(inp.files&&inp.files[0]){const r=new FileReader();r.onload=e=>{const i=document.getElementById(id);i.src=e.target.result;i.style.display='block';};r.readAsDataURL(inp.files[0]);}};
+window.removeFoto=function(){document.getElementById('fp-img').style.display='none';document.getElementById('fp-img').src='';document.getElementById('fileInput').value='';document.getElementById('btn-rf').style.display='none';};
+
+// CHIPS
+document.querySelectorAll('#ch-canal .chip').forEach(c=>{c.onclick=function(){document.querySelectorAll('#ch-canal .chip').forEach(x=>x.classList.remove('on'));this.classList.add('on');const v=this.dataset.v;document.getElementById('fp-proy').style.display=v==='OBRAS'?'block':'none';document.getElementById('fp-ferr-size').style.display=v==='FERRETERIA'?'block':'none';if(v==='FERRETERIA'){document.getElementById('ntc').value='FERRETERIA';onTipoCliChange('FERRETERIA');}else{document.getElementById('ntc').value='';}};});
+['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri','mnp-est','mep-est','ch-fotos','mu-rol','mu-est','ch-ferr-size'].forEach(id=>{const g=document.getElementById(id);if(!g)return;g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});});
+
+// MODAL
+window.openM=function(id){document.getElementById(id).classList.add('on');};
+window.closeM=function(id){document.getElementById(id).classList.remove('on');};
+document.querySelectorAll('.mo').forEach(m=>{m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});});
+
+// SEL VALUE
+window.selProy=function(){const s=document.getElementById('np');const v=s.value;if(!v)return;window._selProy=v;document.getElementById('proy-sv-t').textContent=v;document.getElementById('proy-sv').classList.add('on');document.getElementById('proy-sw').style.display='none';};
+window.selProyAsig=function(){const s=document.getElementById('ma-pr');const v=s.value;if(!v)return;const txt=s.options[s.selectedIndex]?.textContent||v;document.getElementById('ma-proy-sv-t').textContent=txt;document.getElementById('ma-proy-sv').style.display='flex';document.getElementById('ma-proy-sw').style.display='none';};
+window.clearSelAsig=function(){document.getElementById('ma-proy-sv').style.display='none';document.getElementById('ma-proy-sw').style.display='block';document.getElementById('ma-ps').value='';document.getElementById('ma-pr').innerHTML='<option value="">Escribe para buscar...</option>';};
+window.selCli=function(){const s=document.getElementById('nc');const v=s.value;if(!v)return;window._selCli=v;document.getElementById('cli-sv-t').textContent=v;document.getElementById('cli-sv').classList.add('on');document.getElementById('cli-sw').style.display='none';};
+window.clearSel=function(t){if(t==='proy'){window._selProy='';document.getElementById('proy-sv').classList.remove('on');document.getElementById('proy-sw').style.display='block';document.getElementById('np-s').value='';document.getElementById('np').innerHTML='<option value="">Escribe para buscar...</option>';}else{window._selCli='';document.getElementById('cli-sv').classList.remove('on');document.getElementById('cli-sw').style.display='block';document.getElementById('nc-s').value='';document.getElementById('nc').innerHTML='<option value="">Escribe para buscar...</option>';}};
+
+// SEARCH
+window.fltProy=function(){const q=document.getElementById('np-s').value.toLowerCase().trim();const s=document.getElementById('np');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe para buscar...</option>';return;}const r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q)).slice(0,30);s.innerHTML=r.length?r.map(p=>`<option value="${(p['NOMBRE PROYECTO']||'').replace(/"/g,'')}">${p['CODIGO']?p['CODIGO']+' - ':''}${p['NOMBRE PROYECTO']||''}</option>`).join(''):'<option value="">Sin resultados</option>';};
+window.fltCli=function(){
+  const q=document.getElementById('nc-s').value.toLowerCase().trim();
+  const s=document.getElementById('nc');
+  if(!q||!window.Clientes){s.innerHTML='<option value="">Escribe para buscar...</option>';return;}
+  const r=window.Clientes.filter(c=>{
+    const nom=(c['NOMBRE CLIENTE']||'').toLowerCase();
+    const nit=String(c['NIT CLIENTE']||c.id||'').toLowerCase();
+    return nom.includes(q)||nit.includes(q);
+  }).slice(0,40);
+  s.innerHTML=r.length?r.map(c=>{
+    const nit=c['NIT CLIENTE']||'';
+    const nom=(c['NOMBRE CLIENTE']||'').replace(/"/g,'');
+    const label=nit?nom+' ('+nit+')':nom+' (sin NIT)';
+    return '<option value="'+nom+'">'+label+'</option>';
+  }).join(''):'<option value="">Sin resultados</option>';
+};
+window.fltMCli=function(){
+  const q=document.getElementById('mm-cs').value.toLowerCase().trim();const s=document.getElementById('mm-cl');
+  if(!q||!window.Clientes){s.innerHTML='<option value="">Escribe...</option>';return;}
+  const r=window.Clientes.filter(c=>{const nom=(c['NOMBRE CLIENTE']||'').toLowerCase();const nit=String(c['NIT CLIENTE']||'').toLowerCase();return nom.includes(q)||nit.includes(q);}).slice(0,20);
+  s.innerHTML=r.length?r.map(c=>{const nit=c['NIT CLIENTE']||'';return '<option value="'+(c['NOMBRE CLIENTE']||'')+'">'+(c['NOMBRE CLIENTE']||'')+(nit?' ('+nit+')':'')+'</option>';}).join(''):'<option value="">Sin resultados</option>';
+};
+window.fltMProy=function(){const q=document.getElementById('mm-ps').value.toLowerCase().trim();const s=document.getElementById('mm-pr');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe...</option>';return;}s.innerHTML=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)).slice(0,20).map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['NOMBRE PROYECTO']||''}</option>`).join('');};
+window.fltAProy=function(){const q=document.getElementById('ma-ps').value.toLowerCase().trim();const s=document.getElementById('ma-pr');if(!q||!window.Proyectos){s.innerHTML='<option value="">Escribe...</option>';return;}s.innerHTML=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)).slice(0,20).map(p=>`<option value="${p['NOMBRE PROYECTO']||''}">${p['CODIGO']?p['CODIGO']+' - ':''}${p['NOMBRE PROYECTO']||''}</option>`).join('');};
+window.fltCL=function(){
+  const q=(document.getElementById('cs')?.value||'').toLowerCase().trim();
+  if(!window.Clientes)return;
+  renderCliLista(window.Clientes.filter(c=>{
+    const nom=(c['NOMBRE CLIENTE']||'').toLowerCase();
+    const nit=String(c['NIT CLIENTE']||c.id||'').toLowerCase();
+    return !q||nom.includes(q)||nit.includes(q);
+  }).slice(0,80));
+};
+window._proyF='todos';
+window.fltPL=function(){const q=(document.getElementById('ps')?.value||'').toLowerCase();const f=window._proyF||'todos';if(!window.Proyectos)return;let r=window.Proyectos.filter(p=>(p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q));if(f==='activo')r=r.filter(p=>(p.ESTADO||'ACTIVO')!=='INACTIVO');if(f==='inactivo')r=r.filter(p=>p.ESTADO==='INACTIVO');renderProyLista(r.slice(0,80));};
+window.setPF=function(f){window._proyF=f;['pf-t','pf-a','pf-i'].forEach(id=>document.getElementById(id).classList.remove('on'));const m={todos:'pf-t',activo:'pf-a',inactivo:'pf-i'};document.getElementById(m[f]).classList.add('on');fltPL();};
+
+// RENDER ACTIVIDADES — FIX 1+5: admin ve TODAS las visitas, con filtro por asesor, con fotos
+window._impF='todos';
+window.setImpF=function(f){window._impF=f;['t','i','n'].forEach(x=>document.getElementById('fi-'+x)?.classList.remove('on'));const m={todos:'t',impactado:'i',no_impactado:'n'};document.getElementById('fi-'+m[f])?.classList.add('on');if(window.Actividades)renderActs(window.Actividades,window.actTab||'hoy');};
+window.setTab=function(t){window.actTab=t;['h','s','m','t'].forEach(x=>document.getElementById('t-'+x).classList.remove('on'));const m={hoy:'h',semana:'s',mes:'m',todo:'t'};document.getElementById('t-'+m[t]).classList.add('on');if(window.Actividades)renderActs(window.Actividades,t);};
+window.renderActs=function(list,tab){
+  const isA=window.CU?.tipo==='ADMINISTRADOR';const mi=window.CU?.nombre||'';
+  const filtroAsesor=document.getElementById('act-filter-asesor')?.value||'';
+  const searchQ=(document.getElementById('act-search')?.value||'').toLowerCase().trim();
+  const impF=window._impF||'todos';
+  const hD=new Date();hD.setHours(0,0,0,0);const sD=new Date(hD);sD.setDate(sD.getDate()-6);const mD=new Date();mD.setDate(1);mD.setHours(0,0,0,0);
+  let fl=list.filter(a=>{
+    if(!isA&&a.ASESOR!==mi)return false;
+    if(isA&&filtroAsesor&&a.ASESOR!==filtroAsesor)return false;
+    if(searchQ){const n=(a.PROYECTO||'').toLowerCase();const cl=(a.CLIENTE||'').toLowerCase();if(!n.includes(searchQ)&&!cl.includes(searchQ))return false;}
+    if(impF==='impactado'&&(a.IMPACTO||'').toUpperCase().includes('NO'))return false;
+    if(impF==='no_impactado'&&!(a.IMPACTO||'').toUpperCase().includes('NO'))return false;
+    if(impF==='no_impactado'&&!(a.IMPACTO||''))return false;
+    const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
+    if(tab==='hoy')return f>=hD;if(tab==='semana')return f>=sD;if(tab==='mes')return f>=mD;return true;
+  });
+  const el=document.getElementById('act-list');
+  if(!fl.length){el.innerHTML='<div class="em"><div class="em-i">📋</div><div>Sin actividades en este período</div></div>';return;}
+  el.innerHTML=fl.map(a=>{
+    const f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
+    const fd=f.toLocaleDateString('es-CO',{day:'2-digit',month:'short'});
+    const fh=f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    const imp=(a.IMPACTO||'').toUpperCase();const bc=imp.includes('NO')?'br1':imp==='IMPACTADO'?'bg1':'ba1';
+    const cardCls=imp.includes('NO')?'noimp':imp==='IMPACTADO'?'imp':'';
+    // FIX 5: foto visible en el registro
+    return `<div class="card ${cardCls}">
+      ${a.FOTO?`<div style="position:relative;width:100%;max-height:220px;overflow:hidden;border-radius:10px;margin-bottom:10px;background:var(--bg)" onclick="event.stopPropagation();window.open('${a.FOTO}','_blank')"><img src="${a.FOTO}" style="width:100%;max-height:220px;object-fit:cover;display:block;cursor:zoom-in" loading="lazy" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='https://wsrv.nl/?url='+encodeURIComponent('${a.FOTO}')+'&w=600&output=jpg';}else{this.parentElement.style.display='none';}"><div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;border-radius:6px;padding:2px 8px;font-size:10px">🔍 Ampliar</div></div>`:'\'  }
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px">
+        <div style="font-size:14px;font-weight:500;flex:1;min-width:0;margin-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.PROYECTO||a.CLIENTE||'Sin nombre'}</div>
+        <span class="b ${bc}" style="flex-shrink:0;cursor:pointer" onclick="editAct('${a.id}')">${a.IMPACTO||a['TIPO DE VISITA']||'—'}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted)">${a.CLIENTE||''}${a.CANAL?' · '+a.CANAL:''}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">${fd} ${fh}${a.ASESOR?' · <b>'+a.ASESOR.split(' ')[0]+'</b>':''}</div>
+      ${a.OBSERVACION?`<div style="font-size:12px;margin-top:5px;padding:6px 8px;background:var(--bg);border-radius:6px">${a.OBSERVACION}</div>`:''}
+      ${window.CU?.tipo==='ADMINISTRADOR'?`<div style="display:flex;gap:6px;margin-top:8px"><button class="bg2" style="flex:1" onclick="event.stopPropagation();editAct('${a.id}')">✏️ Editar</button><button class="bg2" style="flex:1;color:var(--red);border-color:var(--red)" onclick="event.stopPropagation();confirmarElimAct('${a.id}','${(a.PROYECTO||a.CLIENTE||'').replace(/'/g,'')}')">🗑️ Eliminar</button></div>`:''}
+    </div>\`;
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --red:#C0392B;--rdark:#96281B;--rlight:#FAECE7;
+  --bg:#F4F4F0;--card:#FFF;--text:#1A1A1A;--muted:#888;--brd:#E8E8E0;
+  --green:#219653;--glight:#E8F5EE;
+  --amber:#E67E22;--alight:#FEF5E7;
+  --blue:#2471A3;--blight:#EAF4FB;
+  --purple:#7D3C98;--plight:#F5EEF8;
+  --sh:0 1px 4px rgba(0,0,0,.07),0 0 0 0.5px rgba(0,0,0,.04)
+}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;background:var(--card);overflow:hidden;position:relative}
+.scr{display:none;flex-direction:column;height:100%;overflow:hidden}.scr.on{display:flex}
+/* TOP BAR */
+.tb{background:var(--red);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-shrink:0}
+.tb-t{font-size:16px;font-weight:600;flex:1}.tb-bk{font-size:24px;cursor:pointer;line-height:1;padding-right:2px}
+.tb-act{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:8px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer}
+/* CONTENT */
+.cnt{flex:1;overflow-y:auto;padding:16px;background:var(--bg)}.cnt::-webkit-scrollbar{width:0}
+/* NAV */
+.nb{display:flex;background:var(--card);border-top:1px solid var(--brd);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+.nb-b{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:9px;font-family:'DM Sans',sans-serif;touch-action:manipulation}
+.nb-b.on{color:var(--red)}.nb-i{font-size:19px;line-height:1}
+/* CARDS */
+.card{background:var(--card);border-radius:14px;border:0.5px solid var(--brd);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.card.imp{border-left:3px solid var(--green)}.card.noimp{border-left:3px solid var(--red)}
+.card.pend{border-left:3px solid var(--amber)}.card.info{border-left:3px solid var(--blue)}
+.crow{display:flex;align-items:center;gap:12px}
+.cico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cbody{flex:1;min-width:0}.ct{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cs{font-size:12px;color:var(--muted);margin-top:2px}
+/* STAT GRID */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.sc{background:var(--card);border-radius:14px;padding:14px;border:0.5px solid var(--brd);box-shadow:var(--sh)}
+.sn{font-size:26px;font-weight:600;color:var(--red);line-height:1}.sl{font-size:11px;color:var(--muted);margin-top:4px}
+/* FORM */
+.f{margin-bottom:12px}
+.f label{font-size:11px;font-weight:500;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.f input,.f select,.f textarea{width:100%;padding:10px 12px;border:1px solid var(--brd);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none;transition:border-color .15s;-webkit-appearance:none}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--red)}.f textarea{resize:none}
+.sw{position:relative}.sw::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
+.sw input{padding-left:32px!important}
+.sv{display:none;background:var(--rlight);border:1px solid var(--red);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--rdark);margin-bottom:6px;align-items:center;justify-content:space-between}
+.sv.on{display:flex}.sv-x{cursor:pointer;font-size:18px;color:var(--red);font-weight:600;line-height:1;padding-left:8px}
+.sl2{width:100%;border:1px solid var(--brd);border-radius:9px;font-size:13px;padding:4px;background:var(--card);color:var(--text);outline:none;margin-top:4px}
+/* BTNS */
+.bp{background:var(--red);color:#fff;border:none;border-radius:11px;padding:14px;width:100%;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;touch-action:manipulation;-webkit-appearance:none}
+.bp:disabled{background:#ccc;cursor:not-allowed}
+.bs{background:transparent;color:var(--red);border:1.5px solid var(--red);border-radius:11px;padding:12px;width:100%;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px;touch-action:manipulation;-webkit-appearance:none}
+.bg2{background:transparent;color:var(--muted);border:0.5px solid var(--brd);border-radius:9px;padding:8px 14px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;touch-action:manipulation;-webkit-appearance:none}
+/* CHIPS */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 12px;border-radius:20px;font-size:12px;border:0.5px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;user-select:none;touch-action:manipulation}
+.chip.on{background:var(--rlight);color:var(--rdark);border-color:var(--red)}
+/* MISC */
+.loc{background:var(--blight);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--blue);display:flex;align-items:center;gap:8px}
+.loc.warn{background:#FFF8E1;color:#856404}
+.fa{border:1.5px dashed var(--brd);border-radius:11px;padding:16px;text-align:center;cursor:pointer;transition:border-color .15s}
+.fpimg{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-bottom:8px;display:none}
+#fileInput,#fileInputM{display:none}
+.lw{flex:1;display:flex;flex-direction:column;justify-content:center;padding:28px;background:var(--card)}
+.lic{width:68px;height:68px;background:var(--red);border-radius:20px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:30px;font-weight:700;margin:0 auto 12px}
+.em{text-align:center;padding:32px 16px;color:var(--muted)}.em-i{font-size:36px;margin-bottom:10px}
+.ld{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+.stl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;margin-top:4px}
+.dv{height:0.5px;background:var(--brd);margin:12px 0}
+.b{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.bg1{background:var(--glight);color:#145A32}.ba1{background:var(--alight);color:#7E5109}.br1{background:var(--rlight);color:var(--rdark)}.bb1{background:var(--blight);color:#1A5276}.bp1{background:var(--plight);color:#6C3483}
+.fab{position:fixed;bottom:74px;right:calc(50% - 224px);width:52px;height:52px;background:var(--red);border-radius:50%;border:none;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 14px rgba(192,57,43,.4);z-index:10;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+@media(max-width:480px){.fab{right:14px}}
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:rgba(26,26,26,.95);color:#fff;padding:10px 18px;border-radius:22px;font-size:13px;z-index:300;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;max-width:88vw;text-align:center;backdrop-filter:blur(8px)}
+.toast.on{opacity:1}
+.sp{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.up{background:rgba(255,255,255,.2);border-radius:20px;padding:4px 10px;font-size:12px}
+.adm{background:rgba(255,215,0,.35);border-radius:20px;padding:3px 9px;font-size:11px;font-weight:600}
+/* DASH */
+.dbw{background:var(--card);border-radius:14px;border:0.5px solid var(--brd);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.dbt{font-size:13px;font-weight:500;margin-bottom:10px;color:var(--text)}
+.brw{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.brl{font-size:11px;color:var(--muted);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brt{flex:1;background:var(--bg);border-radius:4px;height:7px;overflow:hidden}
+.brf{height:100%;border-radius:4px;background:var(--red)}.brv{font-size:12px;font-weight:500;min-width:22px;text-align:right}
+.dw{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.dc{background:var(--card);border-radius:14px;border:0.5px solid var(--brd);padding:14px;text-align:center;box-shadow:var(--sh)}
+.dn{font-size:26px;font-weight:600}.dl{font-size:11px;color:var(--muted);margin-top:2px}
+/* MAP */
+#mc{flex:1;position:relative}#lmap{width:100%;height:100%}
+.mleg{position:absolute;bottom:60px;left:10px;background:rgba(255,255,255,.9);border-radius:12px;padding:9px 12px;font-size:11px;z-index:10;box-shadow:var(--sh);line-height:2;pointer-events:none}
+.mfi{background:var(--card);padding:7px 10px;border-bottom:0.5px solid var(--brd);flex-shrink:0;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.mfc{padding:4px 9px;border-radius:20px;font-size:11px;border:0.5px solid var(--brd);cursor:pointer;background:var(--card);color:var(--muted);font-family:'DM Sans',sans-serif;white-space:nowrap;touch-action:manipulation}
+.mfc.on{background:var(--rlight);color:var(--rdark);border-color:var(--red)}
+/* MODAL — bottom sheet */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.mo.on{display:flex}
+.md{background:var(--card);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.md-pull{width:40px;height:4px;background:var(--brd);border-radius:2px;margin:0 auto 14px}
+.mdt{font-size:16px;font-weight:600;margin-bottom:14px}
+/* DATE FILTER */
+.drf{display:flex;gap:6px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
+.drf input[type=date]{padding:6px 8px;border:0.5px solid var(--brd);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none}
+.drf .bp-sm{padding:6px 12px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer}
+/* RUTA */
+.ruta-card{background:var(--card);border-radius:14px;border:0.5px solid var(--brd);padding:14px;margin-bottom:10px;box-shadow:var(--sh);position:relative}
+.ruta-card.done{opacity:.55;border-left:3px solid var(--green)}
+.ruta-card.active{border-left:3px solid var(--red);box-shadow:0 2px 12px rgba(192,57,43,.15)}
+.ruta-num{width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ruta-num.done{background:var(--green)}
+.ruta-step{display:flex;gap:10px;align-items:center}
+/* LOADING */
+#app-loading{position:fixed;inset:0;background:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;color:#fff;gap:12px}
+#app-loading.hide{display:none}
 .load-A{width:64px;height:64px;background:rgba(255,255,255,.2);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700}
 /* CRUCE / INSIGHT CARDS */
 .insight{background:linear-gradient(135deg,#C0392B,#922B21);border-radius:14px;padding:14px;margin-bottom:10px;color:#fff}
@@ -359,6 +1410,10 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <span class="mfc on" data-g="imp" data-v="" onclick="setMF(this)">Imp.</span>
     <span class="mfc" data-g="imp" data-v="IMPACTADO" onclick="setMF(this)">🟢</span>
     <span class="mfc" data-g="imp" data-v="NO IMPACTADO" onclick="setMF(this)">🔴</span>
+    <span class="mfc on" data-g="tam" data-v="" onclick="setMF(this)">Tamaño</span>
+    <span class="mfc" data-g="tam" data-v="PEQUEÑA" onclick="setMF(this)">🔹Peq</span>
+    <span class="mfc" data-g="tam" data-v="MEDIANA" onclick="setMF(this)">🔶Med</span>
+    <span class="mfc" data-g="tam" data-v="GRANDE" onclick="setMF(this)">🔷Gde</span>
   </div>
   <div id="mc"><div id="lmap"></div>
     <div class="mleg">
@@ -797,7 +1852,7 @@ window.saveAsig=async function(){
 
 <script>
 window.GPS='';window.actTab='hoy';window._editAID=null;window._editAsigID=null;window._editPID=null;
-window._selProy='';window._selCli='';window.mapFiltros={canal:'',imp:''};window.mapaInited=false;
+window._selProy='';window._selCli='';window.mapFiltros={canal:'',imp:'',tam:''};window.mapaInited=false;
 
 // SESSION 6h
 const SK='actividapp_v6';
@@ -920,7 +1975,7 @@ window.prvFoto=function(inp,id){if(inp.files&&inp.files[0]){const r=new FileRead
 window.removeFoto=function(){document.getElementById('fp-img').style.display='none';document.getElementById('fp-img').src='';document.getElementById('fileInput').value='';document.getElementById('btn-rf').style.display='none';};
 
 // CHIPS
-document.querySelectorAll('#ch-canal .chip').forEach(c=>{c.onclick=function(){document.querySelectorAll('#ch-canal .chip').forEach(x=>x.classList.remove('on'));this.classList.add('on');document.getElementById('fp-proy').style.display=this.dataset.v==='OBRAS'?'block':'none';};});
+document.querySelectorAll('#ch-canal .chip').forEach(c=>{c.onclick=function(){document.querySelectorAll('#ch-canal .chip').forEach(x=>x.classList.remove('on'));this.classList.add('on');const v=this.dataset.v;document.getElementById('fp-proy').style.display=v==='OBRAS'?'block':'none';document.getElementById('fp-ferr-size').style.display=v==='FERRETERIA'?'block':'none';if(v==='FERRETERIA'){document.getElementById('ntc').value='FERRETERIA';onTipoCliChange('FERRETERIA');}else{document.getElementById('ntc').value='';}};});
 ['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri','mnp-est','mep-est','ch-fotos','mu-rol','mu-est','ch-ferr-size'].forEach(id=>{const g=document.getElementById(id);if(!g)return;g.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});});
 
 // MODAL
@@ -1012,7 +2067,15 @@ window.renderProyLista=function(list){
 window.editProy=function(id){const p=window.Proyectos?.find(x=>x.id===id);if(!p)return;window._editPID=id;document.getElementById('mep-t').textContent=(p['NOMBRE PROYECTO']||'').substring(0,30);document.querySelectorAll('#mep-est .chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v===(p.ESTADO||'ACTIVO'))c.classList.add('on');});document.getElementById('mep-obs').value=p.OBSERVACIONES||'';document.getElementById('mep-asesor').value=p.ASESOR_ASIGNADO||'';openM('m-edit-proy');};
 
 // RENDER CLIENTES
-window.renderCliLista=function(list){const el=document.getElementById('cli-list');if(!list||!list.length){el.innerHTML='<div class="em"><div class="em-i">👥</div><div>Sin clientes</div></div>';return;}el.innerHTML=list.map(c=>`<div class="card"><div class="ct">${c['NOMBRE CLIENTE']||''}</div><div class="cs">NIT: ${c['NIT CLIENTE']||''}${c['CELULAR']?' · '+c['CELULAR']:''}</div></div>`).join('');};
+window.renderCliLista=function(list){
+  const el=document.getElementById('cli-list');
+  if(!list||!list.length){el.innerHTML='<div class="em"><div class="em-i">👥</div><div>Sin clientes</div></div>';return;}
+  el.innerHTML=list.map(cc=>{
+    const nit=cc['NIT CLIENTE']||'';const nom=cc['NOMBRE CLIENTE']||'';
+    const nitTxt=nit?('NIT: '+nit):'ID: '+cc.id.substring(0,12);
+    return '<div class="card"><div class="ct">'+nom+'</div><div class="cs">'+nitTxt+(cc['CELULAR']?' · '+cc['CELULAR']:'')+'</div></div>';
+  }).join('');
+};
 
 // RENDER MUESTRAS
 window.renderMuestras=function(){
@@ -1068,7 +2131,7 @@ window.renderAsigAdminLista=function(){
 
 // MAPA
 window.mapaMarkers=[];
-window.setMF=function(el){const g=el.dataset.g;document.querySelectorAll(`.mfc[data-g="${g}"]`).forEach(x=>x.classList.remove('on'));el.classList.add('on');window.mapFiltros[g]=el.dataset.v||'';renderMap();};
+window.setMF=function(el){const g=el.dataset.g;document.querySelectorAll(`.mfc[data-g="${g}"]`).forEach(x=>x.classList.remove('on'));el.classList.add('on');if(g==='tam'||g==='canal'||g==='imp')window.mapFiltros[g]=el.dataset.v||'';renderMap();};
 window.renderMap=function(){
   if(!window.Actividades)return;
   const fA=document.getElementById('mf-a').value;const fC=window.mapFiltros.canal||'';const fI=window.mapFiltros.imp||'';
@@ -1077,6 +2140,7 @@ window.renderMap=function(){
     const ubi=a['UBICACION']||a['UBICACIÓN']||'';if(!ubi)return false;
     const p=ubi.toString().split(',');if(p.length<2||isNaN(parseFloat(p[0]))||isNaN(parseFloat(p[1])))return false;
     if(fA&&a.ASESOR!==fA)return false;if(fC&&(a.CANAL||'')!==fC)return false;if(fI&&(a.IMPACTO||'')!==fI)return false;
+    const fT=window.mapFiltros?.tam||'';if(fT&&(a['TAMAÑO FERRETERIA']||'')!==fT)return false;
     if(!isA&&a.ASESOR!==mi)return false;return true;
   });
   if(!window.mapaInited){
@@ -1541,6 +2605,183 @@ window.eliminarAsig=async function(id){
     refreshStats();
   }catch(e){toast('Error: '+e.message);}
 };
+
+// ══════════════════════════════════════════════════
+// MÓDULO FERRETERÍAS CERCANAS (Overpass API + OSM)
+// ══════════════════════════════════════════════════
+window._ferrLat=null;window._ferrLng=null;window._ferrAll=[];window._ferrTab='todas';
+
+window.initFerreterias=function(){
+  document.getElementById('ferr-lista').innerHTML='<div class="fc-loading"><div class="fc-ani">🔍</div><div style="margin-top:10px">Buscando ferreterías cerca de ti...</div></div>';
+  document.getElementById('ferr-status-txt').textContent='Obteniendo tu ubicación...';
+  document.getElementById('ferr-status').style.background='var(--blight)';
+  if(!navigator.geolocation){
+    document.getElementById('ferr-status-txt').textContent='GPS no disponible. Activa la ubicación.';
+    document.getElementById('ferr-status').style.background='var(--rlight)';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      window._ferrLat=pos.coords.latitude;window._ferrLng=pos.coords.longitude;
+      document.getElementById('ferr-status-txt').textContent='📍 '+pos.coords.latitude.toFixed(4)+', '+pos.coords.longitude.toFixed(4)+' — Buscando...';
+      buscarFerreterias();
+    },
+    err=>{
+      document.getElementById('ferr-status-txt').textContent='No se pudo obtener GPS. Activa la ubicación del dispositivo.';
+      document.getElementById('ferr-status').style.background='var(--rlight)';
+      document.getElementById('ferr-lista').innerHTML='<div class="em"><div class="em-i">📍</div><div>Activa el GPS para ver ferreterías cercanas</div></div>';
+    },
+    {timeout:15000,enableHighAccuracy:true}
+  );
+};
+
+window.buscarFerreterias=async function(){
+  if(!window._ferrLat){initFerreterias();return;}
+  const el=document.getElementById('ferr-lista');
+  const lat=window._ferrLat,lng=window._ferrLng;
+  el.innerHTML='<div class="fc-loading"><div class="fc-ani">🔍</div><div style="margin-top:10px">Consultando base de datos OpenStreetMap...</div></div>';
+  document.getElementById('ferr-status-txt').textContent='📍 Buscando en radio de 5km...';
+  try{
+    // Overpass query: hardware stores, material stores, construction + ferreterias named
+    const radio=5000; // 5km
+    const query=`
+[out:json][timeout:25];
+(
+  node["shop"="hardware"](around:${radio},${lat},${lng});
+  node["shop"="doityourself"](around:${radio},${lat},${lng});
+  node["shop"="building_materials"](around:${radio},${lat},${lng});
+  node["shop"="paint"](around:${radio},${lat},${lng});
+  node["name"~"[Ff]erret"](around:${radio},${lat},${lng});
+  node["name"~"[Mm]aterial"](around:${radio},${lat},${lng});
+  node["name"~"[Cc]onstruc"](around:${radio},${lat},${lng});
+  way["shop"="hardware"](around:${radio},${lat},${lng});
+  way["shop"="building_materials"](around:${radio},${lat},${lng});
+  way["name"~"[Ff]erret"](around:${radio},${lat},${lng});
+  way["name"~"[Mm]aterial"](around:${radio},${lat},${lng});
+);
+out center 40;`;
+    const url='https://overpass-api.de/api/interpreter';
+    const resp=await fetch(url,{method:'POST',body:'data='+encodeURIComponent(query),headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+    if(!resp.ok)throw new Error('Error API: '+resp.status);
+    const data=await resp.json();
+    // Process results
+    let results=(data.elements||[]).map(el=>{
+      const elLat=el.lat||el.center?.lat;const elLng=el.lon||el.center?.lon;
+      if(!elLat||!elLng)return null;
+      const dist=calcDist(lat,lng,elLat,elLng);
+      const tags=el.tags||{};
+      const name=tags.name||tags['name:es']||'Ferretería sin nombre';
+      const addr=[tags['addr:street'],tags['addr:housenumber'],tags['addr:city']].filter(Boolean).join(', ')||tags['addr:full']||'';
+      const phone=tags.phone||tags['contact:phone']||tags['contact:mobile']||'';
+      const shop=tags.shop||'';
+      const hours=tags.opening_hours||'';
+      let tipo='ferreteria';
+      if((name+shop).toLowerCase().includes('material')||shop==='building_materials')tipo='materiales';
+      if((name+shop).toLowerCase().includes('construc'))tipo='construccion';
+      return{id:el.id,name,lat:elLat,lng:elLng,dist,addr,phone,hours,tipo,tags};
+    }).filter(Boolean);
+    // Deduplicate by name+dist proximity
+    results=deduplicarFerreterias(results);
+    // Sort by distance, take top 20
+    results.sort((a,b)=>a.dist-b.dist);
+    results=results.slice(0,20);
+    window._ferrAll=results;
+    document.getElementById('ferr-status-txt').textContent='✅ '+results.length+' ferreterías encontradas en 5km';
+    document.getElementById('ferr-status').style.background='var(--glight)';
+    document.getElementById('ferr-status').style.color='var(--green)';
+    renderFerreterias();
+  }catch(err){
+    console.error('Overpass error:',err);
+    el.innerHTML='<div class="em"><div class="em-i">⚠️</div><div>No se pudo conectar. Verifica tu conexión a internet.</div><button class="bs" style="margin-top:12px" onclick="buscarFerreterias()">Reintentar</button></div>';
+    document.getElementById('ferr-status-txt').textContent='Error al buscar. Toca Actualizar para reintentar.';
+    document.getElementById('ferr-status').style.background='var(--rlight)';
+  }
+};
+
+function deduplicarFerreterias(list){
+  const seen=new Set();return list.filter(f=>{const k=f.name.toLowerCase().replace(/\s+/g,'')+Math.round(f.lat*1000)+'_'+Math.round(f.lng*1000);if(seen.has(k))return false;seen.add(k);return true;});
+}
+
+function calcDist(lat1,lng1,lat2,lng2){
+  const R=6371000;const dLat=(lat2-lat1)*Math.PI/180;const dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
+}
+
+function fmtDist(m){return m<1000?m+'m':(m/1000).toFixed(1)+'km';}
+
+window.setFerrTab=function(t){
+  window._ferrTab=t;
+  ['todas','ferreteria','materiales','construccion'].forEach(x=>document.getElementById('ft-'+x)?.classList.remove('on'));
+  document.getElementById('ft-'+t)?.classList.add('on');
+  renderFerreterias();
+};
+
+window.renderFerreterias=function(){
+  const el=document.getElementById('ferr-lista');const all=window._ferrAll||[];
+  let list=all;
+  if(window._ferrTab!=='todas')list=all.filter(f=>f.tipo===window._ferrTab);
+  if(!list.length){el.innerHTML='<div class="em"><div class="em-i">🔧</div><div>No hay ferreterías de este tipo cerca</div></div>';return;}
+  const top=list.slice(0,10);
+  const TIPO_ICO={ferreteria:'🔧',materiales:'🧱',construccion:'🏗️'};
+  let html='';
+  top.forEach((f,i)=>{
+    const yaProg=window.Actividades?.some(a=>a.CLIENTE&&a.CLIENTE.toLowerCase().includes(f.name.toLowerCase().substring(0,10)));
+    const ico=TIPO_ICO[f.tipo]||'🔧';
+    const phoneBtn=f.phone?'<a href="tel:'+f.phone+'" class="bg2" style="padding:6px 8px;font-size:13px;color:var(--red);text-decoration:none;text-align:center;display:block" onclick="event.stopPropagation()">📞</a>':'';
+    const visitada=yaProg?'<span class="b bg1" style="margin-top:3px;display:inline-block">✅ Ya visitada</span>':'';
+    const addrLine=f.addr?'<div class="ferr-addr">📍 '+f.addr+'</div>':'';
+    const hoursLine=f.hours?'<div class="ferr-addr">🕒 '+f.hours.substring(0,30)+'</div>':'';
+    const safeName=f.name.replace(/'/g,'').replace(/"/g,'');
+    const safeAddr=f.addr.replace(/'/g,'').replace(/"/g,'');
+    html+='<div class="ferr-card" onclick="abrirDetalleFerrr('+f.id+')">'
+      +'<div class="ferr-num">'+(i+1)+'</div>'
+      +'<div class="ferr-body">'
+        +'<div class="ferr-name">'+ico+' '+f.name+'</div>'
+        +'<div class="ferr-dist">📏 '+fmtDist(f.dist)+' — '+f.tipo+'</div>'
+        +addrLine+hoursLine+visitada
+      +'</div>'
+      +'<div class="ferr-btns">'
+        +'<button class="bg2" style="padding:6px 8px;font-size:13px;color:var(--blue)" onclick="event.stopPropagation();navFerrr('+f.lat+','+f.lng+',''+safeName+'')">🧭</button>'
+        +'<button class="bg2" style="padding:6px 8px;font-size:13px;color:var(--green)" onclick="event.stopPropagation();registrarVisitaFerr(''+safeName+'',''+safeAddr+'','+f.lat+','+f.lng+')">📝</button>'
+        +phoneBtn
+      +'</div>'
+    +'</div>';
+  });
+  html+='<div style="text-align:center;font-size:12px;color:var(--muted);padding:10px 0">Mostrando '+top.length+' de '+list.length+' resultados en 5km · Datos: OpenStreetMap</div>';
+  el.innerHTML=html;
+};
+
+window.abrirDetalleFerrr=function(id){
+  const f=window._ferrAll?.find(x=>x.id==id);if(!f)return;
+  const tipoIcon={ferreteria:'🔧',materiales:'🧱',construccion:'🏗️'}[f.tipo]||'🔧';
+  const gmapsSearch=`https://www.google.com/maps/search/${encodeURIComponent(f.name)}/@${f.lat},${f.lng},17z`;
+  const gmapsDir=`https://www.google.com/maps/dir/?api=1&destination=${f.lat},${f.lng}&travelmode=driving`;
+  window.open(gmapsDir,'_blank');
+};
+
+window.navFerrr=function(lat,lng,nombre){
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`,'_blank');
+};
+
+window.registrarVisitaFerr=function(nombre,addr,lat,lng){
+  // Pre-llenar nueva visita con datos de la ferretería
+  window._selCli=nombre;
+  document.getElementById('cli-sv-t').textContent=nombre;
+  document.getElementById('cli-sv').classList.add('on');
+  document.getElementById('cli-sw').style.display='none';
+  // Set canal to FERRETERIA
+  document.querySelectorAll('#ch-canal .chip').forEach(x=>x.classList.remove('on'));
+  document.querySelector('#ch-canal .chip[data-v="FERRETERIA"]')?.classList.add('on');
+  document.getElementById('fp-proy').style.display='none';
+  document.getElementById('fp-ferr-size').style.display='block';
+  document.getElementById('ntc').value='FERRETERIA';
+  // Set GPS coords
+  if(lat&&lng){window.GPS=lat.toFixed(6)+', '+lng.toFixed(6);document.getElementById('loc-t').textContent=window.GPS+' ✓';}
+  toast('📝 Datos prellenados. Completa la visita.');
+  go('nueva');
+};
+// ══════════════════════════════════════════════════
 
 // Proxy helper para imágenes Firebase (evita CORS)
 function imgProxy(url){if(!url)return '';try{return 'https://wsrv.nl/?url='+encodeURIComponent(url)+'&w=600&output=jpg';}catch(e){return url;}}
