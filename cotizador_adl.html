@@ -6,6 +6,8 @@
 <title>ADL Drywall — Cotizador Comercial</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
 /* ================================================================
    ADL DRYWALL — DESIGN TOKENS
@@ -514,7 +516,8 @@ input.price-inp:focus, input.qty-inp:focus{border-color:var(--adl-orange)}
             <div class="page-sub" id="pageSub">Agrega productos desde el catálogo</div>
           </div>
           <div class="top-strip-right">
-            <button class="abtn abtn-ghost" onclick="exportQuote()">📄 Exportar</button>
+            <button class="abtn abtn-ghost" onclick="exportPDF()">📄 PDF</button>
+            <button class="abtn abtn-ghost" id="exportCsvBtn" onclick="exportCSV()" style="display:none">⬇ CSV</button>
           </div>
         </div>
 
@@ -659,6 +662,12 @@ function launch(r) {
   const adminBtn = document.getElementById('adminBtn');
   if (r==='admin') adminBtn.style.display = '';
   else adminBtn.style.display = 'none';
+
+  // Siempre ocultar panel admin al lanzar (solo se muestra con botón y solo admin lo tiene)
+  document.getElementById('adminPanel').style.display = 'none';
+
+  // CSV solo para admin
+  document.getElementById('exportCsvBtn').style.display = r==='admin' ? '' : 'none';
 
   // Asesor restrictions: hide costo, ganancia, margen cards
   if (r==='asesor') {
@@ -983,32 +992,235 @@ function handleUpload(event) {
 }
 
 // ================================================================
-// EXPORT
+// EXPORT PDF
 // ================================================================
-function exportQuote() {
+function exportPDF() {
   if(!quoteItems.length){ alert('No hay ítems en la cotización.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
   const isAdmin = role==='admin';
-  let csv = isAdmin
-    ? 'Código,Descripción,Costo Unit.,Precio Unit.,Cantidad,Total Costo,Total Precio,Margen\n'
-    : 'Código,Descripción,Precio Unit.,Cantidad,Total Precio\n';
+  const today = new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  const fecha = new Date().toISOString().slice(0,10);
 
+  // ── PALETA ──────────────────────────────────────────
+  const ORANGE  = [232, 56, 13];
+  const DARK    = [26, 26, 26];
+  const DARK2   = [40, 40, 40];
+  const GREY    = [80, 80, 80];
+  const LGREY   = [230, 230, 230];
+  const WHITE   = [255, 255, 255];
+  const GREEN   = [34, 197, 94];
+  const YELLOW  = [245, 158, 11];
+  const W = 210, H = 297;
+
+  // ── FONDO HEADER ────────────────────────────────────
+  doc.setFillColor(...DARK);
+  doc.rect(0, 0, W, 38, 'F');
+  // Franja naranja inferior del header
+  doc.setFillColor(...ORANGE);
+  doc.rect(0, 36, W, 2, 'F');
+
+  // Logo / Brand
+  doc.setFillColor(...ORANGE);
+  doc.roundedRect(12, 8, 22, 22, 3, 3, 'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(10);
+  doc.setTextColor(...WHITE);
+  doc.text('ADL', 23, 21.5, {align:'center'});
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(18);
+  doc.setTextColor(...WHITE);
+  doc.text('ADL Drywall', 38, 17);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8);
+  doc.setTextColor(180,180,180);
+  doc.text('Cotizador Comercial Interno', 38, 23);
+
+  // Fecha y número en header
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(8);
+  doc.setTextColor(...ORANGE);
+  doc.text('COTIZACIÓN', W-12, 14, {align:'right'});
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(200,200,200);
+  doc.setFontSize(8);
+  doc.text(today, W-12, 20, {align:'right'});
+  doc.text(`Ref: COT-${fecha.replace(/-/g,'')}`, W-12, 26, {align:'right'});
+
+  // ── SECCIÓN INFO ────────────────────────────────────
+  let y = 46;
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(10);
+  doc.setTextColor(...DARK);
+  doc.text('DETALLE DE LA COTIZACIÓN', 12, y);
+  doc.setFillColor(...ORANGE);
+  doc.rect(12, y+2, 50, 0.8, 'F');
+  y += 8;
+
+  // ── TABLA DE ÍTEMS ───────────────────────────────────
+  let tp=0, tc=0;
+  const bodyRows = quoteItems.map(q => {
+    const tqp = q.precio * q.cantidad;
+    const tqc = q.costo  * q.cantidad;
+    tp += tqp; tc += tqc;
+    if (isAdmin) {
+      const m = q.precio>0 ? ((q.precio-q.costo)/q.precio*100).toFixed(1)+'%' : '—';
+      return [q.id, q.nombre, cop(q.costo), cop(q.precio), String(q.cantidad), cop(tqc), cop(tqp), m];
+    } else {
+      return [q.id, q.nombre, cop(q.precio), String(q.cantidad), cop(tqp)];
+    }
+  });
+
+  const adminCols = ['Código','Descripción','Costo Unit.','Precio Unit.','Cant.','Total Costo','Total Precio','Margen'];
+  const asesorCols= ['Código','Descripción','Precio Unit.','Cant.','Total Precio'];
+  const headCols  = isAdmin ? adminCols : asesorCols;
+
+  doc.autoTable({
+    startY: y,
+    head: [headCols],
+    body: bodyRows,
+    theme: 'grid',
+    styles: {
+      font:'helvetica', fontSize:7.5,
+      cellPadding:{top:3,bottom:3,left:3,right:3},
+      textColor:[40,40,40], lineColor:[210,210,210], lineWidth:0.3
+    },
+    headStyles: {
+      fillColor: DARK, textColor: WHITE,
+      fontStyle:'bold', fontSize:7.5,
+      halign:'center'
+    },
+    columnStyles: isAdmin ? {
+      0:{cellWidth:14,halign:'center'},
+      1:{cellWidth:55},
+      2:{cellWidth:21,halign:'right'},
+      3:{cellWidth:21,halign:'right'},
+      4:{cellWidth:10,halign:'center'},
+      5:{cellWidth:22,halign:'right'},
+      6:{cellWidth:22,halign:'right'},
+      7:{cellWidth:14,halign:'center'},
+    } : {
+      0:{cellWidth:18,halign:'center'},
+      1:{cellWidth:80},
+      2:{cellWidth:32,halign:'right'},
+      3:{cellWidth:16,halign:'center'},
+      4:{cellWidth:34,halign:'right'},
+    },
+    alternateRowStyles:{fillColor:[248,248,248]},
+    didParseCell(d){
+      // Colorear margen admin
+      if(isAdmin && d.section==='body' && d.column.index===7 && d.cell.text[0]!=='—'){
+        const v=parseFloat(d.cell.text[0]);
+        if(!isNaN(v)){
+          d.cell.styles.textColor = v>=15 ? [22,163,74] : [220,38,38];
+          d.cell.styles.fontStyle = 'bold';
+        }
+      }
+      // Header naranja para código
+      if(d.section==='head' && d.column.index===0){
+        d.cell.styles.fillColor = ORANGE;
+      }
+    },
+    margin:{left:12,right:12},
+  });
+
+  y = doc.lastAutoTable.finalY + 8;
+
+  // ── RESUMEN FINANCIERO ───────────────────────────────
+  const gain   = tp - tc;
+  const margin = tp>0 ? gain/tp : 0;
+  const verdictOk = margin >= MARGIN_MIN;
+
+  // Fondo resumen
+  doc.setFillColor(245,245,245);
+  doc.roundedRect(12, y, W-24, isAdmin ? 36 : 22, 3, 3, 'F');
+  doc.setDrawColor(...ORANGE);
+  doc.setLineWidth(0.8);
+  doc.roundedRect(12, y, W-24, isAdmin ? 36 : 22, 3, 3, 'S');
+
+  const rx = 20, ry = y+8;
+  // Total precio — siempre visible
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...GREY);
+  doc.text('TOTAL PRECIO', rx, ry);
+  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...DARK);
+  doc.text(cop(tp), rx, ry+8);
+
+  if (isAdmin) {
+    // Total costo
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...GREY);
+    doc.text('TOTAL COSTO', rx+50, ry);
+    doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...DARK);
+    doc.text(cop(tc), rx+50, ry+8);
+
+    // Ganancia
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...GREY);
+    doc.text('GANANCIA', rx+100, ry);
+    doc.setFont('helvetica','bold'); doc.setFontSize(13);
+    doc.setTextColor(...(gain>=0 ? GREEN : [220,38,38]));
+    doc.text(cop(gain), rx+100, ry+8);
+
+    // Margen
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...GREY);
+    doc.text('MARGEN GLOBAL', rx+150, ry);
+    doc.setFont('helvetica','bold'); doc.setFontSize(13);
+    doc.setTextColor(...(verdictOk ? GREEN : [220,38,38]));
+    doc.text((margin*100).toFixed(1)+'%', rx+150, ry+8);
+
+    y += 44;
+  } else {
+    y += 30;
+  }
+
+  // ── VEREDICTO ────────────────────────────────────────
+  if (quoteItems.some(q=>q.precio>0)) {
+    const vColor  = verdictOk ? GREEN : YELLOW;
+    const vText   = verdictOk
+      ? '✔  APROBADO — El margen cumple el mínimo requerido del 15%'
+      : '⚠  VALIDAR NEGOCIACIÓN CON COORDINADORES — Margen por debajo del 15%';
+
+    doc.setFillColor(verdictOk ? 240 : 255, verdictOk ? 253 : 251, verdictOk ? 244 : 235);
+    doc.setDrawColor(...vColor);
+    doc.setLineWidth(0.8);
+    doc.roundedRect(12, y, W-24, 14, 3, 3, 'FD');
+    doc.setFont('helvetica','bold'); doc.setFontSize(9);
+    doc.setTextColor(...vColor);
+    doc.text(vText, 20, y+9);
+    y += 20;
+  }
+
+  // ── FOOTER ───────────────────────────────────────────
+  const fY = H - 14;
+  doc.setFillColor(...DARK);
+  doc.rect(0, fY-4, W, 18, 'F');
+  doc.setFillColor(...ORANGE);
+  doc.rect(0, fY-4, W, 1, 'F');
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(150,150,150);
+  doc.text('ADL Drywall — Documento interno, confidencial', 12, fY+4);
+  doc.text(`Generado: ${today}`, W-12, fY+4, {align:'right'});
+
+  // ── GUARDAR ──────────────────────────────────────────
+  doc.save(`Cotizacion_ADL_${fecha}.pdf`);
+}
+
+// ================================================================
+// EXPORT CSV (admin only)
+// ================================================================
+function exportCSV() {
+  if(!quoteItems.length){ alert('No hay ítems en la cotización.'); return; }
+  let csv = 'Código,Descripción,Costo Unit.,Precio Unit.,Cantidad,Total Costo,Total Precio,Margen\n';
   let tp=0,tc=0;
   quoteItems.forEach(q=>{
     const tqp=q.precio*q.cantidad, tqc=q.costo*q.cantidad;
     const m=q.precio>0?((q.precio-q.costo)/q.precio*100).toFixed(1)+'%':'—';
-    if(isAdmin) csv+=`${q.id},"${q.nombre}",${q.costo},${q.precio},${q.cantidad},${tqc},${tqp},${m}\n`;
-    else csv+=`${q.id},"${q.nombre}",${q.precio},${q.cantidad},${tqp}\n`;
+    csv+=`${q.id},"${q.nombre}",${q.costo},${q.precio},${q.cantidad},${tqc},${tqp},${m}\n`;
     tp+=tqp; tc+=tqc;
   });
-  if(isAdmin){
-    const g=tp-tc, m=tp>0?((g/tp)*100).toFixed(1)+'%':'—';
-    csv+=`\nTOTAL,,,,,${tc},${tp},${m}\nGANANCIA,,,,,,${g},\n`;
-  } else {
-    csv+=`\nTOTAL,,,,${tp}\n`;
-  }
+  const g=tp-tc, m=tp>0?((g/tp)*100).toFixed(1)+'%':'—';
+  csv+=`\nTOTAL,,,,,${tc},${tp},${m}\nGANANCIA,,,,,,${g},\n`;
   const link=document.createElement('a');
   link.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));
-  link.download=`cotizacion_ADL_${new Date().toISOString().slice(0,10)}.csv`;
+  link.download=`Cotizacion_ADL_${new Date().toISOString().slice(0,10)}.csv`;
   link.click();
 }
 
