@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ADL Drywall — Cotizador Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+/* ================================================================
+   ADL DRYWALL — DESIGN TOKENS
+   Naranja corporativo: #E8380D / Gris oscuro: #1A1A1A / Blanco: #FFFFFF
+================================================================ */
+:root {
+  --adl-orange:   #E8380D;
+  --adl-orange2:  #C92D09;
+  --adl-dark:     #1A1A1A;
+  --adl-dark2:    #252525;
+  --adl-dark3:    #2F2F2F;
+  --adl-mid:      #3A3A3A;
+  --adl-border:   #3E3E3E;
+  --adl-border2:  #4A4A4A;
+  --adl-text:     #F0F0F0;
+  --adl-muted:    #8A8A8A;
+  --adl-dim:      #B0B0B0;
+  --adl-green:    #22C55E;
+  --adl-yellow:   #F59E0B;
+  --adl-red:      #EF4444;
+  --radius:       10px;
+  --radius-sm:    7px;
+  --header-h:     60px;
+  --sidebar-w:    320px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--adl-dark);
+  color:var(--adl-text);
+  min-height:100vh;
+  font-size:14px;
+  overflow-x:hidden;
+}
+
+/* ======================== SCROLLBAR ======================== */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--adl-border2);border-radius:2px}
+
+/* ======================== LOGIN ======================== */
+#loginScreen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(232,56,13,0.15) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 80%, rgba(232,56,13,0.08) 0%, transparent 50%),
+    var(--adl-dark);
+}
+
+.login-card{
+  background:var(--adl-dark2);
+  border:1px solid var(--adl-border);
+  border-radius:16px;
+  padding:40px 36px 36px;
+  width:min(380px, calc(100vw - 32px));
+  box-shadow:0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(232,56,13,0.1);
+}
+
+.login-brand{
+  display:flex;align-items:center;gap:12px;margin-bottom:6px;
+}
+.login-brand-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:linear-gradient(135deg,var(--adl-orange),var(--adl-orange2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:900;color:#fff;
+  font-family:'Barlow Condensed',sans-serif;letter-spacing:-1px;
+}
+.login-brand-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:24px;font-weight:800;letter-spacing:0.5px;
+  color:var(--adl-text);
+}
+.login-brand-name span{color:var(--adl-orange)}
+.login-tagline{font-size:12px;color:var(--adl-muted);margin-bottom:32px;padding-left:56px}
+
+.tab-group{display:flex;gap:6px;margin-bottom:24px;background:var(--adl-dark3);border-radius:8px;padding:4px}
+.tab-btn{
+  flex:1;padding:9px;border-radius:6px;border:none;cursor:pointer;
+  font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;
+  background:transparent;color:var(--adl-muted);transition:all .2s;
+}
+.tab-btn.active{background:var(--adl-orange);color:#fff}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--adl-muted);margin-bottom:7px}
+.field input{
+  width:100%;padding:12px 14px;
+  background:var(--adl-dark3);border:1.5px solid var(--adl-border);
+  border-radius:var(--radius-sm);color:var(--adl-text);
+  font-family:'Barlow',sans-serif;font-size:14px;outline:none;
+  transition:border-color .2s;
+}
+.field input:focus{border-color:var(--adl-orange)}
+.field input::placeholder{color:var(--adl-border2)}
+
+.btn-login{
+  width:100%;padding:13px;margin-top:4px;
+  background:linear-gradient(135deg,var(--adl-orange),var(--adl-orange2));
+  border:none;border-radius:var(--radius-sm);
+  color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;letter-spacing:.3px;transition:opacity .2s;
+  box-shadow:0 4px 20px rgba(232,56,13,0.35);
+}
+.btn-login:hover{opacity:.88}
+.btn-login:active{opacity:.75;transform:scale(.99)}
+
+.login-err{color:var(--adl-red);font-size:13px;text-align:center;margin-top:10px;min-height:18px}
+
+/* ======================== APP SHELL ======================== */
+#appScreen{display:none;min-height:100vh;flex-direction:column}
+
+/* ======================== HEADER ======================== */
+.header{
+  height:var(--header-h);
+  background:var(--adl-dark2);
+  border-bottom:2px solid var(--adl-orange);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;
+  position:sticky;top:0;z-index:200;
+  flex-shrink:0;
+}
+.header-brand{display:flex;align-items:center;gap:10px}
+.header-logo-box{
+  width:34px;height:34px;border-radius:7px;
+  background:linear-gradient(135deg,var(--adl-orange),var(--adl-orange2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:#fff;
+}
+.header-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:800;letter-spacing:.5px;color:var(--adl-text);
+}
+.header-name span{color:var(--adl-orange)}
+.header-badge{
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 9px;border-radius:20px;margin-left:2px;
+  background:var(--adl-dark3);color:var(--adl-muted);border:1px solid var(--adl-border);
+}
+.header-badge.admin{background:rgba(232,56,13,.12);color:var(--adl-orange);border-color:rgba(232,56,13,.3)}
+
+.header-right{display:flex;align-items:center;gap:8px}
+.hbtn{
+  padding:7px 13px;border-radius:7px;border:1px solid var(--adl-border);
+  background:transparent;color:var(--adl-dim);
+  font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .18s;
+}
+.hbtn:hover{border-color:var(--adl-orange);color:var(--adl-orange)}
+.hbtn.danger:hover{border-color:var(--adl-red);color:var(--adl-red)}
+
+/* ======================== MOBILE NAV ======================== */
+.mobile-nav{
+  display:none;
+  background:var(--adl-dark2);
+  border-bottom:1px solid var(--adl-border);
+  padding:0 16px;
+  flex-shrink:0;
+}
+.mobile-nav-tabs{display:flex;gap:0}
+.mnav-tab{
+  flex:1;padding:11px 8px;
+  background:transparent;border:none;border-bottom:2px solid transparent;
+  color:var(--adl-muted);font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .18s;
+}
+.mnav-tab.active{border-bottom-color:var(--adl-orange);color:var(--adl-orange)}
+
+/* ======================== BODY LAYOUT ======================== */
+.app-body{display:flex;height:calc(100vh - var(--header-h));overflow:hidden}
+
+/* ======================== SIDEBAR ======================== */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);
+  background:var(--adl-dark2);
+  border-right:1px solid var(--adl-border);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:transform .3s ease;
+}
+.sidebar-hd{
+  padding:16px 16px 10px;
+  border-bottom:1px solid var(--adl-border);
+  flex-shrink:0;
+}
+.sidebar-hd-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--adl-muted);
+}
+.search-wrap{position:relative;padding:10px 12px;flex-shrink:0}
+.search-wrap input{
+  width:100%;padding:9px 12px 9px 36px;
+  background:var(--adl-dark3);border:1.5px solid var(--adl-border);
+  border-radius:var(--radius-sm);color:var(--adl-text);
+  font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .2s;
+}
+.search-wrap input:focus{border-color:var(--adl-orange)}
+.search-wrap input::placeholder{color:var(--adl-border2)}
+.search-ico{position:absolute;left:22px;top:50%;transform:translateY(-50%);color:var(--adl-muted);font-size:14px;pointer-events:none}
+.cat-count{padding:2px 14px 6px;font-size:11px;color:var(--adl-muted);font-weight:600;flex-shrink:0}
+.items-scroll{flex:1;overflow-y:auto;padding:2px 8px 12px}
+.item-row{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 10px;border-radius:8px;
+  transition:background .13s;margin-bottom:1px;cursor:default;
+}
+.item-row:hover{background:var(--adl-dark3)}
+.item-row-info{flex:1;min-width:0}
+.item-row-code{font-size:11px;font-weight:700;color:var(--adl-orange);letter-spacing:.2px}
+.item-row-name{font-size:12px;color:var(--adl-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.item-row-cost{font-size:11px;color:var(--adl-muted);margin-top:2px}
+.add-btn{
+  width:30px;height:30px;border-radius:7px;border:1.5px solid var(--adl-border);
+  background:transparent;color:var(--adl-muted);font-size:20px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;transition:all .15s;line-height:1;
+}
+.add-btn:hover,.add-btn:active{background:var(--adl-orange);border-color:var(--adl-orange);color:#fff}
+
+/* ======================== MAIN ======================== */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.main-inner{padding:20px 24px 0;flex-shrink:0}
+
+/* ======================== TOP STRIP ======================== */
+.top-strip{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.top-strip-left{}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:var(--adl-text);letter-spacing:.3px}
+.page-sub{font-size:12px;color:var(--adl-muted);margin-top:2px}
+.top-strip-right{display:flex;gap:8px;flex-shrink:0}
+.abtn{
+  padding:9px 16px;border-radius:var(--radius-sm);
+  font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;border:1.5px solid;transition:all .18s;letter-spacing:.3px;
+}
+.abtn-ghost{background:transparent;border-color:var(--adl-border);color:var(--adl-dim)}
+.abtn-ghost:hover{border-color:var(--adl-orange);color:var(--adl-orange)}
+.abtn-orange{
+  background:linear-gradient(135deg,var(--adl-orange),var(--adl-orange2));
+  border-color:transparent;color:#fff;
+  box-shadow:0 3px 12px rgba(232,56,13,.3);
+}
+.abtn-orange:hover{opacity:.87}
+
+/* ======================== ADMIN UPLOAD PANEL ======================== */
+.admin-upload{
+  background:var(--adl-dark2);border:1px solid rgba(232,56,13,.25);
+  border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;
+}
+.admin-upload-title{
+  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--adl-orange);margin-bottom:12px;display:flex;align-items:center;gap:7px;
+}
+.drop-zone{
+  border:2px dashed var(--adl-border2);border-radius:var(--radius-sm);
+  padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;
+}
+.drop-zone:hover{border-color:var(--adl-orange)}
+.drop-zone input{display:none}
+.drop-label{font-size:13px;color:var(--adl-muted)}
+.drop-label strong{color:var(--adl-orange)}
+.drop-label small{display:block;margin-top:4px;font-size:11px;color:var(--adl-border2)}
+.drop-status{font-size:12px;margin-top:8px;min-height:18px;color:var(--adl-muted)}
+
+/* ======================== SUMMARY CARDS ======================== */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-bottom:18px;
+}
+.card{
+  background:var(--adl-dark2);border:1px solid var(--adl-border);
+  border-radius:var(--radius);padding:14px 16px;
+}
+.card.accent{border-color:rgba(232,56,13,.3);background:rgba(232,56,13,.04)}
+.card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--adl-muted);margin-bottom:8px}
+.card-value{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--adl-text);letter-spacing:.3px}
+.card-value.green{color:var(--adl-green)}
+.card-value.red{color:var(--adl-red)}
+.card-value.orange{color:var(--adl-orange)}
+
+/* ======================== VERDICT ======================== */
+.verdict{
+  border-radius:var(--radius);padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:18px;border:1.5px solid;
+  transition:all .3s;
+}
+.verdict.idle{background:var(--adl-dark2);border-color:var(--adl-border)}
+.verdict.ok{background:rgba(34,197,94,.07);border-color:rgba(34,197,94,.3)}
+.verdict.warn{background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.3)}
+.verdict-icon{font-size:24px;flex-shrink:0}
+.verdict-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:.3px}
+.verdict-title.green{color:var(--adl-green)}
+.verdict-title.yellow{color:var(--adl-yellow)}
+.verdict-title.muted{color:var(--adl-muted)}
+.verdict-sub{font-size:12px;color:var(--adl-muted);margin-top:2px}
+
+/* ======================== TABLE AREA ======================== */
+.table-area{padding:0 24px 32px;flex:1}
+.table-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--adl-muted);margin-bottom:10px;
+}
+.table-wrap{border-radius:var(--radius);overflow:hidden;border:1px solid var(--adl-border)}
+table{width:100%;border-collapse:collapse}
+thead th{
+  padding:10px 12px;text-align:left;
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--adl-muted);
+  background:var(--adl-dark3);border-bottom:1px solid var(--adl-border);
+  white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid rgba(62,62,62,.5);transition:background .13s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.025)}
+tbody td{padding:11px 12px;font-size:13px;vertical-align:middle}
+.tc-code{color:var(--adl-orange);font-weight:700;font-size:11px;white-space:nowrap}
+.tc-name{color:var(--adl-text);max-width:200px}
+.tc-cost{color:var(--adl-muted);white-space:nowrap}
+.tc-num{color:var(--adl-dim);white-space:nowrap;text-align:right}
+.tc-total{color:var(--adl-text);font-weight:600;white-space:nowrap}
+
+input.price-inp, input.qty-inp{
+  background:var(--adl-dark3);border:1.5px solid var(--adl-border);
+  border-radius:var(--radius-sm);color:var(--adl-text);
+  font-family:'Barlow',sans-serif;font-size:13px;outline:none;
+  padding:7px 9px;transition:border-color .18s;
+}
+input.price-inp{width:120px;text-align:right}
+input.qty-inp{width:62px;text-align:center}
+input.price-inp:focus, input.qty-inp:focus{border-color:var(--adl-orange)}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge.ok{background:rgba(34,197,94,.12);color:var(--adl-green)}
+.badge.bad{background:rgba(239,68,68,.12);color:var(--adl-red)}
+.badge.idle{background:var(--adl-dark3);color:var(--adl-muted)}
+
+.del-row{
+  width:28px;height:28px;border-radius:6px;border:none;
+  background:transparent;color:var(--adl-muted);cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.del-row:hover{background:rgba(239,68,68,.12);color:var(--adl-red)}
+
+/* ======================== EMPTY STATE ======================== */
+.empty{text-align:center;padding:60px 24px;color:var(--adl-muted)}
+.empty-ico{font-size:48px;opacity:.25;margin-bottom:14px}
+.empty-txt{font-size:14px}
+
+/* ======================== MOBILE QUOTE CARDS ======================== */
+.mobile-cards{display:none;padding:0 0 24px}
+.mcard{
+  background:var(--adl-dark2);border:1px solid var(--adl-border);
+  border-radius:var(--radius);padding:14px;margin-bottom:8px;
+}
+.mcard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.mcard-info{}
+.mcard-code{font-size:11px;font-weight:700;color:var(--adl-orange)}
+.mcard-name{font-size:13px;color:var(--adl-text);margin-top:2px;line-height:1.3}
+.mcard-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mcard-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--adl-muted);margin-bottom:5px}
+.mcard-field input{
+  width:100%;padding:9px;
+  background:var(--adl-dark3);border:1.5px solid var(--adl-border);
+  border-radius:var(--radius-sm);color:var(--adl-text);
+  font-family:'Barlow',sans-serif;font-size:14px;outline:none;
+  transition:border-color .18s;text-align:right;
+}
+.mcard-field input:focus{border-color:var(--adl-orange)}
+.mcard-total{margin-top:10px;padding-top:10px;border-top:1px solid var(--adl-border);display:flex;align-items:center;justify-content:space-between}
+.mcard-total-label{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--adl-muted)}
+.mcard-total-val{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--adl-text)}
+
+/* ======================== RESPONSIVE ======================== */
+@media (max-width:768px){
+  :root{--sidebar-w:100%;--header-h:56px}
+
+  .header-name{font-size:16px}
+  .header-badge{display:none}
+  .hbtn span{display:none}
+  .hbtn{padding:7px 10px}
+
+  .mobile-nav{display:block}
+  .app-body{flex-direction:column;height:calc(100vh - var(--header-h) - 40px);overflow:hidden}
+
+  .sidebar{
+    width:100%;min-width:100%;
+    height:100%;
+    position:absolute;left:0;top:calc(var(--header-h) + 40px);
+    z-index:100;
+    transform:translateX(-100%);
+  }
+  .sidebar.mobile-visible{transform:translateX(0)}
+
+  .main{
+    width:100%;height:100%;
+    overflow-y:auto;
+  }
+  .main-inner{padding:14px 14px 0}
+
+  .top-strip{flex-direction:column;gap:8px}
+  .top-strip-right{width:100%}
+  .abtn{flex:1;text-align:center}
+
+  .cards-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* Hide desktop table on mobile, show cards */
+  .table-wrap{display:none}
+  .mobile-cards{display:block}
+  .table-area{padding:0 14px 24px}
+
+  .main-inner .top-strip-right .abtn-ghost{display:none}/* hide export on mobile or keep */
+
+  .admin-upload{padding:12px 14px}
+}
+
+@media (min-width:769px){
+  .mobile-nav{display:none}
+  .sidebar{position:static;transform:none!important}
+}
+
+@media (max-width:480px){
+  .login-card{padding:28px 20px 24px}
+  .cards-grid{grid-template-columns:1fr 1fr}
+  .page-title{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================== LOGIN ================== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-brand-icon">ADL</div>
+      <div class="login-brand-name">ADL <span>Drywall</span></div>
+    </div>
+    <div class="login-tagline">Cotizador Comercial Interno</div>
+
+    <div class="tab-group">
+      <button class="tab-btn active" onclick="setRole('admin')">Administrador</button>
+      <button class="tab-btn" onclick="setRole('asesor')">Asesor Comercial</button>
+    </div>
+
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="pwInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-login" onclick="doLogin()">Ingresar</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ================== APP ================== -->
+<div id="appScreen">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-brand">
+      <div class="header-logo-box">ADL</div>
+      <div class="header-name">ADL <span>Drywall</span></div>
+      <div class="header-badge" id="roleBadge">ASESOR</div>
+    </div>
+    <div class="header-right">
+      <button class="hbtn" onclick="clearQuote()" title="Limpiar cotización">🗑 <span>Limpiar</span></button>
+      <button class="hbtn" id="adminBtn" onclick="toggleAdmin()" title="Panel administrador" style="display:none">⚙ <span>Admin</span></button>
+      <button class="hbtn danger" onclick="doLogout()">↩ <span>Salir</span></button>
+    </div>
+  </div>
+
+  <!-- MOBILE NAV TABS -->
+  <div class="mobile-nav">
+    <div class="mobile-nav-tabs">
+      <button class="mnav-tab active" id="mnavCatalog" onclick="mobileTab('catalog')">📦 Catálogo</button>
+      <button class="mnav-tab" id="mnavQuote" onclick="mobileTab('quote')">📋 Cotización</button>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="app-body" id="appBody">
+
+    <!-- SIDEBAR / CATALOG -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-hd">
+        <div class="sidebar-hd-title">Catálogo de Productos</div>
+      </div>
+      <div class="search-wrap">
+        <span class="search-ico">🔍</span>
+        <input type="text" id="searchInput" placeholder="Buscar código o nombre..." oninput="filterItems()">
+      </div>
+      <div class="cat-count" id="catCount"></div>
+      <div class="items-scroll" id="itemsList"></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main" id="mainPanel">
+      <div class="main-inner">
+
+        <!-- TOP STRIP -->
+        <div class="top-strip">
+          <div class="top-strip-left">
+            <div class="page-title">Nueva Cotización</div>
+            <div class="page-sub" id="pageSub">Agrega productos desde el catálogo</div>
+          </div>
+          <div class="top-strip-right">
+            <button class="abtn abtn-ghost" onclick="exportQuote()">📄 Exportar</button>
+          </div>
+        </div>
+
+        <!-- ADMIN PANEL (solo admin) -->
+        <div class="admin-upload" id="adminPanel" style="display:none">
+          <div class="admin-upload-title">⚙ Actualizar Base de Costos</div>
+          <div class="drop-zone" onclick="document.getElementById('xlsxFile').click()">
+            <input type="file" id="xlsxFile" accept=".xlsx,.xls" onchange="handleUpload(event)">
+            <div class="drop-label">
+              📂 Toca para cargar archivo de costos<br>
+              <strong>Hoja "Dinamica"</strong> o <strong>"Base"</strong> del sistema ADL
+              <small>Mismo formato del archivo original exportado</small>
+            </div>
+          </div>
+          <div class="drop-status" id="dropStatus"></div>
+        </div>
+
+        <!-- CARDS RESUMEN -->
+        <div class="cards-grid" id="cardsGrid">
+          <div class="card accent">
+            <div class="card-label">Total Precio</div>
+            <div class="card-value orange" id="cTotalPrecio">$0</div>
+          </div>
+          <div class="card" id="cCostoCard">
+            <div class="card-label">Total Costo</div>
+            <div class="card-value" id="cTotalCosto">$0</div>
+          </div>
+          <div class="card" id="cGananciaCard">
+            <div class="card-label">Ganancia</div>
+            <div class="card-value green" id="cGanancia">$0</div>
+          </div>
+          <div class="card" id="cMargenCard" style="display:none">
+            <div class="card-label">Margen Global</div>
+            <div class="card-value" id="cMargen">—</div>
+          </div>
+        </div>
+
+        <!-- VEREDICTO -->
+        <div class="verdict idle" id="verdictBox">
+          <span class="verdict-icon">📋</span>
+          <div>
+            <div class="verdict-title muted" id="vTitle">Sin cotización activa</div>
+            <div class="verdict-sub" id="vSub">Agrega productos y precios para ver el análisis</div>
+          </div>
+        </div>
+
+      </div><!-- /main-inner -->
+
+      <!-- TABLE AREA -->
+      <div class="table-area">
+        <div class="table-label">Ítems en cotización</div>
+
+        <!-- Empty state -->
+        <div class="empty" id="emptyState">
+          <div class="empty-ico">📦</div>
+          <div class="empty-txt">No hay ítems aún<br><small style="font-size:11px">Busca y agrega productos desde el catálogo</small></div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="table-wrap" id="desktopTable" style="display:none">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th class="col-admin">Costo Unit.</th>
+                <th>Precio Unit. ($)</th>
+                <th>Cant.</th>
+                <th class="col-admin">Total Costo</th>
+                <th>Total Precio</th>
+                <th class="col-admin">Margen</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="quoteBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Mobile cards -->
+        <div class="mobile-cards" id="mobileCards"></div>
+
+      </div><!-- /table-area -->
+    </div><!-- /main -->
+
+  </div><!-- /app-body -->
+</div><!-- /appScreen -->
+
+<script>
+// ================================================================
+// CONFIGURACIÓN
+// ================================================================
+const ADMIN_PASS      = 'admin123';
+const ASESOR_PASS     = 'asesor123';
+const MARGIN_MIN      = 0.15;
+
+let role        = 'asesor';
+let selRole     = 'admin';
+let quoteItems  = [];
+let catalog     = [];
+let isMobile    = () => window.innerWidth <= 768;
+
+// ================================================================
+// DATOS BASE (606 ítems de la hoja Dinamica con IVA 19%)
+// ================================================================
+const BASE_ITEMS = [{"id":"10","nombre":"TAPA DE INSPECCION PANEL YESO 0,60X0,60","costo":140825.26},{"id":"11","nombre":"TAPA DE INSPECCION PANEL YESO 0,40X0,40","costo":116565.57},{"id":"15","nombre":"PLACA FIBRO SB 6MMX1,22X2,44 105644","costo":56669.92},{"id":"16","nombre":"PLACA FIBRO SB 8MMX1,22X2,44 105645","costo":77650.36},{"id":"17","nombre":"PLACA FIBRO SB 10MMX1,22X2,44 105635","costo":94846.16},{"id":"18","nombre":"PLACA FIBRO SB 14MMX1,22X2,44 - 105647","costo":132523.5},{"id":"19","nombre":"PLACA FIBRO SB 17MMX1,22X2,44 105648","costo":159778.17},{"id":"20","nombre":"PLACA FIBRO SB 20MMX1,22X2,44 105649","costo":188567.41},{"id":"23","nombre":"PLACA FIBRO SB MAD 6MMX1,22X2,44","costo":79526.93},{"id":"26","nombre":"PLACA FIBRO SB SIDING MAD 8MMX0,20X2,44","costo":19678.33},{"id":"31","nombre":"PLACA FIBRO SB MAD 8MMX1,22X2,44 105665","costo":108628.9},{"id":"133","nombre":"ANGULO 2X2 0,40MM 2,44M","costo":1851.87},{"id":"155","nombre":"PARAL 89 0,60MM SB TERNIUM 3,05M","costo":11511.12},{"id":"172","nombre":"CANAL 2 1/2\"X1 C20 2,44M C25010020","costo":14704.42},{"id":"198","nombre":"TORNILLO PANEL PA 6X1 5/8\"","costo":41.79},{"id":"199","nombre":"TORNILLO PANEL PB 6X1\" COD 48","costo":32.84},{"id":"200","nombre":"TORNILLO PANEL PB 6X1 5/8\" NEGRO","costo":60.21},{"id":"204","nombre":"TORNILLO SUPERBOARD PB 8X1 1/4\"","costo":56.02},{"id":"208","nombre":"TORNILLO ESTRUCT PB CABEZA PLANA 8X1/2\"","costo":20.96},{"id":"225","nombre":"CLAVO DE ACERO LISO 1\" X LIBRA","costo":6357.86},{"id":"226","nombre":"CLAVO DE ACERO ESTRIADO 1\" X LIBRA","costo":6603.37},{"id":"230","nombre":"CHAZO PUNTILLA 1/4\"X1 5/8\" ANCLAJE NR-14","costo":136.85},{"id":"231","nombre":"CHAZO MARIPOSA PANEL YESO 335506 HILTI","costo":226.1},{"id":"232","nombre":"CHAZO PLASTICO PARA DRYWALL","costo":113.05},{"id":"239","nombre":"ALAMBRE GALVANIZADO C16 X KILO","costo":9839.82},{"id":"240","nombre":"ALAMBRE GALVANIZADO C14 X KILO","costo":3897.52},{"id":"260","nombre":"ANCLAJE NR-1414 1/4\" X 1 1/4\"","costo":124.95},{"id":"266","nombre":"CINTA ENMASCARAR 1\" RF4010 CE204 40M","costo":4466.12},{"id":"275","nombre":"CINTA MALLA SELLAPANEL 90M","costo":6358.07},{"id":"276","nombre":"CINTA MALLA SELLAPANEL 45M","costo":3415.76},{"id":"277","nombre":"CINTA MALLA SELLAPANEL 20M","costo":1844.37},{"id":"278","nombre":"CINTA METALICA SELLAPANEL 30M","costo":16937.19},{"id":"280","nombre":"CINTA ENMASCARAR 1,5\" RF4010 CE205 40M","costo":7022.77},{"id":"283","nombre":"CINTA MALLA SELLAPANEL 150M","costo":10951.28},{"id":"286","nombre":"CINTA DE ENMASCARAR 3/4\" X 44M CE-203","costo":3443.86},{"id":"292","nombre":"ESQUINERO PLASTICO DEXSON 2,44 DXN6008P","costo":4938.54},{"id":"293","nombre":"ESQUINERO PLASTICO DEXSON 3.05M DXN6000P","costo":6725.99},{"id":"295","nombre":"DILATACION PLASTICA Z 1/2 3,05 DXN6007P","costo":6091.4},{"id":"296","nombre":"TERMINAL PLAST L DEXSON 3,05M DXN6003P","costo":6069.43},{"id":"297","nombre":"TERMINAL PLAST J DEXSON 3,05M DXN6002P","costo":6705.65},{"id":"298","nombre":"ESTRIA PLAST U 10MM DEXS0N3,05M DXN6005P","costo":7855.19},{"id":"301","nombre":"MEDIACANA PLAST 1 1/2\" DXN 3,05M DXN6004","costo":22502.44},{"id":"302","nombre":"RINCON PLAST INTER 3 VIAS 1 1/2\"DXN6101A","costo":3322.72},{"id":"306","nombre":"MEDIACANA PLAST ENSAM RIG 6CM UNIPERF 3M","costo":38922.63},{"id":"309","nombre":"PARCHE TOMA ELECTRICA STRAITFLEX","costo":1357.85},{"id":"310","nombre":"PARCHE ASPERSOR 2 1/4\" STRAITFLEX","costo":413.19},{"id":"311","nombre":"PARCHE TUBERIA 3/4\" X 4 AROS STRAITFLEX","costo":1495.83},{"id":"316","nombre":"MEDIACANA PLAST ENSAM COEXT 9CM UNIPE 3M","costo":63168.71},{"id":"327","nombre":"ESQUINA INTERNA MEDIACANA 6CM UNIPERF","costo":7546.98},{"id":"328","nombre":"ESQUINA EXTERNA MEDIACANA 6CM UNIPERF","costo":7053.13},{"id":"329","nombre":"ESTRELLA MEDIACANA ENSAMBLE 6CM UNIPERF","costo":7053.13},{"id":"330","nombre":"TAPA MEDIACANA ENSAMBLE 6CM UNIPERF","costo":7530.14},{"id":"367","nombre":"LIJA DE AGUA No. 150 ABRACOL 1005 PLIEGO","costo":1425.74},{"id":"368","nombre":"LIJA DE AGUA No. 80 ABRACOL 1002 PLIEGO","costo":1345.18},{"id":"369","nombre":"LIJA DE AGUA No. 120 ABRACOL 1004 PLIEGO","costo":1393.76},{"id":"376","nombre":"FRESCASA 3 1/2\" FIBERG 18,58M2 REF 00173","costo":236229.82},{"id":"381","nombre":"BLACK THEATHER 2\"X1,22X2,44 FIBERG 00052","costo":227635.2},{"id":"385","nombre":"MEMBRANA ACUSTICA FIBERGLASS RF 00152","costo":298231.61},{"id":"392","nombre":"FRESCASA ECO  3 1/2\" FIBERG 9M2 RF 00169","costo":119749.74},{"id":"607","nombre":"TEE PRINCIPAL INFINITY 3,66M","costo":5114.55},{"id":"608","nombre":"TEE INTERMEDIA INFINITY 1,22M","costo":1512.47},{"id":"609","nombre":"TEE SECUNDARIA INFINITY 0,61M","costo":800.05},{"id":"627","nombre":"INFINITY CEILING STAND 5/8\"X0,603X0,603","costo":7182.51},{"id":"628","nombre":"INFINITY CEILING STAND 5/8\"X0,603X0,603","costo":3529.96},{"id":"631","nombre":"INFINITY GYPSUM  7MMX0,61X1,22","costo":7960.6},{"id":"638","nombre":"PLACA FIBRO SB 4MMX1,22X2,44 SIN PINT","costo":39765.09},{"id":"662","nombre":"TEJA COLOMBIT P7 NO.6 105518","costo":33741.05},{"id":"663","nombre":"TEJA COLOMBIT P7 NO.10  105521","costo":53064.92},{"id":"1279","nombre":"ALICATE FORTE DE 7\" COD 897314","costo":15960.99},{"id":"1280","nombre":"ATORNILLADOR PALA 3/16X4\" FORTE 900068","costo":3440.49},{"id":"1286","nombre":"FLEXOMETRO 8MT FORTE COD 885913","costo":18550.15},{"id":"1287","nombre":"MARTILLO 25MM FORTE COD 898536","costo":14510.43},{"id":"1288","nombre":"PUNTA ESTRELLA 1\" TOPE IRWIN COD 5119","costo":2774.22},{"id":"1289","nombre":"TIJERAS DE AVIACION RECTA FORTE COD 4218","costo":19494.88},{"id":"1290","nombre":"BROCA TUNGSTENO 3/16X4 IRWIN COD 2273","costo":4141.2},{"id":"1291","nombre":"BROCA TUNGSTENO 1/4X4 IRWIN COD 2274","costo":5176.56},{"id":"1299","nombre":"MOLDURA NOMASTYL A2 2M","costo":10226.55},{"id":"1301","nombre":"MOLDURA NOMASTYL AT 2M","costo":19113.78},{"id":"1302","nombre":"MOLDURA NOMASTYL B5 2M","costo":6057.1},{"id":"1303","nombre":"MOLDURA NOMASTYL D 2M","costo":7166.18},{"id":"1304","nombre":"MOLDURA NOMASTYL J 2M","costo":10031.7},{"id":"1321","nombre":"BROCHA PROFESIONAL AZUL 2\" BR023504","costo":5772.69},{"id":"1322","nombre":"BROCHA 2216 CERD MONA PROF CABO AZUL 3\"","costo":9569.75},{"id":"1323","nombre":"BROCHA POPUL 2234/224 MONA/GRIS 2\" NEG","costo":3473.61},{"id":"1324","nombre":"BROCHA POPUL 2236/226 MONA/GRIS 3\" NEG","costo":6118.21},{"id":"1325","nombre":"RODILLO FELPA ACR/POL MASTDER 9\" REF 902","costo":11348.32},{"id":"1326","nombre":"RODILLO FELPA VERDE MASTDER 3\" RF 312","costo":3626.43},{"id":"1464","nombre":"MOLDURA NOMASTYL A1 2M","costo":23447.59},{"id":"1465","nombre":"MOLDURA NOMASTYL F 2M","costo":6483.57},{"id":"1481","nombre":"MOLDURA NOMASTYL K 2M","costo":18011.84},{"id":"1488","nombre":"CINTA PAPEL SELLAPANEL 23M","costo":1788.66},{"id":"1689","nombre":"TABLERO ELECTRICO","costo":214200.0},{"id":"1709","nombre":"GUANTE POLIURETANO G-40 T/M-L","costo":9044.0},{"id":"1969","nombre":"MASTIQUE SUPERMASTICK 1/4GAL","costo":7574.74},{"id":"1970","nombre":"MASTIQUE SUPERMASTICK BALD 2,5GAL","costo":35997.39},{"id":"1971","nombre":"MASTIQUE SUPERMASTICK CAJA 28KG","costo":44489.51},{"id":"1972","nombre":"MASTIQUE SUPERMASTICK CUN","costo":52860.43},{"id":"1973","nombre":"MASTIQUE SUPERMASTICK GAL","costo":15071.25},{"id":"1980","nombre":"TAPA DE INSPECCION PANEL YESO 0,20X0,20","costo":65116.66},{"id":"1997","nombre":"FRESCASA ECO  2 1/2\" FIBERG 9M2 RF 00168","costo":99763.3},{"id":"2198","nombre":"TORNILLO TW ESTRUCTURA PB 7X7/16\"","costo":7.06},{"id":"2201","nombre":"TORNILLO TW PANEL PA 6X1\"","costo":14.96},{"id":"2202","nombre":"TORNILLO TW PANEL PB 6X1\"","costo":18.42},{"id":"2203","nombre":"TORNILLO TW SUPERBOARD AVELL PA 6X7/8\"","costo":14.64},{"id":"2204","nombre":"TORNILLO TW ESTR PA FOSFATO 7X7/16","costo":14.56},{"id":"2206","nombre":"TORNILLO TW ESTRUCT PA CAB PLANA 8X1/2\"","costo":16.27},{"id":"2208","nombre":"TORNILLO TW ESTRUCT PB 8X1/2\" CAB PLANA","costo":18.67},{"id":"2403","nombre":"BISTURI ALUMINIO FORTE COD 910638","costo":8884.46},{"id":"2404","nombre":"BISTURI ECONOMICO FORTE COD 910737","costo":2108.49},{"id":"2405","nombre":"REPUESTO BISTURI  BLISTER X10 UND R4159","costo":3599.9},{"id":"2406","nombre":"FLEXOMETRO 5\" FORTE COD 885897","costo":10291.82},{"id":"2457","nombre":"TORNILLO PANPHILL 8X1\"","costo":19.04},{"id":"2582","nombre":"LIJA DE AGUA No. 180 ABRACOL 1006 PLIEGO","costo":1407.4},{"id":"2583","nombre":"LIJA OMEGA No. 80 ABRACOL 1102 PLIEGO","costo":495.04},{"id":"2584","nombre":"LIJA OMEGA No. 120 ABRACOL 1104 PLIEGO","costo":1063.86},{"id":"2585","nombre":"LIJA OMEGA No. 150 ABRACOL 1105 PLIEGO","costo":1062.25},{"id":"2586","nombre":"LIJA OMEGA No. 180 ABRACOL 1106 PLIEGO","costo":1003.59},{"id":"2588","nombre":"DISCO DIAMAN DT1 180X22X7,00MM CONT MUL","costo":28605.22},{"id":"2615","nombre":"PLACA DE YESO GYPLAC 1/2\"X1,22X2,44 1061","costo":43145.88},{"id":"2616","nombre":"PLACA DE YESO CEILING 11MMX1,22X2,44","costo":37224.62},{"id":"2617","nombre":"PLACA DE YESO GYPLAC RH 1/2\"X1,22X2,44 -","costo":73825.53},{"id":"2625","nombre":"PLACA DE YESO GYPLAC 5/8\"X1,22X2,44","costo":71500.55},{"id":"2626","nombre":"PLACA DE YESO GYPLAC RF 5/8\"X1,22X2,44","costo":96583.95},{"id":"2627","nombre":"PLACA DE YESO GYPLAC RH 5/8\"X1,22X2.44","costo":93984.39},{"id":"2639","nombre":"RINCONE PLAST EXTE 2VIAS 1 1/2\"DXN6100A","costo":3322.72},{"id":"2650","nombre":"PLACA DE YESO EXTRAD GYPL 5/8\"X1,22X2,44","costo":97312.82},{"id":"2679","nombre":"REJILLA VENT ALETAS CURVAS L-RA 20X20CM","costo":17531.08},{"id":"2680","nombre":"REJILLA VENT ALETAS CURVAS L-RA 40X40CM","costo":45896.75},{"id":"2712","nombre":"CANAL B6-2 1/2\"X1\"C24-2440C2501000824","costo":9457.4},{"id":"2741","nombre":"TORNILLO SUPERB AV PB ALETA 8X1 1/4\"","costo":65.74},{"id":"2742","nombre":"ANGULO 2,5X2,5 0,40 MM FANALCA 2,44M","costo":2324.07},{"id":"2758","nombre":"PLACA DE YESO GYPLAC 3/8\"X1,22X2,44","costo":41918.58},{"id":"2825","nombre":"CINTA DOBLE FAZ 3/4\"X 5M COD.DXN33031 -","costo":12166.56},{"id":"2826","nombre":"CINTA DOBLE FAZ 3/4\"X 30M COD. DXN33032","costo":69965.35},{"id":"2827","nombre":"PLACA DE YESO GYPLAC RF 1/2\"X1,22X2,44","costo":76923.86},{"id":"3105","nombre":"ESQUINA INTERNA MEDIACANA 9CM UNIPERF","costo":11090.29},{"id":"3106","nombre":"ESQUINA EXTERNA MEDIACANA 9CM UNIPERF","costo":11178.26},{"id":"3107","nombre":"ESTRELLA MEDIACANA ENSAMBLE 9CM UNIPERF","costo":10562.44},{"id":"3108","nombre":"TAPA MEDIACANA ENSAMBLE 9CM UNIPE","costo":11088.01},{"id":"3175","nombre":"MANTO METALEX PRO 3.0MM 10M2 RF 27602","costo":172953.16},{"id":"3189","nombre":"MANTO METALEX PRO 2.0MM 10M2 RF 00479","costo":147960.23},{"id":"3190","nombre":"MANTO METALEX PRO 2.5MM 10M2 RF 00478","costo":148721.3},{"id":"3197","nombre":"MANTO PROTEKTOR PRO 2,7MM 10M2 RF 00495","costo":153095.88},{"id":"3198","nombre":"MANTO FG200 PRO 2,2MM 10M2 RF 27742","costo":119520.82},{"id":"3199","nombre":"MANTO 500XT PRO 2,8MM 10M2 RF 00499","costo":216854.03},{"id":"3237","nombre":"TORNILLO TW ESTRUCT PB 8X1\" CAB PLANA","costo":11.31},{"id":"3274","nombre":"DILATACION PLAST EN Z 6MM UNIPERF 3,05M","costo":8121.75},{"id":"3956","nombre":"REJILLA VENT ALETAS CURVAS L-RA 60X60CM","costo":100257.83},{"id":"4002","nombre":"TEXSATAPE ALUMINIO 10CMX1M","costo":6877.01},{"id":"4003","nombre":"TEXSATAPE ALUMINIO 10CMX5M","costo":11756.91},{"id":"4006","nombre":"TEXSATAPE ALUMINIO 33CMX5M","costo":46462.08},{"id":"4007","nombre":"TEXSATAPE ALUMINIO 50CMX5M","costo":67186.21},{"id":"4008","nombre":"ALUMANTO AUTOADH 2.5MMX10M TEXSA","costo":161147.42},{"id":"4072","nombre":"PARAL B6-2 1/2\"X1 5/8\"C24-244P2501620824","costo":13184.84},{"id":"4791","nombre":"ANGULO ESQUINERO 2CMX2CM UNIPERF 2,40M","costo":4161.43},{"id":"4816","nombre":"GAFA DE SEGURIDAD SPY CLARO STEEL","costo":3808.0},{"id":"4876","nombre":"LIJA DE AGUA No. 220 ABRACOL 1007 PLIEGO","costo":1066.72},{"id":"4890","nombre":"PLACA FIBRO SB 12MMX1,22X2,44 105657","costo":109981.42},{"id":"4985","nombre":"CANAL 3 5/8\" X 1\" 0,55MMX2,44 C36212524","costo":12679.85},{"id":"5065","nombre":"TORNILLO SUPERBOARD PB 8X1 3/4\" ALETA","costo":81.6},{"id":"5069","nombre":"TORNILLO SUPERBOARD AVELL PB 6X7/8\"","costo":30.7},{"id":"5121","nombre":"DILATACION PLAST EN Z 8MM 3.05M DXN6011P","costo":4572.6},{"id":"5227","nombre":"TAPA REGISTRO PALANCA TECH-PARED 30X30CM","costo":40026.22},{"id":"5228","nombre":"TAPA REGISTRO PALANCA TECH-PARED 40X40CM","costo":53454.73},{"id":"5229","nombre":"TAPA REGISTRO PALANCA TECH-PARED 60X60CM","costo":102435.64},{"id":"5280","nombre":"DURAFELT 20 M2 RF 27622","costo":186011.27},{"id":"5290","nombre":"CINTA PAPEL SELLAPANEL 75M","costo":4838.89},{"id":"5291","nombre":"CINTA PAPEL SELLAPANEL 150M","costo":9950.19},{"id":"5369","nombre":"TORNILLO SUPERBOARD AVELL PA 8X1 1/4\"","costo":63.68},{"id":"5572","nombre":"STRECTH 6\" C0.7X15 X 450m","costo":10775.41},{"id":"5630","nombre":"PUNTA PHILIPS No. 2 DE 2\" COD 7398","costo":1419.91},{"id":"5659","nombre":"STRECTH 18\" C0.7X45x450M","costo":30506.74},{"id":"5663","nombre":"PARAL 2 1/2\"X 1 1/4\" C24 X3,05 P25012524","costo":13870.28},{"id":"5684","nombre":"PARAL 3 5/8\"X1 5/8\" C24 X 2,44 P36216224","costo":14800.7},{"id":"5755","nombre":"PARAL 2 1/2\"X 1 1/4  C20  2,44 P25012520","costo":16134.23},{"id":"6032","nombre":"PERFIL UNION MADERA 5,95M H-005","costo":8573.67},{"id":"6120","nombre":"PARCHE ULTRA STRAITFLEX X 2 UNDS","costo":4771.25},{"id":"6220","nombre":"PLACA FIBRO SB INS MAD LIS 6MM 1.20X2.40","costo":81639.95},{"id":"6812","nombre":"MEDIACAÑA 9 BLANCO DEXSON 3.05M DXN6014P","costo":30871.01},{"id":"7009","nombre":"PEGANTE MOLDURAS ADEFIX P5/0.5 KG REF.30","costo":17000.34},{"id":"7135","nombre":"GUANTE MULTIFLEX IMPACT LÁTEX STEELPRO 5","costo":30107.0},{"id":"7163","nombre":"LIJADOR DEWALT","costo":657697.13},{"id":"7164","nombre":"BROCHA PROFES CABO AZUL 1\" REF. BR023502","costo":3543.82},{"id":"7165","nombre":"BROCHA GOYA CABO AZUL 1 1/2\"","costo":4240.47},{"id":"7168","nombre":"BROCHA PROFESIONAL GO CABO AZUL GOYA 5''","costo":19093.55},{"id":"7169","nombre":"BROCHA  PROFESIONAL GOYA CABO AZUL 6''","costo":21334.99},{"id":"7170","nombre":"RODILLO ESPUMA POPULAR GOYA 9\"","costo":5792.96},{"id":"7172","nombre":"BROCA HSS IRWIN 1/16\"","costo":1420.98},{"id":"7175","nombre":"BROCA HSS IRWIN 11/64\"","costo":2040.0},{"id":"7176","nombre":"BROCA HSS IRWIN 15/64\"","costo":1724.01},{"id":"7178","nombre":"BROCA HSS IRWIN 3/8\"","costo":8651.97},{"id":"7179","nombre":"BROCA HSS IRWIN 5/32\"","costo":1601.0},{"id":"7181","nombre":"BROCA HSS IRWIN 5/64\"","costo":1402.02},{"id":"7182","nombre":"BROCA HSS IRWIN 7/16\"","costo":11156.99},{"id":"7184","nombre":"BROCA MURO IRWIN 1/2\"","costo":7930.02},{"id":"7185","nombre":"BROCA MURO IRWIN 1/4\"","costo":2472.99},{"id":"7186","nombre":"BROCA MURO IRWIN 3/16\"","costo":2271.98},{"id":"7188","nombre":"METRO IRWIN * 3 MTS","costo":6446.03},{"id":"7193","nombre":"CARGA VERDE CAL22 TIRO A TIRO","costo":158.27},{"id":"7205","nombre":"HOMBRESOLO DIESEL 10\"","costo":6103.14},{"id":"7241","nombre":"CANAL EME 90 *305 CAL 26","costo":3794.01},{"id":"7247","nombre":"ALAMBRE GALVANIZADO CAL 16 * kg","costo":5404.0},{"id":"7248","nombre":"CHAZO EZ-COLADE MARRANO","costo":68.0},{"id":"7280","nombre":"TORNILLO ESTRU HORMIGA 7*7/16 PB","costo":10.0},{"id":"7331","nombre":"LIJA PREMIER #120","costo":541.0},{"id":"7426","nombre":"CIELO PVC BLANCO MATE 7 X 250 X 5950 MM","costo":18433.35},{"id":"7506","nombre":"TEE PRINCIPAL INFINITY 24 X 32 X 3660MM","costo":4794.94},{"id":"7507","nombre":"TEE INTERMEDIA INFINITY 24 X 26 X 1220MM","costo":1467.52},{"id":"7508","nombre":"TEE SECUNDARIA INFINITY 24 X 26 X 610MM","costo":701.83},{"id":"7509","nombre":"ANGULO INFINITY 20 X 20 X 3050MM","costo":2494.64},{"id":"7718","nombre":"ANGULO PERIMETRO 4X3X244 CAL 26","costo":7701.98},{"id":"7722","nombre":"BROCA MURO IRWIN 3/8\"","costo":3823.05},{"id":"7723","nombre":"BROCA MURO IRWIN 5/16\"","costo":2512.98},{"id":"7728","nombre":"REPUESTO CEPILLO STANLEY PARA PANEL","costo":14563.01},{"id":"8070","nombre":"ACROTECH 50% GALON 3.4 KG","costo":28706.89},{"id":"8071","nombre":"ACROTECH 50% 1/4 GALON 0.85 KG","costo":12981.64},{"id":"8143","nombre":"CIELO PVC GRIS JASP 7,5X250X5950MM A03","costo":19154.56},{"id":"8148","nombre":"PERFIL PVC CORNISA BLANCO X 5950MM T-01","costo":6491.53},{"id":"8149","nombre":"PERFIL PVC UNION BLANCO X 5950MM H-01","costo":6068.44},{"id":"8151","nombre":"PERFIL PVC PERIM F BLANCO X 5950MM F-01","costo":6848.37},{"id":"8227","nombre":"ESPATULA GOYA C/AZUL ACER INOX 4\"","costo":4987.29},{"id":"8346","nombre":"PLACA DENSGLASS SHEATHING 1/2'' X 4X8","costo":106494.07},{"id":"8347","nombre":"ANGULO ADL 25X25X0,35MM X 2,44M","costo":2295.7},{"id":"8568","nombre":"ESPATULA GOYA C/AZUL ACER INOX 2\"","costo":3543.82},{"id":"8569","nombre":"ESPATULA GOYA C/AZUL ACER INOX 5\"","costo":5450.2},{"id":"8570","nombre":"ESPATULA GOYA C/AZUL ACER INOX 3\"","costo":4250.3},{"id":"8572","nombre":"LLANA LISA GOYA 11X5 ACERO INOXIDABLE","costo":22518.37},{"id":"8573","nombre":"RODILLO POLIMAX PREMIUM 9\" GOYA RD010106","costo":8613.22},{"id":"8613","nombre":"VINILO ULTRAVINYL TIPO 1 CUNETE X 27.4KL","costo":170621.86},{"id":"8614","nombre":"VINILO ULTRAVINYL TIPO 1 GALON X 5.48 KL","costo":43584.0},{"id":"8615","nombre":"VINILO ULTRAVINYL TIPO 2 CUNETE X 27.4 K","costo":137489.85},{"id":"8616","nombre":"VINILO ULTRAVINYL TIPO 2 GALON X 5.48 KL","costo":36123.08},{"id":"8617","nombre":"VINILO ULTRAVINYL TIPO 3 CUNETE X 28 KG","costo":112269.75},{"id":"8618","nombre":"VINILO ULTRAVINYL TIPO 3 GALON X 5.6 KL","costo":28731.76},{"id":"8619","nombre":"SELLAPANEL DRYWALL POLVO X 25 KL","costo":41824.93},{"id":"8621","nombre":"SELLAPANEL DRYWALL PREMEZCLADA X 28 KL","costo":48163.64},{"id":"8622","nombre":"SELLAPANEL DRYWALL PREMEZCLADA GALON X 5","costo":17411.11},{"id":"8623","nombre":"STUCCO PROFESIONAL POLVO X 25 KL","costo":39963.57},{"id":"8624","nombre":"STUCCO PROFESIONAL POLVO X 10 KL","costo":19324.35},{"id":"8625","nombre":"SELLAFLEX JUNTAS CUNETE X 28 KL","costo":112258.44},{"id":"8626","nombre":"SELLAFLEX JUNTAS GALON X 5.6 KL","costo":26044.98},{"id":"8628","nombre":"SELLAFLEX ACABADO CUNETE X 28 KL","costo":113783.72},{"id":"8646","nombre":"TAPA REGISTRO PALANCA TECH-PARED 25X25CM","costo":32022.9},{"id":"8666","nombre":"ESTUCO PLASTICO EXT ADL CUN X 28KL","costo":76582.7},{"id":"8735","nombre":"ANGULO 20X30X0,35MM ADL X 2,44M","costo":2017.62},{"id":"8877","nombre":"VINILO ULTRAVINYL TIPO 1 BALDE X 13.7KG","costo":89223.54},{"id":"8879","nombre":"VINILO ULTRAVINYL TIPO 3 BALDE X 14 KG","costo":52949.62},{"id":"8883","nombre":"SELLAPANEL DRYWALL PREMEZCLADA BALDE X 1","costo":39899.47},{"id":"8885","nombre":"SELLAFLEX JUNTAS BALDE X 14 KL","costo":61871.26},{"id":"8916","nombre":"PULVERIZADOR CONTROL SPRAY 100 WAGNER EA","costo":219084.95},{"id":"8917","nombre":"PISTOLA CONTROL SPRAY 200 WAGNER","costo":334152.0},{"id":"8919","nombre":"PULVERIZADORA MULTIUSOS READY SPRAYER WA","costo":325002.8},{"id":"8966","nombre":"VINILO ULTRAVINYL TIPO 2 BALDE X 13.7 KG","costo":70289.3},{"id":"9033","nombre":"CANAL EME 90 *2.44 CAL 24","costo":3446.79},{"id":"9034","nombre":"LIJA PREMIER #150","costo":566.44},{"id":"9134","nombre":"CARGA VERDE CAL22 MASTER COD.697","costo":166.6},{"id":"9137","nombre":"CLAVO DE ANCLAJE 1/2\" MASTER COD.866","costo":61.95},{"id":"9200","nombre":"PARAL 59 0,38 2 1/2X1 1/4 3,05 P25012510","costo":7965.94},{"id":"9224","nombre":"CANAL 90 3 5/8X1\"X 2,44 C3621000800","costo":7378.91},{"id":"9225","nombre":"CANAL 60 2 1/2X 1 X 2,44 C2501000800","costo":5881.08},{"id":"9266","nombre":"ESTUCO PLASTICO INT ADL CUN X 28KG","costo":71308.65},{"id":"9555","nombre":"PARAL 59 0.55 X 3.05M  C24 MATECSA","costo":16024.23},{"id":"9654","nombre":"BROCHA ACEPINT 1\" 25.4MM MANGO PP ROJO","costo":2525.92},{"id":"9655","nombre":"BROCHA ACEPINT 1.5\" 38.1MM MANGO PP ROJO","costo":3311.77},{"id":"9656","nombre":"BROCHA ACEPINT 2\" 50.8MM MANGO PP ROJO","costo":3437.51},{"id":"9657","nombre":"BROCHA ACEPINT 2.5\" 63.5MM MANGO PP ROJO","costo":4340.61},{"id":"9658","nombre":"BROCHA ACEPINT 3\" 76.2MM MANGO PP ROJO C","costo":6022.49},{"id":"9662","nombre":"BROCHA ACEPINT 2.5\" MANGO MADER BM557065","costo":6627.11},{"id":"9667","nombre":"BROCHA ACEPINT 4\" MANGO MADERA BM557100","costo":12335.27},{"id":"9669","nombre":"BROCHA ACEPINT 2.5\" 63.5MM Aqua Angular","costo":10944.43},{"id":"9670","nombre":"RECAMBIO RODILLO ACEPINT 9\" 12MM TRICOLO","costo":6599.74},{"id":"9671","nombre":"RECAMBIO RODILLO ACEPINT 9\" 12MM ANTIGOT","costo":5389.51},{"id":"9673","nombre":"RECAMBIO RODILLO ACEPINT 9\" 18MM MONTSER","costo":10037.65},{"id":"9674","nombre":"RODILLO ACEPINT 9\" 12MM TRICOLOM Antigot","costo":9955.54},{"id":"9675","nombre":"RODILLO ACEPINT 9\" 12MM ANTIGOTA RC00032","costo":8139.6},{"id":"9676","nombre":"RODILLO ACEPINT 9\" 18MM MONTSERRAT AZUL","costo":12704.99},{"id":"9853","nombre":"REJILLA VENT PANEL CENTRAL L-RA-P. 60x60","costo":69350.82},{"id":"9856","nombre":"MARCO PARA CIELO RASO 20X20 EN TEE 7/8","costo":8515.62},{"id":"9857","nombre":"MARCO PARA CIELO RASO 40X40 EN TEE 7/8","costo":14665.56},{"id":"9858","nombre":"MARCO PARA CIELO RASO 60X60 EN TEE 7/8","costo":19806.36},{"id":"9967","nombre":"OMEGA 2 3/16\" x 3/4\"X3.05 OM23062000PQ","costo":5255.52},{"id":"10109","nombre":"EMULSION ASF 5GAL FL-50 PRO RF 25062","costo":83119.83},{"id":"10146","nombre":"ESQUINERO EN ROLLO STRAITFLEX MEDIUM 15M","costo":9922.98},{"id":"10762","nombre":"PARAL 3 1/2\" X 1 1/4\" X 1/4\" C24 X2.44","costo":12865.54},{"id":"10814","nombre":"GRAPA NYLON PARA ZUNCHO PLASTICO","costo":16660.0},{"id":"10891","nombre":"TAPA REGISTRO INVISIBLE TRG 30X30CM","costo":51958.18},{"id":"10897","nombre":"PARAL2 1/2\"X1 1/4\" C24 X2.44 P2501250824","costo":10533.31},{"id":"11034","nombre":"TAPA REGISTRO INVISIBLE TRG 40X40CM","costo":69608.61},{"id":"11057","nombre":"TAPA REGISTRO INVISIBLE TRG 60X60CM","costo":100543.47},{"id":"11058","nombre":"TAPA REGISTRO INVISIBLE TRG 20X20CM","costo":40196.05},{"id":"11060","nombre":"ANGULO 0.36 1 1/4\"x3/4\"X2.44 AL125750828","costo":2248.15},{"id":"11103","nombre":"PARAL 3 1/2 X1 1/4 C20 P36212520 X2,44M","costo":20949.66},{"id":"11164","nombre":"PARAL 2 1/2\"x 1\"1/4  C20X3.05 P25012520","costo":21403.98},{"id":"11243","nombre":"PISTOLA DE FIJACION REDPOINT C27 JD301","costo":231446.53},{"id":"11250","nombre":"CLIP DE ANCLAJE REDPOINT 19X33MM","costo":173.54},{"id":"11374","nombre":"REJILLA VENT ALETAS CURVAS L-RA 30X30CM","costo":29304.94},{"id":"11415","nombre":"MANTO SIN LLAMA 1Mx10M x 2\" - 00461","costo":122567.62},{"id":"11416","nombre":"CINTA ASFALTICA 10CM X 5M 27755","costo":15027.32},{"id":"11417","nombre":"CINTA ASFALTICA 20CM X 5M 27756","costo":35604.8},{"id":"11420","nombre":"EMULSION ASF 1GAL FL-50 PRO RF 25063","costo":22889.53},{"id":"11444","nombre":"ZUNCHO PLASTICO CAL. 3  ROLLO X 2000 MTS","costo":106361.41},{"id":"11454","nombre":"MARCO PARA CIELO RASO 50X50 EN TEE 7/8","costo":17108.63},{"id":"11491","nombre":"TAPA REGISTRO PALANCA TECH-PARED 20X20CM","costo":26374.49},{"id":"11494","nombre":"CANAL 3 5/8\" X 1\"LONG 2.44 C24 C36210024","costo":11480.45},{"id":"11541","nombre":"SELLAFLEX 2 en 1  CUNETE X 28 KL","costo":93372.28},{"id":"11542","nombre":"SELLAFLEX 2 en 1 BALDE X 14 KL","costo":50221.3},{"id":"11576","nombre":"PARAL B9 3 5/8\"X1 5/8\"C20 3.05 P36216220","costo":29881.14},{"id":"11577","nombre":"PARAL 3 5/8\" X 1 5/8\" C20 2.44 P36216208","costo":23977.75},{"id":"11578","nombre":"CANAL 3 5/8\" X 1\" C20 2.44 C3621000820","costo":18937.52},{"id":"11579","nombre":"PARAL B9 3 5/8\"X1 5/8\"C24 X 3.05 P362162","costo":18207.93},{"id":"11639","nombre":"TAPA REGISTRO PALANCA TECH-PARED 15X15","costo":21698.46},{"id":"11673","nombre":"CINTA MALLA 15CM X 45MT DELTA","costo":14274.05},{"id":"11675","nombre":"ANGULO 0,40 X1 5/8x3/4X2,44M AL162750800","costo":3008.57},{"id":"11749","nombre":"CLAVO FIJADOR REDPOINT 1\" PD25MM X 100PC","costo":3878.5},{"id":"11750","nombre":"CLAVO FIJADOR REDPOINT 1/2\" PD13MM X100P","costo":3694.29},{"id":"11826","nombre":"PINTURA BLINDACRYL BLANCA CUÑETE 27 KG","costo":225437.01},{"id":"11828","nombre":"PINTURA BLINDACRYL BLANCA GALÓN 5.4 KG","costo":54414.39},{"id":"11921","nombre":"CINTA MALLA SELLAPANEL 10,2 CM X 45M","costo":7822.99},{"id":"12124","nombre":"PARAL 3 5/8\"X1 1/4\"X3.05C24 P3621251024","costo":16920.39},{"id":"12126","nombre":"CAMISA MANGA LARGA SB+SELLAFLEX TRICOLOR","costo":13923.3},{"id":"12290","nombre":"PARAL 3 1/2 X1 1/4 C20 P36212520 X3.05M","costo":26509.63},{"id":"12354","nombre":"ESQUINERO PLASTICO VINYL-FLEX 2,44M","costo":3221.33},{"id":"12355","nombre":"ESQUINERO PLASTICO VINYL-FLEX 3,05M","costo":4026.36},{"id":"12356","nombre":"DILATACION PLAST EN Z 8MM 3.05M VINYL-FL","costo":4101.7},{"id":"12357","nombre":"DILATACION PLAST Z 11MM X3,05M VINYL-FLE","costo":4025.84},{"id":"12620","nombre":"MEDIACANA PLAST ENSAM COEXT 6CM UNIPE 3M","costo":36279.81},{"id":"12706","nombre":"CIELO PVC BLANC BRILL 7X250X5950MM A01","costo":25026.24},{"id":"12707","nombre":"CIELO PVC BLANCO MATE 7X250X5950MM A02","costo":25831.94},{"id":"12847","nombre":"ANGULO 3X2 0,38MM PF X2,44M","costo":1480.39},{"id":"12848","nombre":"CANAL 60 0,38MM PF X2,44M","costo":3064.41},{"id":"12849","nombre":"CANAL 90 0,38MM PF X2,44M","costo":3948.97},{"id":"12850","nombre":"OMEGA CR 0,38MM PF X2,44M","costo":2511.94},{"id":"12852","nombre":"PARAL 59 0,38MM PF X2,44M","costo":3958.45},{"id":"12853","nombre":"VIGUETA 0,38MM PF X2,44M","costo":2479.15},{"id":"12854","nombre":"PARAL 89 0,38MM PF X2,44M","costo":4883.52},{"id":"12862","nombre":"VIGUETA 0,35MM PF X2,44M PVC","costo":2350.13},{"id":"12863","nombre":"OMEGA CR 0,35MM PF X2,44M PVC","costo":2338.93},{"id":"12864","nombre":"ANGULO 2,5X2,5 0,35MM PF X2,44M","costo":2165.59},{"id":"12865","nombre":"ANGULO 3X2 0,35MM PF X2,44M","costo":1397.33},{"id":"13160","nombre":"PROPACK CINTA MALLA SELLAPANEL 2X90M","costo":12716.14},{"id":"13163","nombre":"PROPACK CINTA PAPEL SELLAPANEL 7X23M","costo":12478.82},{"id":"13383","nombre":"COMBO TALAD PERCU INAL PXC 1/2\" BRUSSLES","costo":377871.71},{"id":"13385","nombre":"COMBO ATORNIL INAL 1/4\" +STARTER KIT 4AM","costo":367786.16},{"id":"13387","nombre":"COMBO LIJADORA ALTURA INAL +START KIT 4A","costo":1042843.41},{"id":"13390","nombre":"BROCA MULTICONSTRUCCIÓN 13/64 5,0MM","costo":13544.58},{"id":"13392","nombre":"BROCA MULTICONSTRUCCIÓN 5/16 8,0MM","costo":19182.2},{"id":"13393","nombre":"BROCA MULTICONSTRUCCIÓN 3/8 10MM","costo":21356.93},{"id":"13429","nombre":"CIELO PVC BLANC BRILL 7X300X5950MM A01","costo":20387.97},{"id":"13430","nombre":"CIELO PVC BLANC MATE 7X300X5950MM A02","costo":23571.5},{"id":"13431","nombre":"CIELO PVC BLANC HUMO 7X300X5950MM A06","costo":22168.12},{"id":"13464","nombre":"MARCO PARA CIELO RASO 61X61 EN TEE 7/8","costo":18370.63},{"id":"14312","nombre":"ANGULO 3X2 0,40MM PF X2,44M","costo":1671.7},{"id":"14313","nombre":"CANAL 60 0,40MM PF X2,44M","costo":3380.92},{"id":"14314","nombre":"CANAL 90 0,40MM PF X2,44M","costo":4516.77},{"id":"14315","nombre":"OMEGA CR 0,40MM PF X2,44M","costo":2630.9},{"id":"14316","nombre":"PARAL 59 0,40MM PF X2,44M","costo":4211.86},{"id":"14317","nombre":"VIGUETA 0,40MM PF X2,44M","costo":2615.11},{"id":"14318","nombre":"PARAL 89 0,40MM PF X2,44M","costo":5083.42},{"id":"14319","nombre":"OMEGA CR 0,40MM PF X3,05M","costo":4324.43},{"id":"14320","nombre":"PARAL 89 0,40MM PF X3,05M","costo":6689.1},{"id":"14427","nombre":"TABLERO OSB APA 9,5mm 1,22X2,44 LP","costo":71623.72},{"id":"14429","nombre":"TABLERO OSB APA 11,1mm 1,22X2,44 LP","costo":91628.26},{"id":"14430","nombre":"TABLERO OSB APA 18,3mm 1,22 X 2,44M LP","costo":155706.74},{"id":"14432","nombre":"TABLERO SMART R8'' 11,1 1,22X2,44 LP","costo":146102.36},{"id":"14433","nombre":"SMART SIDE LAP CE-1 EC A 9.5 0,20x4,88M","costo":44632.14},{"id":"14705","nombre":"PARAL 3 5/8X1 1/4 CL 22 3.05M P36212522","costo":23262.12},{"id":"14850","nombre":"CANAL 90  3 1/2*1 0,55 MM PF X 2.44M","costo":6681.59},{"id":"14851","nombre":"PARAL B9  3 1/2 *1 1/4 0,55MM PF X3,05M","costo":10049.51},{"id":"14966","nombre":"EPOTOC 1-1 CCPARK10578210 1KG","costo":104959.99},{"id":"15007","nombre":"ANGULO 2X2 0,40MM PF X2,44M","costo":1363.11},{"id":"15041","nombre":"PARAL 59 0,40MM PF X3,05M","costo":6136.9},{"id":"15071","nombre":"CANAL 89x25x C20x2.440MM -DR-C8925085 FN","costo":14708.4},{"id":"15075","nombre":"PARAL 89x31 C20X3.05 DR-P8931085-305 F","costo":20941.62},{"id":"15130","nombre":"SUSPENSIÓN FIJA R/S 3/4\" - 1\" ACERO GALV","costo":974.61},{"id":"15137","nombre":"ESTUCO PLASTICO EXT. ADL BALDE  X 14 KG","costo":43907.41},{"id":"15138","nombre":"ESTUCO PLASTICO EXT ADL GALON X 5.6 KG","costo":24795.27},{"id":"15190","nombre":"ESTUCO PLASTICO INT. ADL BALDE X 14 KG","costo":36882.58},{"id":"15191","nombre":"ESTUCO PLASTICO INT ADL GALON X 5.6 KG","costo":16518.22},{"id":"15231","nombre":"ALUMBAND 10X5 1,1 MM REF 00618 PLATA IMP","costo":16991.55},{"id":"15232","nombre":"ALUMBAND 10X10 1,1 MM RF 00615 PLATA IMP","costo":28733.74},{"id":"15233","nombre":"ALUMBAND 20X5 1,1 MM REF 00623 PLATA IMP","costo":29342.87},{"id":"15234","nombre":"ALUMBAND 20X10 1,1 MM RF 00621 PLATA IMP","costo":51419.27},{"id":"15236","nombre":"ALUMBAND 33X10 1,1 MM RF 00625 PLATA IMP","costo":85902.16},{"id":"15244","nombre":"CEMENTO ASFALTICO 1/4 GL REF 47926 IMPT","costo":14822.89},{"id":"15245","nombre":"CEMENTO ASFALICO 1 GL  REF 47927 IMPT","costo":45243.08},{"id":"15303","nombre":"ESPATULA PRO FLEXIBLE AZUL 3\" HS172603","costo":7617.19},{"id":"15304","nombre":"ESPATULA PRO FLEXIBLE AZUL 4\" HS172604","costo":10821.19},{"id":"15305","nombre":"ESPATULA PRO FLEXIBLE AZUL 5\" HS172605","costo":12728.33},{"id":"15324","nombre":"PLACA DE YESO GYPLAC CIEL 1220X2440X8MM","costo":37623.73},{"id":"15423","nombre":"SELLAPANEL DRYWALL PREMEZCL 27K CAJA  EK","costo":41768.56},{"id":"15568","nombre":"CANAL B9 3 1/2X1 PFN C20 2,44ML","costo":13351.57},{"id":"15569","nombre":"PARAL B9 3 1/2x1 5/8 PFN  C20 2,44ML","costo":17676.68},{"id":"15571","nombre":"PARAL B9  3 1/2X1 5/8  PFN C20 3,05ML","costo":20813.4},{"id":"15572","nombre":"CANAL B9 3 1/2x1PFN  C24 2,44ML","costo":9111.64},{"id":"15573","nombre":"PARAL B9 3 1/2X1 1/4 PFN C24 2,44ML","costo":9005.92},{"id":"15574","nombre":"CANAL B9 3 1/2X1PFN C24 3,05ML","costo":9618.77},{"id":"15575","nombre":"PARAL B9 3 1/2 X 1 1/4 PFN C24 3,05ML","costo":13303.87},{"id":"15635","nombre":"ADHESIVO JUNTAS 425GR/280ML 69957321917","costo":5897.7},{"id":"15641","nombre":"ESPUMA EXPAN BEI 750ML/740GR 69957326996","costo":19992.0},{"id":"15669","nombre":"SELLADOR PU40 BL 310ML/359GR 69957321924","costo":14399.0},{"id":"15673","nombre":"SILICONA ACE CONS TRANSP 256G/270ML 6982","costo":6069.0},{"id":"15764","nombre":"SILICONA USO GENERA 270GR BLANCO 0015339","costo":6069.0},{"id":"15778","nombre":"IMPAC 7000 N IMPERM BLAN CUÑ 19 LT 10232","costo":175695.76},{"id":"15786","nombre":"IMPAC X-TERIOR TOTAL BLA GAL 3.8LT 10256","costo":153872.95},{"id":"15790","nombre":"IMPER MAXI 7 BLANCO CUÑETE 19 LT 10236","costo":164220.0},{"id":"15884","nombre":"BROCHA POP 1 1/2 600153","costo":2509.71},{"id":"15885","nombre":"BROCHA POP 2 600154","costo":3085.67},{"id":"15886","nombre":"BROCHA POP 2 1/2 600155","costo":3899.63},{"id":"15887","nombre":"BROCHA POP 3 600156","costo":5437.11},{"id":"15952","nombre":"PARAL 59 0,35MM PF X2,44M","costo":3602.47},{"id":"15957","nombre":"CANAL 60 0,35MM PF X2,44M","costo":2990.83},{"id":"15958","nombre":"CANAL 90 0,35MM PF X2,44M","costo":4107.0},{"id":"15959","nombre":"PARAL 89 0,35MM PF X2,44M","costo":4436.69},{"id":"15974","nombre":"PARAL B6 2 1/2X1 1/4 PFN C24 2,44ML","costo":9040.64},{"id":"15975","nombre":"CANAL B6 2 1/2 X 1\" PFN C24  2,44ML","costo":7233.6},{"id":"15998","nombre":"PARAL B6 2 1/2X1 1/4 PFN C20 X3,05ML","costo":17524.03},{"id":"16125","nombre":"CINTA ENMASCARAR CARIBE 2\" 48MM 74515","costo":5118.19},{"id":"16302","nombre":"PANEL GLASSREY 12/7MM X 1.22 X 2.44M","costo":91640.73},{"id":"16315","nombre":"PARAL B6 2 1/2 X 1 5/8 PFN C24 X 3.05M","costo":12581.87},{"id":"16351","nombre":"PEGAMENTO REVOQUE SECO 25 KG REF314251","costo":51529.82},{"id":"16461","nombre":"MASILLA EN PASTA GYPLAC GALON 5,6 KG","costo":16837.19},{"id":"16283","nombre":"CANAL B6 2 1/2X1\" PFN C20  2,44ML","costo":10349.43},{"id":"16282","nombre":"PARAL B6 2 1/2 X 1 5/8 PFN C20 2,44ML","costo":14019.36},{"id":"16462","nombre":"MASTIQUE GYPLAC CUN 115383","costo":51235.59},{"id":"16464","nombre":"MASILLA GYPLAC EN POLVO 25KG 106205","costo":51192.21},{"id":"16483","nombre":"RODILLO ANTIGOTA 9\" CARIBE","costo":5537.07},{"id":"16556","nombre":"MASTIQUE GYPLAC BALD 2,5GAL 115386","costo":28656.24},{"id":"8613","nombre":"VINILO ULTRAVINYL TIPO 1 CUNETE X 27.4KL","costo":170621.86},{"id":"8619","nombre":"SELLAPANEL DRYWALL POLVO X 25 KL","costo":41824.93},{"id":"8623","nombre":"STUCCO PROFESIONAL POLVO X 25 KL","costo":39963.57},{"id":"8625","nombre":"SELLAFLEX JUNTAS CUNETE X 28 KL","costo":112258.44},{"id":"9266","nombre":"ESTUCO PLASTICO INT ADL CUN X 28KG","costo":71308.65},{"id":"8666","nombre":"ESTUCO PLASTICO EXT ADL CUN X 28KL","costo":76582.7},{"id":"11541","nombre":"SELLAFLEX 2 en 1  CUNETE X 28 KL","costo":93372.28},{"id":"16464","nombre":"MASILLA GYPLAC EN POLVO 25KG 106205","costo":51192.21}];
+
+// Deduplicate
+const seen = new Set();
+const ITEMS = BASE_ITEMS.filter(i => { if(seen.has(i.id)) return false; seen.add(i.id); return true; });
+catalog = [...ITEMS];
+
+// ================================================================
+// AUTH
+// ================================================================
+function setRole(r) {
+  selRole = r;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0 && r==='admin')||(i===1 && r==='asesor'));
+  });
+}
+
+function doLogin() {
+  const pw = document.getElementById('pwInput').value.trim();
+  const err = document.getElementById('loginErr');
+  err.textContent = '';
+  if (selRole==='admin' && pw===ADMIN_PASS) { launch('admin'); }
+  else if (selRole==='asesor' && pw===ASESOR_PASS) { launch('asesor'); }
+  else { err.textContent = 'Contraseña incorrecta. Intenta de nuevo.'; }
+}
+
+function launch(r) {
+  role = r;
+  document.getElementById('loginScreen').style.display = 'none';
+  const app = document.getElementById('appScreen');
+  app.style.display = 'flex';
+
+  const badge = document.getElementById('roleBadge');
+  badge.textContent = r==='admin' ? 'ADMINISTRADOR' : 'ASESOR';
+  badge.className = 'header-badge' + (r==='admin' ? ' admin' : '');
+
+  // Admin-only elements
+  const adminBtn = document.getElementById('adminBtn');
+  if (r==='admin') adminBtn.style.display = '';
+  else adminBtn.style.display = 'none';
+
+  // Asesor restrictions: hide costo, ganancia, margen cards
+  if (r==='asesor') {
+    document.getElementById('cCostoCard').style.display    = 'none';
+    document.getElementById('cGananciaCard').style.display = 'none';
+    document.getElementById('cMargenCard').style.display   = 'none';
+    document.querySelectorAll('.col-admin').forEach(el => el.style.display='none');
+  } else {
+    // Admin sees margen card
+    document.getElementById('cMargenCard').style.display = '';
+    // Make cards grid 4 columns for admin
+    document.getElementById('cardsGrid').style.gridTemplateColumns = 'repeat(4,1fr)';
+  }
+
+  renderCatalog(catalog);
+  clearQuote();
+  if (isMobile()) mobileTab('catalog');
+}
+
+function doLogout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appScreen').style.display = 'none';
+  document.getElementById('pwInput').value = '';
+  document.getElementById('loginErr').textContent = '';
+  quoteItems = [];
+}
+
+// ================================================================
+// MOBILE TABS
+// ================================================================
+function mobileTab(tab) {
+  const sidebar   = document.getElementById('sidebar');
+  const mainPanel = document.getElementById('mainPanel');
+  document.getElementById('mnavCatalog').classList.toggle('active', tab==='catalog');
+  document.getElementById('mnavQuote').classList.toggle('active', tab==='quote');
+  if (tab==='catalog') {
+    sidebar.classList.add('mobile-visible');
+    mainPanel.style.display = 'none';
+  } else {
+    sidebar.classList.remove('mobile-visible');
+    mainPanel.style.display = '';
+  }
+}
+
+// ================================================================
+// CATALOG
+// ================================================================
+function renderCatalog(items) {
+  const list = document.getElementById('itemsList');
+  document.getElementById('catCount').textContent = `${items.length} productos`;
+  const isAdmin = role==='admin';
+  if (!items.length) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--adl-muted);font-size:13px">Sin resultados</div>';
+    return;
+  }
+  list.innerHTML = items.slice(0,300).map(it => `
+    <div class="item-row">
+      <div class="item-row-info">
+        <div class="item-row-code">#${it.id}</div>
+        <div class="item-row-name" title="${it.nombre}">${it.nombre}</div>
+        ${isAdmin ? `<div class="item-row-cost">${cop(it.costo)}</div>` : ''}
+      </div>
+      <button class="add-btn" onclick="addItem('${it.id}')" title="Agregar">+</button>
+    </div>`).join('');
+}
+
+function filterItems() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  if (!q) { renderCatalog(catalog); return; }
+  renderCatalog(catalog.filter(i => i.id.includes(q) || i.nombre.toLowerCase().includes(q)));
+}
+
+// ================================================================
+// QUOTE
+// ================================================================
+function addItem(id) {
+  if (quoteItems.find(q => q.id===id)) {
+    // flash existing
+    document.querySelectorAll(`[data-id="${id}"]`).forEach(el => {
+      el.style.outline = '2px solid var(--adl-orange)';
+      setTimeout(()=>el.style.outline='', 700);
+    });
+    if (isMobile()) mobileTab('quote');
+    return;
+  }
+  const it = catalog.find(c => c.id===id);
+  if (!it) return;
+  quoteItems.push({id:it.id, nombre:it.nombre, costo:it.costo, precio:0, cantidad:1});
+  renderQuote();
+  updateSummary();
+  if (isMobile()) mobileTab('quote');
+}
+
+function removeItem(id) {
+  quoteItems = quoteItems.filter(q => q.id!==id);
+  renderQuote(); updateSummary();
+}
+
+function clearQuote() {
+  quoteItems = [];
+  renderQuote(); updateSummary();
+}
+
+function setPrecio(id, v) {
+  const q = quoteItems.find(i=>i.id===id);
+  if(q){ q.precio=parseFloat(v)||0; updateSummary(); updateRowBadge(id); updateMCard(id); }
+}
+
+function setQty(id, v) {
+  const q = quoteItems.find(i=>i.id===id);
+  if(q){ q.cantidad=parseInt(v)||1; updateSummary(); updateRowTotals(id); updateMCard(id); }
+}
+
+function renderQuote() {
+  const empty   = document.getElementById('emptyState');
+  const dtable  = document.getElementById('desktopTable');
+  const mcards  = document.getElementById('mobileCards');
+  const isAdmin = role==='admin';
+  const n       = quoteItems.length;
+
+  empty.style.display  = n ? 'none' : '';
+  dtable.style.display = n ? '' : 'none';
+  mcards.innerHTML     = '';
+
+  if (!n) return;
+
+  // Desktop table rows
+  document.getElementById('quoteBody').innerHTML = quoteItems.map(qi => {
+    const m = qi.precio>0 && qi.costo>0 ? (qi.precio-qi.costo)/qi.precio : null;
+    const mc = m===null?'idle': m>=MARGIN_MIN?'ok':'bad';
+    return `<tr data-id="${qi.id}">
+      <td class="tc-code">#${qi.id}</td>
+      <td class="tc-name">${qi.nombre}</td>
+      ${isAdmin?`<td class="tc-cost col-admin">${cop(qi.costo)}</td>`:''}
+      <td><input class="price-inp" type="number" min="0" value="${qi.precio||''}" placeholder="0" oninput="setPrecio('${qi.id}',this.value)"></td>
+      <td><input class="qty-inp" type="number" min="1" value="${qi.cantidad}" oninput="setQty('${qi.id}',this.value)"></td>
+      ${isAdmin?`<td class="tc-cost col-admin">${cop(qi.costo*qi.cantidad)}</td>`:''}
+      <td class="tc-total">${cop(qi.precio*qi.cantidad)}</td>
+      ${isAdmin?`<td class="col-admin"><span class="badge ${mc}" id="badge-${qi.id}">${m!==null?(m*100).toFixed(1)+'%':'—'}</span></td>`:''}
+      <td><button class="del-row" onclick="removeItem('${qi.id}')" title="Quitar">×</button></td>
+    </tr>`;
+  }).join('');
+
+  // Mobile cards
+  mcards.innerHTML = quoteItems.map(qi => `
+    <div class="mcard" data-id="${qi.id}">
+      <div class="mcard-head">
+        <div class="mcard-info">
+          <div class="mcard-code">#${qi.id}</div>
+          <div class="mcard-name">${qi.nombre}</div>
+        </div>
+        <button class="del-row" onclick="removeItem('${qi.id}')">×</button>
+      </div>
+      <div class="mcard-fields">
+        <div class="mcard-field">
+          <label>Precio Unit. ($)</label>
+          <input type="number" min="0" value="${qi.precio||''}" placeholder="0" oninput="setPrecio('${qi.id}',this.value)" inputmode="numeric">
+        </div>
+        <div class="mcard-field">
+          <label>Cantidad</label>
+          <input type="number" min="1" value="${qi.cantidad}" oninput="setQty('${qi.id}',this.value)" inputmode="numeric">
+        </div>
+      </div>
+      <div class="mcard-total">
+        <span class="mcard-total-label">Total</span>
+        <span class="mcard-total-val" id="mtotal-${qi.id}">${cop(qi.precio*qi.cantidad)}</span>
+      </div>
+    </div>`).join('');
+}
+
+function updateRowBadge(id) {
+  const q = quoteItems.find(i=>i.id===id);
+  if(!q) return;
+  const badge = document.getElementById('badge-'+id);
+  if(!badge) return;
+  const m = q.precio>0 && q.costo>0 ? (q.precio-q.costo)/q.precio : null;
+  badge.className = 'badge '+(m===null?'idle':m>=MARGIN_MIN?'ok':'bad');
+  badge.textContent = m!==null?(m*100).toFixed(1)+'%':'—';
+  // also update total col in desktop
+  const row = document.querySelector(`#quoteBody tr[data-id="${id}"]`);
+  if(row){ const tds=row.querySelectorAll('td'); const tcIdx=role==='admin'?6:4; if(tds[tcIdx]) tds[tcIdx].textContent=cop(q.precio*q.cantidad); }
+}
+
+function updateRowTotals(id) {
+  const q = quoteItems.find(i=>i.id===id);
+  if(!q) return;
+  updateRowBadge(id);
+  const mcard = document.querySelector(`.mcard[data-id="${id}"] .mcard-total-val`);
+  if(mcard) mcard.textContent = cop(q.precio*q.cantidad);
+}
+
+function updateMCard(id) {
+  const q = quoteItems.find(i=>i.id===id);
+  if(!q) return;
+  const el = document.getElementById('mtotal-'+id);
+  if(el) el.textContent = cop(q.precio*q.cantidad);
+}
+
+// ================================================================
+// SUMMARY & VERDICT
+// ================================================================
+function updateSummary() {
+  let tp=0, tc=0;
+  quoteItems.forEach(q => { tp += (q.precio||0)*q.cantidad; tc += q.costo*q.cantidad; });
+  const gain   = tp - tc;
+  const margin = tp>0 ? gain/tp : 0;
+
+  document.getElementById('cTotalPrecio').textContent = cop(tp);
+  document.getElementById('cTotalCosto').textContent  = cop(tc);
+  document.getElementById('cGanancia').textContent    = cop(gain);
+
+  const mEl = document.getElementById('cMargen');
+  if (mEl) {
+    mEl.textContent  = tp>0 ? (margin*100).toFixed(1)+'%' : '—';
+    mEl.className    = 'card-value '+(margin>=MARGIN_MIN?'green':margin>0?'red':'');
+  }
+
+  const n = quoteItems.length;
+  const hasPrice = quoteItems.some(q=>q.precio>0);
+  const vb = document.getElementById('verdictBox');
+  const vt = document.getElementById('vTitle');
+  const vs = document.getElementById('vSub');
+
+  if (!n) {
+    vb.className='verdict idle'; vt.className='verdict-title muted'; vt.textContent='Sin cotización activa';
+    vs.textContent='Agrega productos y precios para ver el análisis';
+    return;
+  }
+  if (!hasPrice) {
+    vb.className='verdict idle'; vt.className='verdict-title muted'; vt.textContent='Ingresa los precios para ver el análisis';
+    vs.textContent=`${n} producto(s) agregado(s)`;
+    return;
+  }
+
+  if (role==='asesor') {
+    if (margin>=MARGIN_MIN) {
+      vb.className='verdict ok'; vt.className='verdict-title green';
+      vt.textContent='✅ APROBADO';
+      vs.textContent='El margen del negocio cumple el mínimo requerido. Puedes continuar.';
+    } else {
+      vb.className='verdict warn'; vt.className='verdict-title yellow';
+      vt.textContent='⚠️ VALIDAR NEGOCIACIÓN CON COORDINADORES';
+      vs.textContent='El precio propuesto no cumple el margen mínimo. Consulta antes de cerrar.';
+    }
+  } else {
+    // Admin sees full detail
+    if (margin>=MARGIN_MIN) {
+      vb.className='verdict ok'; vt.className='verdict-title green';
+      vt.textContent=`✅ APROBADO — Margen: ${(margin*100).toFixed(1)}%`;
+      vs.textContent=`Ganancia estimada: ${cop(gain)} · Total precio: ${cop(tp)}`;
+    } else {
+      vb.className='verdict warn'; vt.className='verdict-title yellow';
+      vt.textContent=`⚠️ MARGEN BAJO — ${(margin*100).toFixed(1)}% (mínimo 15%)`;
+      vs.textContent=`Ganancia estimada: ${cop(gain)} · Sube precios para alcanzar el umbral.`;
+    }
+  }
+
+  // Update page subtitle
+  document.getElementById('pageSub').textContent = `${n} ítem(s) · Total: ${cop(tp)}`;
+}
+
+// ================================================================
+// ADMIN PANEL
+// ================================================================
+function toggleAdmin() {
+  const p = document.getElementById('adminPanel');
+  p.style.display = p.style.display==='none' ? '' : 'none';
+}
+
+function handleUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const status = document.getElementById('dropStatus');
+  status.textContent = '⏳ Procesando...';
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+      const names = wb.SheetNames;
+      let sheet=null, mode='';
+      const dname = names.find(n=>n.toLowerCase().includes('dinam'));
+      if (dname) { sheet=wb.Sheets[dname]; mode='dinamica'; }
+      else {
+        const bname = names.find(n=>n.toLowerCase()==='base');
+        if (bname) { sheet=wb.Sheets[bname]; mode='base'; }
+      }
+      if (!sheet) { status.textContent='❌ No se encontró hoja "Dinamica" o "Base"'; return; }
+
+      const rows = XLSX.utils.sheet_to_json(sheet,{header:1});
+      const items = [];
+      if (mode==='dinamica') {
+        for(let i=3;i<rows.length;i++){
+          const r=rows[i];
+          if(!r[1]||r[1]==='Item') continue;
+          const id=String(r[1]).trim();
+          const nombre=String(r[2]||'').trim();
+          let costo=0;
+          for(const c of[7,6,5,4,3]){ const v=parseFloat(r[c]); if(!isNaN(v)&&v>0){costo=Math.round(v*100)/100;break;} }
+          if(id&&nombre&&costo>0) items.push({id,nombre,costo});
+        }
+      } else {
+        let hr=-1;
+        for(let i=0;i<Math.min(rows.length,5);i++){if(rows[i]&&String(rows[i][0]).toLowerCase().includes('item')){hr=i;break;}}
+        const seen2=new Set();
+        for(let i=hr+1;i<rows.length;i++){
+          const r=rows[i];
+          if(!r[0]) continue;
+          const id=String(r[0]).trim();
+          if(seen2.has(id)) continue;
+          const c=parseFloat(r[34]);
+          if(!isNaN(c)&&c>0){ seen2.add(id); items.push({id,nombre:String(r[1]||'').trim(),costo:Math.round(c*1.19*100)/100}); }
+        }
+      }
+      if(!items.length){ status.textContent='⚠️ No se encontraron ítems válidos.'; return; }
+      catalog=[...items];
+      renderCatalog(catalog);
+      status.textContent=`✅ ${items.length} ítems cargados desde "${file.name}"`;
+      event.target.value='';
+    } catch(err){ status.textContent='❌ Error: '+err.message; }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ================================================================
+// EXPORT
+// ================================================================
+function exportQuote() {
+  if(!quoteItems.length){ alert('No hay ítems en la cotización.'); return; }
+  const isAdmin = role==='admin';
+  let csv = isAdmin
+    ? 'Código,Descripción,Costo Unit.,Precio Unit.,Cantidad,Total Costo,Total Precio,Margen\n'
+    : 'Código,Descripción,Precio Unit.,Cantidad,Total Precio\n';
+
+  let tp=0,tc=0;
+  quoteItems.forEach(q=>{
+    const tqp=q.precio*q.cantidad, tqc=q.costo*q.cantidad;
+    const m=q.precio>0?((q.precio-q.costo)/q.precio*100).toFixed(1)+'%':'—';
+    if(isAdmin) csv+=`${q.id},"${q.nombre}",${q.costo},${q.precio},${q.cantidad},${tqc},${tqp},${m}\n`;
+    else csv+=`${q.id},"${q.nombre}",${q.precio},${q.cantidad},${tqp}\n`;
+    tp+=tqp; tc+=tqc;
+  });
+  if(isAdmin){
+    const g=tp-tc, m=tp>0?((g/tp)*100).toFixed(1)+'%':'—';
+    csv+=`\nTOTAL,,,,,${tc},${tp},${m}\nGANANCIA,,,,,,${g},\n`;
+  } else {
+    csv+=`\nTOTAL,,,,${tp}\n`;
+  }
+  const link=document.createElement('a');
+  link.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));
+  link.download=`cotizacion_ADL_${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+}
+
+// ================================================================
+// UTILS
+// ================================================================
+function cop(v) {
+  if(!v&&v!==0) return '—';
+  return '$'+Math.round(v).toLocaleString('es-CO');
+}
+</script>
+</body>
+</html>
