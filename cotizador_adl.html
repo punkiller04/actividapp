@@ -594,9 +594,11 @@ input.price-inp:focus, input.qty-inp:focus{border-color:var(--adl-orange)}
         <div class="sidebar-hd-title">Catálogo de Productos</div>
       </div>
       <div class="import-zone">
-        <button class="import-btn" onclick="openImportModal()">
+        <label for="pdfDirectInput" class="import-btn" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;border-radius:7px;border:1.5px dashed #4A4A4A;background:transparent;color:#B0B0B0;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;transition:all .2s;width:100%;box-sizing:border-box;">
           📥 Importar desde PDF de cotización
-        </button>
+        </label>
+        <input type="file" id="pdfDirectInput" accept=".pdf" style="display:none" onchange="handlePdfDirect(this)">
+        <div id="importStatusBar" style="font-size:11px;min-height:16px;margin:6px 2px 0;color:#8A8A8A;"></div>
       </div>
       <div class="search-wrap">
         <span class="search-ico">🔍</span>
@@ -1558,6 +1560,115 @@ function confirmImport() {
   const pageSub = document.getElementById('pageSub');
   pageSub.innerHTML = `<span style="color:var(--adl-green)">✅ ${added} ítem(s) importados, ${updated} actualizados desde PDF</span>`;
   setTimeout(() => { pageSub.innerHTML = `${quoteItems.length} ítem(s) · Total: ${cop(quoteItems.reduce((s,q)=>s+q.precio*q.cantidad,0))}`; }, 3500);
+}
+
+
+// ================================================================
+// IMPORTAR PDF — DIRECTO SIN MODAL
+// ================================================================
+function handlePdfDirect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const bar = document.getElementById('importStatusBar');
+  bar.style.color = '#8A8A8A';
+  bar.textContent = '⏳ Leyendo PDF...';
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      // Check if PDF.js loaded
+      if (typeof pdfjsLib === 'undefined') {
+        bar.style.color = '#EF4444';
+        bar.textContent = '❌ PDF.js no cargó. Necesitas internet.';
+        return;
+      }
+
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+      const pdf = await pdfjsLib.getDocument({ data: e.target.result }).promise;
+      let lines = [];
+
+      for (let p = 1; p <= pdf.numPages; p++) {
+        const page    = await pdf.getPage(p);
+        const content = await page.getTextContent();
+        // Group text items by Y position → reconstruct lines
+        const byY = {};
+        content.items.forEach(item => {
+          const y = Math.round(item.transform[5]);
+          if (!byY[y]) byY[y] = [];
+          byY[y].push({ x: item.transform[4], t: item.str });
+        });
+        Object.keys(byY)
+          .map(Number)
+          .sort((a, b) => b - a)
+          .forEach(y => {
+            const txt = byY[y].sort((a,b) => a.x - b.x).map(i => i.t).join(' ').trim();
+            if (txt) lines.push(txt);
+          });
+      }
+
+      // Parse ADL format: 7-digit code | description | UM | peso | cantidad | precio_sin_iva | valor_total
+      const NUM    = '[\\d]{1,3}(?:[,\\.][\\d]+)*';
+      const lineRe = new RegExp(
+        '^(\\d{7})\\s+(.+?)\\s+(UND|ROLL|CUN|KIT|GLN|PAR|BLS|LTR|M2|ML|KG)\\s+' +
+        '(' + NUM + ')\\s+(' + NUM + ')\\s+(' + NUM + ')\\s+(' + NUM + ')',
+        'i'
+      );
+
+      const found = [];
+      const seen  = new Set();
+      lines.forEach(line => {
+        const m = lineRe.exec(line);
+        if (!m) return;
+        const id = String(parseInt(m[1], 10));
+        if (seen.has(id)) return;
+        seen.add(id);
+        const qty   = Math.round(parseFloat(m[5].replace(/,/g,'')) || 1);
+        const priceRaw = m[6].replace(/,/g,'');
+        const price = Math.round(parseFloat(priceRaw) * 1.19) || 0;
+        found.push({ id, rawId: m[1], desc: m[2].trim(), qty, price });
+      });
+
+      if (found.length === 0) {
+        bar.style.color = '#EF4444';
+        bar.textContent = '❌ No se encontraron ítems. ¿Es una cotización ADL?';
+        input.value = '';
+        return;
+      }
+
+      // Load into quote
+      let added = 0, skipped = 0;
+      found.forEach(item => {
+        const cat = catalog.find(c => c.id === item.id);
+        if (!cat) { skipped++; return; }
+        const existing = quoteItems.find(q => q.id === item.id);
+        if (existing) {
+          existing.cantidad = item.qty;
+          if (item.price > 0) existing.precio = item.price;
+        } else {
+          quoteItems.push({ id: cat.id, nombre: cat.nombre, costo: cat.costo, precio: item.price, cantidad: item.qty });
+          added++;
+        }
+      });
+
+      renderQuote();
+      updateSummary();
+      input.value = '';
+
+      bar.style.color = '#22C55E';
+      bar.textContent = '✅ ' + added + ' ítems importados' + (skipped ? ' (' + skipped + ' sin costo)' : '');
+
+      // On mobile switch to quote tab
+      if (isMobile()) mobileTab('quote');
+
+    } catch(err) {
+      document.getElementById('importStatusBar').style.color = '#EF4444';
+      document.getElementById('importStatusBar').textContent = '❌ Error: ' + err.message;
+      input.value = '';
+    }
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 </script>
