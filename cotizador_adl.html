@@ -6,6 +6,7 @@
 <title>ADL Drywall — Cotizador Comercial</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <style>
 /* ================================================================
@@ -436,6 +437,102 @@ input.price-inp:focus, input.qty-inp:focus{border-color:var(--adl-orange)}
   .cards-grid{grid-template-columns:1fr 1fr}
   .page-title{font-size:22px}
 }
+
+/* ======================== IMPORT PDF BUTTON ======================== */
+.import-zone{padding:8px 12px 10px;flex-shrink:0;border-bottom:1px solid var(--adl-border)}
+.import-btn{
+  width:100%;padding:9px 12px;border-radius:var(--radius-sm);
+  border:1.5px dashed var(--adl-border2);background:transparent;
+  color:var(--adl-dim);font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.import-btn:hover{border-color:var(--adl-orange);color:var(--adl-orange);background:rgba(232,56,13,.05)}
+
+/* ======================== MODAL ======================== */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.78);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:16px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--adl-dark2);border:1px solid var(--adl-border);
+  border-radius:14px;width:min(540px,100%);max-height:88vh;
+  display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.65);
+}
+.modal-head{
+  padding:18px 22px 14px;border-bottom:1px solid var(--adl-border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.modal-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;
+  color:var(--adl-text);display:flex;align-items:center;gap:8px;
+}
+.modal-title span{color:var(--adl-orange)}
+.modal-close{
+  width:30px;height:30px;border-radius:7px;border:1px solid var(--adl-border);
+  background:transparent;color:var(--adl-muted);cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.modal-close:hover{background:rgba(239,68,68,.12);color:var(--adl-red)}
+.modal-body{padding:18px 22px;overflow-y:auto;flex:1}
+.drop-pdf{
+  border:2px dashed var(--adl-border2);border-radius:var(--radius);
+  padding:28px 16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;
+}
+.drop-pdf:hover,.drop-pdf.dragover{border-color:var(--adl-orange);background:rgba(232,56,13,.04)}
+.drop-pdf input{display:none}
+.drop-pdf-icon{font-size:34px;margin-bottom:8px;opacity:.55}
+.drop-pdf-txt{font-size:13px;color:var(--adl-muted);line-height:1.5}
+.drop-pdf-txt strong{color:var(--adl-orange)}
+.import-status{font-size:12px;min-height:20px;color:var(--adl-muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--adl-border2);border-top-color:var(--adl-orange);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.prev-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--adl-muted);margin-bottom:7px}
+.prev-scroll{max-height:240px;overflow-y:auto;border:1px solid var(--adl-border);border-radius:var(--radius-sm)}
+.prev-table{width:100%;border-collapse:collapse}
+.prev-table thead th{
+  padding:7px 9px;background:var(--adl-dark3);font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.4px;color:var(--adl-muted);
+  border-bottom:1px solid var(--adl-border);position:sticky;top:0;white-space:nowrap;
+}
+.prev-table tbody tr{border-bottom:1px solid rgba(62,62,62,.4)}
+.prev-table tbody tr:last-child{border:none}
+.prev-table tbody tr:hover{background:rgba(255,255,255,.03)}
+.prev-table td{padding:6px 9px;font-size:12px;vertical-align:middle}
+.prev-code{color:var(--adl-orange);font-weight:700;font-size:10.5px;white-space:nowrap}
+.prev-name{color:var(--adl-text);max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prev-qty{text-align:center;color:var(--adl-dim)}
+.prev-price{text-align:right;white-space:nowrap;color:var(--adl-dim)}
+.prev-ok{color:var(--adl-green)!important;font-size:13px}
+.prev-no{color:var(--adl-red)!important;font-size:13px}
+.modal-footer{
+  padding:12px 22px 18px;border-top:1px solid var(--adl-border);
+  display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;
+}
+.btn-confirm{
+  padding:11px 22px;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--adl-orange),var(--adl-orange2));
+  border:none;color:#fff;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:opacity .2s;
+}
+.btn-confirm:hover{opacity:.87}
+.btn-confirm:disabled{opacity:.35;cursor:not-allowed}
+.btn-cancel2{
+  padding:11px 18px;border-radius:var(--radius-sm);border:1px solid var(--adl-border);
+  background:transparent;color:var(--adl-muted);font-family:'Barlow',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;
+}
+.btn-cancel2:hover{border-color:var(--adl-red);color:var(--adl-red)}
+.import-summary{
+  background:var(--adl-dark3);border:1px solid var(--adl-border);
+  border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;
+  font-size:12px;color:var(--adl-dim);display:flex;gap:16px;flex-wrap:wrap;
+}
+.import-summary b{color:var(--adl-text)}
+.import-summary .ok{color:var(--adl-green)}
+.import-summary .no{color:var(--adl-yellow)}
+
 </style>
 </head>
 <body>
@@ -495,6 +592,11 @@ input.price-inp:focus, input.qty-inp:focus{border-color:var(--adl-orange)}
     <div class="sidebar" id="sidebar">
       <div class="sidebar-hd">
         <div class="sidebar-hd-title">Catálogo de Productos</div>
+      </div>
+      <div class="import-zone">
+        <button class="import-btn" onclick="openImportModal()">
+          📥 Importar desde PDF de cotización
+        </button>
       </div>
       <div class="search-wrap">
         <span class="search-ico">🔍</span>
@@ -1154,6 +1256,58 @@ function exportPDF() {
     setTimeout(function(){ window.close(); }, 1500);
   };
 <\/script>
+
+<!-- ================== IMPORT PDF MODAL ================== -->
+<div class="modal-overlay" id="importModal" onclick="if(event.target===this)closeImportModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">📥 Importar <span>Cotización PDF</span></div>
+      <button class="modal-close" onclick="closeImportModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="drop-pdf" id="dropPdf"
+           onclick="document.getElementById('pdfFileInput').click()"
+           ondragover="event.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="handlePdfDrop(event)">
+        <input type="file" id="pdfFileInput" accept=".pdf" onchange="handlePdfFile(event)">
+        <div class="drop-pdf-icon">📄</div>
+        <div class="drop-pdf-txt">
+          Toca o arrastra aquí tu <strong>PDF de cotización ADL</strong><br>
+          <small style="font-size:11px;color:var(--adl-border2)">Formato: cotización generada por el sistema ADL Drywall</small>
+        </div>
+      </div>
+
+      <div class="import-status" id="importStatus"></div>
+
+      <div id="importPreviewWrap" style="display:none">
+        <div class="import-summary" id="importSummary"></div>
+        <div class="prev-label">Vista previa de ítems detectados</div>
+        <div class="prev-scroll">
+          <table class="prev-table">
+            <thead>
+              <tr>
+                <th>En catálogo</th>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Cant.</th>
+                <th>Precio Unit.</th>
+              </tr>
+            </thead>
+            <tbody id="importPreviewBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" id="importFooter" style="display:none">
+      <button class="btn-cancel2" onclick="closeImportModal()">Cancelar</button>
+      <button class="btn-confirm" id="btnConfirmImport" onclick="confirmImport()">
+        ✅ Cargar ítems a la cotización
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>`;
 
@@ -1194,6 +1348,217 @@ function cop(v) {
   if(!v&&v!==0) return '—';
   return '$'+Math.round(v).toLocaleString('es-CO');
 }
+
+// ================================================================
+// IMPORTAR PDF DE COTIZACIÓN ADL
+// ================================================================
+let importedItems = [];
+
+function openImportModal() {
+  document.getElementById('importModal').classList.add('open');
+  resetImportModal();
+}
+function closeImportModal() {
+  document.getElementById('importModal').classList.remove('open');
+  resetImportModal();
+}
+function resetImportModal() {
+  document.getElementById('importStatus').innerHTML = '';
+  document.getElementById('importPreviewWrap').style.display = 'none';
+  document.getElementById('importFooter').style.display = 'none';
+  document.getElementById('pdfFileInput').value = '';
+  document.getElementById('dropPdf').classList.remove('dragover');
+  document.getElementById('importSummary').innerHTML = '';
+  document.getElementById('importPreviewBody').innerHTML = '';
+  importedItems = [];
+}
+
+function handlePdfDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropPdf').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') processPdfFile(file);
+  else setImportStatus('❌ Solo se aceptan archivos PDF.', 'red');
+}
+function handlePdfFile(e) {
+  const file = e.target.files[0];
+  if (file) processPdfFile(file);
+}
+
+function setImportStatus(msg, color) {
+  const el = document.getElementById('importStatus');
+  const colors = { orange:'var(--adl-orange)', green:'var(--adl-green)', red:'var(--adl-red)', muted:'var(--adl-muted)' };
+  el.style.color = colors[color] || 'var(--adl-muted)';
+  el.innerHTML = msg;
+}
+
+async function processPdfFile(file) {
+  setImportStatus('<span class="spinner"></span> Leyendo PDF...', 'muted');
+  document.getElementById('importPreviewWrap').style.display = 'none';
+  document.getElementById('importFooter').style.display = 'none';
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+
+    // PDF.js — configure worker
+    if (typeof pdfjsLib === 'undefined') {
+      // Fallback: try to read as text directly (won't work for binary but worth trying)
+      throw new Error('PDF.js no cargó. Verifica tu conexión a internet.');
+    }
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      // Reconstruct lines using y-position grouping
+      const items = content.items;
+      const lines = {};
+      items.forEach(item => {
+        const y = Math.round(item.transform[5]);
+        if (!lines[y]) lines[y] = [];
+        lines[y].push({ x: item.transform[4], text: item.str });
+      });
+      // Sort by y descending (top to bottom), then x ascending (left to right)
+      const sortedYs = Object.keys(lines).map(Number).sort((a,b) => b - a);
+      sortedYs.forEach(y => {
+        const lineItems = lines[y].sort((a,b) => a.x - b.x);
+        fullText += lineItems.map(i => i.text).join(' ') + '\n';
+      });
+    }
+
+    parseADLCotizacion(fullText, file.name);
+
+  } catch (err) {
+    setImportStatus('❌ Error leyendo PDF: ' + err.message, 'red');
+  }
+}
+
+function parseADLCotizacion(text, filename) {
+  /*
+    Formato cotización ADL:
+    Columnas: ID(7dig) | Descripción | U.M | Peso | Cantidad | Precio Unit/Sin iva | Valor Total
+    Ejemplo:  0000019  PLACA FIBRO SB 17MMX1,22X2,44 105648  UND  2,171.81  29.00  157,983  4,581,512
+  */
+  const NUM = '[\\d]{1,3}(?:[,\\.][\\d]+)*';
+  const LINE_RE = new RegExp(
+    '^(\\d{7})\\s+(.+?)\\s+(UND|ROLL|CUN|KIT|GLN|PAR|BLS|LTR|M2|ML|KG)\\s+(' + NUM + ')\\s+(' + NUM + ')\\s+(' + NUM + ')\\s+(' + NUM + ')',
+    'i'
+  );
+
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+  const results = [];
+  const seenIds = new Set();
+
+  lines.forEach(line => {
+    const m = LINE_RE.exec(line);
+    if (!m) return;
+    const rawId  = m[1];
+    const desc   = m[2].trim();
+    // m[4]=peso, m[5]=cantidad, m[6]=precio_sin_iva, m[7]=valor_total
+    const qty    = Math.round(parseNum(m[5])) || 1;
+    const precio = parseNum(m[6]);
+    const id     = String(parseInt(rawId, 10));
+    if (seenIds.has(id)) return;
+    seenIds.add(id);
+    results.push({ rawId, id, desc, qty, precio });
+  });
+
+  if (results.length === 0) {
+    setImportStatus('⚠️ No se detectaron ítems. Verifica que sea una cotización ADL válida.', 'red');
+    return;
+  }
+
+  importedItems = results.map(r => {
+    const catItem = catalog.find(c => c.id === r.id);
+    return { ...r, catItem, inCatalog: !!catItem };
+  });
+
+  renderImportPreview(importedItems, filename);
+}
+
+function parseNum(s) {
+  if (!s) return 0;
+  // Remove all non-numeric except last dot/comma as decimal
+  // "157,983" → 157983 | "29.00" → 29 | "2,171.81" → 2171.81
+  const clean = s.replace(/,/g, '').replace(/\.(?=.*\.)/g, '');
+  return parseFloat(clean) || 0;
+}
+
+function renderImportPreview(items, filename) {
+  const found    = items.filter(i => i.inCatalog).length;
+  const notFound = items.length - found;
+
+  document.getElementById('importSummary').innerHTML = `
+    <div>📄 <b>${filename}</b></div>
+    <div>Total ítems: <b>${items.length}</b></div>
+    <div class="ok">✓ En catálogo: <b>${found}</b></div>
+    ${notFound > 0 ? `<div class="no">⚠ Sin costo: <b>${notFound}</b></div>` : ''}
+  `;
+
+  const tbody = document.getElementById('importPreviewBody');
+  tbody.innerHTML = items.map(item => `
+    <tr>
+      <td class="prev-${item.inCatalog ? 'ok' : 'no'}">${item.inCatalog ? '✓' : '⚠'}</td>
+      <td class="prev-code">${item.rawId}</td>
+      <td class="prev-name" title="${item.desc}">${item.desc}</td>
+      <td class="prev-qty">${item.qty}</td>
+      <td class="prev-price">${cop(item.precio)}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('importPreviewWrap').style.display = '';
+  document.getElementById('importFooter').style.display = '';
+  document.getElementById('btnConfirmImport').disabled = found === 0;
+
+  if (found === 0) {
+    setImportStatus('⚠️ Ningún ítem coincide con el catálogo actual. Carga primero los costos.', 'red');
+  } else {
+    setImportStatus(`✅ ${items.length} ítem(s) detectados — ${found} con costo disponible.`, 'green');
+  }
+}
+
+function confirmImport() {
+  // Only import items found in catalog, pre-fill price from PDF
+  const toImport = importedItems.filter(i => i.inCatalog);
+  let added = 0, updated = 0;
+
+  toImport.forEach(item => {
+    const existing = quoteItems.find(q => q.id === item.id);
+    const pdfPrice = item.precio > 0 ? Math.round(item.precio * 1.19) : 0; // PDF price is sin IVA → add IVA
+    if (existing) {
+      existing.cantidad = item.qty || 1;
+      if (pdfPrice > 0) existing.precio = pdfPrice;
+      updated++;
+    } else {
+      quoteItems.push({
+        id: item.catItem.id,
+        nombre: item.catItem.nombre,
+        costo: item.catItem.costo,
+        precio: pdfPrice,
+        cantidad: item.qty || 1
+      });
+      added++;
+    }
+  });
+
+  renderQuote();
+  updateSummary();
+  closeImportModal();
+
+  // Switch to quote tab on mobile
+  if (isMobile()) mobileTab('quote');
+
+  // Show a brief confirmation
+  const pageSub = document.getElementById('pageSub');
+  pageSub.innerHTML = `<span style="color:var(--adl-green)">✅ ${added} ítem(s) importados, ${updated} actualizados desde PDF</span>`;
+  setTimeout(() => { pageSub.innerHTML = `${quoteItems.length} ítem(s) · Total: ${cop(quoteItems.reduce((s,q)=>s+q.precio*q.cantidad,0))}`; }, 3500);
+}
+
 </script>
 </body>
 </html>
