@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Cielos Rasos — ADL Drywall</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root {
+  --rojo: #CC1A1A;
+  --rojo-dark: #a01212;
+  --rojo-light: #e82020;
+  --negro: #111111;
+  --negro2: #1a1a1a;
+  --negro3: #222222;
+  --gris: #2a2a2a;
+  --gris2: #333333;
+  --gris3: #444444;
+  --border: #3a3a3a;
+  --text: #f0f0f0;
+  --text2: #aaaaaa;
+  --text3: #777777;
+  --accent: #CC1A1A;
+  --accent2: #ff3333;
+  --green: #2ea84a;
+  --radius: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--negro); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; overflow: hidden; }
+
+/* ── HEADER ── */
+header {
+  background: var(--negro2);
+  border-bottom: 3px solid var(--rojo);
+  padding: 0 24px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  z-index: 100;
+}
+.logo-svg { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo-svg svg { height: 36px; width: auto; }
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
+.logo-text .lt1 { font-size: 19px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+.logo-text .lt2 { font-size: 10px; color: var(--text2); letter-spacing: 2px; text-transform: uppercase; margin-top: 1px; }
+.header-divider { width: 1px; background: var(--border); height: 32px; margin: 0 20px; }
+.header-center { flex: 1; }
+.header-center h1 { font-size: 15px; font-weight: 700; color: #fff; }
+.header-center p { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.cal-tabs { margin-left: auto; display: flex; gap: 3px; background: var(--negro); border-radius: var(--radius); padding: 3px; border: 1px solid var(--border); }
+.cal-tab { padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: var(--text2); transition: all .15s; letter-spacing: .3px; }
+.cal-tab.active { background: var(--rojo); color: #fff; }
+.norma-chip { margin-left: 12px; padding: 5px 12px; background: rgba(204,26,26,.15); border: 1px solid rgba(204,26,26,.4); border-radius: 20px; font-size: 10px; color: var(--rojo-light); font-weight: 600; letter-spacing: .5px; white-space: nowrap; }
+
+/* ── QUICK INPUT MODAL STRIP ── */
+.quick-strip {
+  background: var(--rojo-dark);
+  border-bottom: 1px solid var(--rojo);
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.qs-label { font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.qs-label svg { width: 14px; height: 14px; }
+.qs-field { display: flex; align-items: center; gap: 6px; }
+.qs-field label { font-size: 11px; color: rgba(255,255,255,.8); white-space: nowrap; }
+.qs-field input, .qs-field select {
+  background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.25); border-radius: 6px;
+  color: #fff; font-size: 13px; font-weight: 600; padding: 5px 9px; width: 80px; outline: none;
+  transition: border-color .15s;
+}
+.qs-field input:focus, .qs-field select:focus { border-color: rgba(255,255,255,.7); }
+.qs-field select { width: 140px; }
+.qs-btn {
+  padding: 7px 20px; background: #fff; color: var(--rojo-dark); font-size: 12px; font-weight: 800;
+  border: none; border-radius: 6px; cursor: pointer; transition: all .15s; letter-spacing: .3px; white-space: nowrap;
+}
+.qs-btn:hover { background: #f0f0f0; transform: scale(1.02); }
+.qs-result { margin-left: auto; font-size: 11px; color: rgba(255,255,255,.7); display: flex; gap: 16px; }
+.qs-result span strong { color: #fff; font-weight: 700; }
+
+/* ── MAIN LAYOUT ── */
+.main { display: grid; grid-template-columns: 268px 1fr 290px; height: calc(100vh - 58px - 44px); }
+
+/* ── LEFT PANEL ── */
+.left-panel {
+  background: var(--negro2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.sec-label {
+  font-size: 10px; font-weight: 700; color: var(--rojo-light);
+  text-transform: uppercase; letter-spacing: 1.2px;
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+}
+.sec-label::before { content: ''; width: 3px; height: 12px; background: var(--rojo); border-radius: 2px; display: inline-block; }
+.field { margin-bottom: 11px; }
+.field label { display: block; font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+.field input[type=number], .field select {
+  width: 100%; padding: 7px 9px; background: var(--negro);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--text); font-size: 13px; outline: none; transition: border-color .15s;
+}
+.field input[type=number]:focus, .field select:focus { border-color: var(--rojo); }
+.range-row { display: flex; align-items: center; gap: 8px; }
+.range-val { font-size: 13px; font-weight: 700; color: var(--rojo-light); min-width: 48px; text-align: right; }
+input[type=range] { flex: 1; accent-color: var(--rojo); cursor: pointer; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 8px 10px; background: var(--negro); border-radius: var(--radius); border: 1px solid var(--border); }
+.toggle-label { font-size: 12px; color: var(--text2); }
+.toggle { position: relative; width: 40px; height: 20px; }
+.toggle input { display: none; }
+.tslider { position: absolute; inset: 0; background: var(--gris2); border-radius: 10px; cursor: pointer; transition: background .2s; }
+.tslider:before { content: ''; position: absolute; left: 3px; top: 3px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: transform .2s; }
+.toggle input:checked + .tslider { background: var(--rojo); }
+.toggle input:checked + .tslider:before { transform: translateX(20px); }
+.view-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.vb { padding: 7px 6px; background: var(--negro); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text2); font-size: 11px; cursor: pointer; transition: all .15s; text-align: center; font-weight: 500; }
+.vb:hover { border-color: var(--rojo); color: var(--rojo-light); }
+.vb.active { border-color: var(--rojo); color: #fff; background: rgba(204,26,26,.2); }
+.norma-box { background: rgba(204,26,26,.07); border: 1px solid rgba(204,26,26,.25); border-radius: var(--radius); padding: 10px 12px; font-size: 10.5px; color: #ccc; line-height: 1.65; }
+.norma-box strong { color: var(--rojo-light); }
+.btn-calc { width: 100%; padding: 11px; background: var(--rojo); color: #fff; font-size: 13px; font-weight: 800; border: none; border-radius: var(--radius); cursor: pointer; transition: all .15s; letter-spacing: .5px; text-transform: uppercase; }
+.btn-calc:hover { background: var(--rojo-light); }
+.btn-calc:active { transform: scale(0.98); }
+
+/* ── VIEWPORT ── */
+.viewport { position: relative; background: #0c0c0c; overflow: hidden; }
+#canvas3d { width: 100%; height: 100%; display: block; }
+.vp-overlay { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 7px; pointer-events: none; }
+.chip { background: rgba(17,17,17,.88); border: 1px solid #333; border-radius: var(--radius); padding: 5px 10px; font-size: 11px; color: #aaa; backdrop-filter: blur(6px); }
+.chip strong { color: var(--rojo-light); font-weight: 700; }
+.legend { position: absolute; bottom: 14px; left: 14px; background: rgba(17,17,17,.92); border: 1px solid #333; border-radius: var(--radius); padding: 10px 14px; backdrop-filter: blur(6px); }
+.li { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #aaa; margin-bottom: 5px; }
+.li:last-child { margin-bottom: 0; }
+.ld { width: 12px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.transp-ctrl { position: absolute; top: 12px; right: 12px; background: rgba(17,17,17,.88); border: 1px solid #333; border-radius: var(--radius); padding: 10px 14px; min-width: 190px; backdrop-filter: blur(6px); }
+.tc-row { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-bottom: 5px; }
+.tc-row span { color: var(--rojo-light); font-weight: 700; }
+.vp-btns { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 5px; }
+.vpb { width: 32px; height: 32px; background: rgba(17,17,17,.9); border: 1px solid #333; border-radius: var(--radius); color: #aaa; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; backdrop-filter: blur(6px); }
+.vpb:hover { border-color: var(--rojo); color: var(--rojo-light); }
+.drag-hint { position: absolute; bottom: 56px; right: 14px; font-size: 10px; color: #555; text-align: right; }
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  background: var(--negro2);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.rp-head {
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--negro2);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.rp-title { font-size: 13px; font-weight: 700; color: var(--rojo-light); display: flex; align-items: center; gap: 7px; }
+.rp-subtitle { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.rp-body { padding: 0 0 16px; flex: 1; }
+.qty-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.qty-table thead th { color: var(--text3); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+.qty-table thead th:last-child { text-align: right; }
+.cat-hdr { background: rgba(204,26,26,.1); }
+.cat-hdr td { padding: 6px 10px; font-size: 9.5px; font-weight: 800; color: var(--rojo-light); text-transform: uppercase; letter-spacing: .8px; border-bottom: 1px solid var(--border); }
+.cat-hdr td::before { content: '▸ '; }
+.qty-table tbody tr:not(.cat-hdr) { border-bottom: 1px solid rgba(58,58,58,.5); transition: background .1s; }
+.qty-table tbody tr:not(.cat-hdr):hover { background: var(--negro3); }
+.qty-table td { padding: 7px 10px; vertical-align: top; }
+.cod { font-size: 9.5px; background: var(--negro); color: var(--text3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-family: monospace; display: inline-block; margin-bottom: 3px; }
+.iname { font-size: 11px; color: var(--text); line-height: 1.35; }
+.inote { font-size: 9.5px; color: var(--text3); margin-top: 2px; }
+.qval { display: block; font-size: 16px; font-weight: 800; color: #fff; line-height: 1; }
+.qunit { font-size: 9.5px; color: var(--text3); }
+.summary-block { margin: 10px 14px; background: rgba(204,26,26,.08); border: 1px solid rgba(204,26,26,.25); border-radius: var(--radius); padding: 12px 14px; }
+.srow { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 11.5px; border-bottom: 1px solid rgba(255,255,255,.05); }
+.srow:last-child { border-bottom: none; padding-top: 8px; margin-top: 4px; border-top: 1px solid rgba(204,26,26,.3); }
+.srow .sk { color: var(--text2); }
+.srow .sv { font-weight: 700; color: #fff; }
+.srow:last-child .sv { color: var(--rojo-light); font-size: 13px; }
+.disc { margin: 10px 14px 0; font-size: 9.5px; color: var(--text3); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header>
+  <div class="logo-svg">
+    <!-- ADL Diamond logo SVG recreated from corporate identity -->
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="22,2 42,22 22,42 2,22" fill="#CC1A1A" stroke="#CC1A1A" stroke-width="1"/>
+      <polygon points="22,7 37,22 22,37 7,22" fill="none" stroke="white" stroke-width="2.5"/>
+      <line x1="22" y1="7" x2="22" y2="37" stroke="white" stroke-width="2.5"/>
+      <line x1="7" y1="22" x2="37" y2="22" stroke="white" stroke-width="2.5"/>
+    </svg>
+    <div class="logo-text">
+      <span class="lt1">ADL DRYWALL</span>
+      <span class="lt2">Adelfa de Lombana S.A.</span>
+    </div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="header-center">
+    <h1>Calculadora &amp; Visualizador — Cielos Rasos Drywall</h1>
+    <p>Despiece 3D interactivo · Conforme NSR-10 Título E · ENKI Industrias</p>
+  </div>
+  <div class="norma-chip">NSR-10</div>
+  <div class="cal-tabs" style="margin-left:14px">
+    <button class="cal-tab active" id="tab038" onclick="setCalib('038')">0.38 mm</button>
+    <button class="cal-tab" id="tab040" onclick="setCalib('040')">0.40 mm</button>
+  </div>
+</header>
+
+<!-- ═══════════ QUICK INPUT STRIP ═══════════ -->
+<div class="quick-strip">
+  <div class="qs-label">
+    <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="2" stroke="white" stroke-width="1.5"/><path d="M4 8h8M8 4v8" stroke="white" stroke-width="1.5"/></svg>
+    Ingreso rápido de m²:
+  </div>
+  <div class="qs-field">
+    <label>Largo (m)</label>
+    <input type="number" id="qs-largo" value="6" min="1" max="30" step="0.5" oninput="syncQS()">
+  </div>
+  <div class="qs-field">
+    <label>Ancho (m)</label>
+    <input type="number" id="qs-ancho" value="4" min="1" max="20" step="0.5" oninput="syncQS()">
+  </div>
+  <div class="qs-field" style="width:auto">
+    <label>Calibre</label>
+    <select id="qs-cal" onchange="setCalib(this.value === '0.38' ? '038' : '040')">
+      <option value="0.38">0.38 mm</option>
+      <option value="0.40">0.40 mm</option>
+    </select>
+  </div>
+  <div class="qs-field">
+    <label>Doble placa</label>
+    <select id="qs-doble" onchange="document.getElementById('doble').checked=this.value==='si';calcular()">
+      <option value="no">No</option>
+      <option value="si">Sí</option>
+    </select>
+  </div>
+  <button class="qs-btn" onclick="applyQS()">▶ CALCULAR Y VER 3D</button>
+  <div class="qs-result">
+    <span>Área: <strong id="qs-area">24.0 m²</strong></span>
+    <span>Placas: <strong id="qs-placas">—</strong></span>
+    <span>Omegas: <strong id="qs-omega">—</strong></span>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN GRID ═══════════ -->
+<div class="main">
+
+  <!-- ── LEFT ── -->
+  <div class="left-panel">
+
+    <div>
+      <div class="sec-label">Dimensiones del área</div>
+      <div class="field">
+        <label>Largo (m)</label>
+        <div class="range-row">
+          <input type="range" id="largo" min="2" max="20" step="0.5" value="6" oninput="syncRange('largo')">
+          <span class="range-val" id="largo-v">6.0 m</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Ancho (m)</label>
+        <div class="range-row">
+          <input type="range" id="ancho" min="2" max="12" step="0.5" value="4" oninput="syncRange('ancho')">
+          <span class="range-val" id="ancho-v">4.0 m</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Altura de suspensión (cm)</label>
+        <div class="range-row">
+          <input type="range" id="altura" min="10" max="80" step="5" value="30" oninput="syncRange('altura')">
+          <span class="range-val" id="altura-v">30 cm</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec-label">Configuración</div>
+      <div class="toggle-row">
+        <span class="toggle-label">Doble placa (2 capas)</span>
+        <label class="toggle"><input type="checkbox" id="doble" onchange="calcular()"><span class="tslider"></span></label>
+      </div>
+      <div class="field" style="margin-top:8px">
+        <label>Desperdicio (%)</label>
+        <div class="range-row">
+          <input type="range" id="desp" min="5" max="20" step="1" value="10" oninput="syncRange('desp')">
+          <span class="range-val" id="desp-v">10%</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec-label">Vista 3D</div>
+      <div class="view-btns">
+        <button class="vb active" id="vb-persp" onclick="setView('persp')">⬡ Perspectiva</button>
+        <button class="vb" id="vb-top" onclick="setView('top')">⬛ Planta</button>
+        <button class="vb" id="vb-front" onclick="setView('front')">▭ Frontal</button>
+        <button class="vb" id="vb-iso" onclick="setView('iso')">◈ Isométrica</button>
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label>Transparencia de placas</label>
+        <div class="range-row">
+          <input type="range" id="transp" min="0" max="100" value="75" oninput="setTransp(this.value)">
+          <span class="range-val" id="transp-v">75%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="norma-box">
+      <strong>NSR-10 Tít. E:</strong> Omegas cada 0.61 m · Viguetas cada 1.22 m · Ángulo 3×2 perimetral continuo · Cuelgues cal.12 c/1.22×1.22 m máx · Placa Gyplac ½" (12.7 mm) · Tornillo TW 6×1" placa-placa · 7×7/16" placa-estructura
+    </div>
+
+    <button class="btn-calc" onclick="calcular()">▶ Calcular Despiece</button>
+
+  </div>
+
+  <!-- ── VIEWPORT 3D ── -->
+  <div class="viewport">
+    <canvas id="canvas3d"></canvas>
+
+    <div class="vp-overlay">
+      <div class="chip">Área: <strong id="chip-area">24.0 m²</strong></div>
+      <div class="chip">Placas Gyplac: <strong id="chip-placas">—</strong></div>
+      <div class="chip">Omegas CR: <strong id="chip-omega">—</strong></div>
+      <div class="chip">Viguetas: <strong id="chip-vig">—</strong></div>
+    </div>
+
+    <div class="transp-ctrl">
+      <div class="tc-row">Transparencia placas <span id="tp-pct">75%</span></div>
+      <input type="range" id="transp2" min="0" max="100" value="75" style="width:100%;accent-color:#CC1A1A" oninput="setTransp(this.value)">
+    </div>
+
+    <div class="legend">
+      <div class="li"><div class="ld" style="background:#CC1A1A;opacity:.85"></div>Placa Gyplac ½"</div>
+      <div class="li"><div class="ld" style="background:#4a90d9"></div>Omega CR (tirante prin.)</div>
+      <div class="li"><div class="ld" style="background:#2ea84a"></div>Vigueta (secundario)</div>
+      <div class="li"><div class="ld" style="background:#b8860b"></div>Ángulo 3×2 perimetral</div>
+      <div class="li"><div class="ld" style="background:#e05050;border-radius:50%"></div>Punto de cuelgue</div>
+    </div>
+
+    <div class="vp-btns">
+      <button class="vpb" title="Zoom +" onclick="zoomCam(0.82)">+</button>
+      <button class="vpb" title="Zoom -" onclick="zoomCam(1.22)">−</button>
+      <button class="vpb" title="Reset" onclick="resetCam()">⟳</button>
+    </div>
+    <div class="drag-hint">Arrastra para rotar · Rueda para zoom</div>
+  </div>
+
+  <!-- ── RIGHT PANEL ── -->
+  <div class="right-panel">
+    <div class="rp-head">
+      <div class="rp-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="2" stroke="#CC1A1A" stroke-width="1.5"/><path d="M5 5h6M5 8h6M5 11h4" stroke="#CC1A1A" stroke-width="1.5"/></svg>
+        Cantidades de Obra — Estimado
+      </div>
+      <div class="rp-subtitle">Incluye desperdicio · Ref. ENKI Industrias / ADL Drywall</div>
+    </div>
+    <div class="rp-body">
+      <table class="qty-table">
+        <thead><tr><th>Ítem</th><th style="text-align:right">Cant.</th></tr></thead>
+        <tbody id="qty-body"></tbody>
+      </table>
+      <div class="summary-block" id="summ"></div>
+      <div class="disc">* Cantidades incluyen % de desperdicio configurado. El cálculo asume optimización de cortes en obra. No incluye desperdicios adicionales por cortes complejos ni accesorios de suspensión (varillas, alambre galvanizado). Verificar con director de obra.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════
+//  ESTADO GLOBAL
+// ════════════════════════════════════
+let calibre = '038';
+let scene, camera, renderer;
+let isDrag = false, prevMX = 0, prevMY = 0;
+let camTheta = 40, camPhi = 32, camR = 16;
+let camTgt;
+let plateMats = [];
+let plateOpacity = 0.75;
+
+const IT = {
+  omega:   { '038':{cod:'12850',desc:'Omega CR 0.38 mm PF × 2.44 m'}, '040':{cod:'14315',desc:'Omega CR 0.40 mm PF × 2.44 m'} },
+  vigueta: { '038':{cod:'12853',desc:'Vigueta 0.38 mm PF × 2.44 m'}, '040':{cod:'14317',desc:'Vigueta 0.40 mm PF × 2.44 m'} },
+  angulo:  { '038':{cod:'12847',desc:'Ángulo 3×2 0.38 mm PF × 2.44 m'}, '040':{cod:'14312',desc:'Ángulo 3×2 0.40 mm PF × 2.44 m'} },
+  placa:   {cod:'2615',   desc:'Placa de yeso Gyplac ½"×1.22×2.44 m'},
+  tornP:   {cod:'2201',   desc:'Tornillo TW panel-panel 6×1"'},
+  tornE:   {cod:'2204',   desc:'Tornillo TW estr. fosfato 7×7/16"'},
+  cinta:   {cod:'5291',   desc:'Cinta papel Sellapanel 150 m'},
+  masilla: {cod:'14425',  desc:'Sellapanel Drywall premezclada 28 kg'},
+  vinilo:  {cod:'8966',   desc:'Ultravinyl tipo 2 balde × 13.7 kg'},
+  lija:    {cod:'369',    desc:'Lija agua No.120 ABRACOL pliego'},
+};
+
+// ════════════════════════════════════
+//  SYNC / QUICK INPUT
+// ════════════════════════════════════
+function syncQS() {
+  const l = parseFloat(document.getElementById('qs-largo').value)||6;
+  const a = parseFloat(document.getElementById('qs-ancho').value)||4;
+  document.getElementById('qs-area').textContent = (l*a).toFixed(1)+' m²';
+}
+
+function applyQS() {
+  const l = parseFloat(document.getElementById('qs-largo').value)||6;
+  const a = parseFloat(document.getElementById('qs-ancho').value)||4;
+  // Update sliders
+  document.getElementById('largo').value = Math.min(20, Math.max(2, l));
+  document.getElementById('ancho').value = Math.min(12, Math.max(2, a));
+  document.getElementById('largo-v').textContent = l.toFixed(1)+' m';
+  document.getElementById('ancho-v').textContent = a.toFixed(1)+' m';
+  calcular();
+}
+
+function syncRange(id) {
+  const v = parseFloat(document.getElementById(id).value);
+  if (id==='largo') { document.getElementById('largo-v').textContent=v.toFixed(1)+' m'; document.getElementById('qs-largo').value=v; }
+  else if (id==='ancho') { document.getElementById('ancho-v').textContent=v.toFixed(1)+' m'; document.getElementById('qs-ancho').value=v; }
+  else if (id==='altura') document.getElementById('altura-v').textContent=v+' cm';
+  else if (id==='desp') document.getElementById('desp-v').textContent=v+'%';
+  calcular();
+}
+
+function setCalib(c) {
+  calibre = c;
+  document.getElementById('tab038').classList.toggle('active', c==='038');
+  document.getElementById('tab040').classList.toggle('active', c==='040');
+  document.getElementById('qs-cal').value = c==='038'?'0.38':'0.40';
+  calcular();
+}
+
+function setTransp(val) {
+  plateOpacity = val/100;
+  document.getElementById('transp-v').textContent = val+'%';
+  document.getElementById('transp2').value = val;
+  document.getElementById('transp').value = val;
+  document.getElementById('tp-pct').textContent = val+'%';
+  plateMats.forEach(m => { m.opacity=plateOpacity; m.transparent=plateOpacity<1; });
+}
+
+// ════════════════════════════════════
+//  THREE.JS INIT
+// ════════════════════════════════════
+function initThree() {
+  const canvas = document.getElementById('canvas3d');
+  const vp = canvas.parentElement;
+  camTgt = new THREE.Vector3(0,0,0);
+
+  renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor(0x0c0c0c, 1);
+  renderer.shadowMap.enabled = true;
+
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x0c0c0c, 28, 70);
+
+  const W = vp.clientWidth, H = vp.clientHeight;
+  camera = new THREE.PerspectiveCamera(44, W/H, 0.1, 200);
+  renderer.setSize(W, H);
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+  const dir = new THREE.DirectionalLight(0xffffff, 1.0);
+  dir.position.set(10,16,8); dir.castShadow = true; scene.add(dir);
+  const fill = new THREE.DirectionalLight(0xff4444, 0.15);
+  fill.position.set(-8,4,-6); scene.add(fill);
+  const fill2 = new THREE.DirectionalLight(0x4466aa, 0.25);
+  fill2.position.set(0,2,12); scene.add(fill2);
+
+  // Grid
+  const grid = new THREE.GridHelper(50, 50, 0x1a1a1a, 0x1a1a1a);
+  grid.position.y = -0.08; scene.add(grid);
+
+  setCamSph(); camera.lookAt(camTgt);
+
+  // Mouse
+  canvas.addEventListener('mousedown', e => { isDrag=true; prevMX=e.clientX; prevMY=e.clientY; });
+  canvas.addEventListener('mousemove', e => {
+    if(!isDrag) return;
+    camTheta -= (e.clientX-prevMX)*0.38;
+    camPhi = Math.max(4, Math.min(84, camPhi-(e.clientY-prevMY)*0.28));
+    prevMX=e.clientX; prevMY=e.clientY;
+    setCamSph(); camera.lookAt(camTgt);
+  });
+  window.addEventListener('mouseup', ()=>isDrag=false);
+  canvas.addEventListener('wheel', e=>{ camR=Math.max(4,Math.min(45,camR+e.deltaY*0.02)); setCamSph(); camera.lookAt(camTgt); e.preventDefault(); },{passive:false});
+
+  // Touch
+  let lt=null;
+  canvas.addEventListener('touchstart', e=>{ lt=e.touches[0]; },{passive:true});
+  canvas.addEventListener('touchmove', e=>{
+    if(!lt) return;
+    const t=e.touches[0];
+    camTheta-=(t.clientX-lt.clientX)*0.38;
+    camPhi=Math.max(4,Math.min(84,camPhi-(t.clientY-lt.clientY)*0.28));
+    lt=t; setCamSph(); camera.lookAt(camTgt); e.preventDefault();
+  },{passive:false});
+
+  window.addEventListener('resize', ()=>{
+    const W=vp.clientWidth, H=vp.clientHeight;
+    camera.aspect=W/H; camera.updateProjectionMatrix(); renderer.setSize(W,H);
+  });
+
+  (function animate(){ requestAnimationFrame(animate); renderer.render(scene,camera); })();
+}
+
+function setCamSph() {
+  const t=THREE.MathUtils.degToRad(camTheta), p=THREE.MathUtils.degToRad(camPhi);
+  camera.position.set(
+    camTgt.x+camR*Math.cos(p)*Math.sin(t),
+    camTgt.y+camR*Math.sin(p),
+    camTgt.z+camR*Math.cos(p)*Math.cos(t)
+  );
+}
+function zoomCam(f){ camR=Math.max(4,Math.min(45,camR*f)); setCamSph(); camera.lookAt(camTgt); }
+function resetCam(){ camTheta=40; camPhi=32; camR=16; setCamSph(); camera.lookAt(camTgt); }
+function setView(v){
+  ['persp','top','front','iso'].forEach(k=>document.getElementById('vb-'+k).classList.toggle('active',k===v));
+  if(v==='persp'){camTheta=40;camPhi=32;camR=16;}
+  else if(v==='top'){camTheta=0;camPhi=87;camR=20;}
+  else if(v==='front'){camTheta=0;camPhi=6;camR=16;}
+  else if(v==='iso'){camTheta=30;camPhi=42;camR=18;}
+  setCamSph(); camera.lookAt(camTgt);
+}
+
+// ════════════════════════════════════
+//  BUILD 3D SCENE
+// ════════════════════════════════════
+function buildScene(largo, ancho, altM, doble) {
+  plateMats = [];
+  const rem=[];
+  scene.children.forEach(c=>{ if(c.userData.dw) rem.push(c); });
+  rem.forEach(c=>scene.remove(c));
+
+  const CX=largo/2, CZ=ancho/2;
+  const Y0=0;
+  camTgt.set(CX, altM*0.4, CZ);
+  camR = Math.max(10, Math.max(largo,ancho)*1.55+2);
+  setCamSph(); camera.lookAt(camTgt);
+
+  function mk(geo,mat,x,y,z){ const m=new THREE.Mesh(geo,mat); m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true; m.userData.dw=true; scene.add(m); return m; }
+  function box(w,h,d){ return new THREE.BoxGeometry(w,h,d); }
+  function mat(col,op=1){ const m=new THREE.MeshLambertMaterial({color:col,transparent:op<1,opacity:op}); return m; }
+
+  // ── Ángulo perimetral (marco) ──
+  const AM=mat(0xb8860b); const AH=0.038, AW=0.03;
+  mk(box(largo,AH,AW), AM, CX, Y0+AH/2, 0);
+  mk(box(largo,AH,AW), AM, CX, Y0+AH/2, ancho);
+  mk(box(AW,AH,ancho), AM, 0,  Y0+AH/2, CZ);
+  mk(box(AW,AH,ancho), AM, largo, Y0+AH/2, CZ);
+
+  // ── Omegas — c/0.61 m ──
+  const OM=mat(0x4a90d9); const OH=0.05, OW=0.022;
+  const omegaY = Y0+AH+OH/2;
+  let ox=0.61;
+  while(ox<largo){ mk(box(OW,OH,ancho), OM, ox, omegaY, CZ); ox+=0.61; }
+
+  // ── Viguetas — c/1.22 m ──
+  const VM=mat(0x2ea84a); const VH=0.028, VW=0.018;
+  const vigY = omegaY+OH/2+VH/2;
+  let vz=1.22;
+  while(vz<ancho){ mk(box(largo,VH,VW), VM, CX, vigY, vz); vz+=1.22; }
+
+  // ── Cuelgues ──
+  const sphGeo=new THREE.SphereGeometry(0.055,8,8);
+  const sphMat=new THREE.MeshLambertMaterial({color:0xe05050});
+  const cylMat=new THREE.MeshLambertMaterial({color:0x555555});
+  let cx2=0.61;
+  while(cx2<largo){
+    let cz2=1.22;
+    while(cz2<ancho){
+      const s=new THREE.Mesh(sphGeo,sphMat); s.position.set(cx2,vigY+VH/2+0.03,cz2); s.userData.dw=true; scene.add(s);
+      const wireH=altM*0.28;
+      const wg=new THREE.CylinderGeometry(0.007,0.007,wireH,5);
+      const w=new THREE.Mesh(wg,cylMat); w.position.set(cx2,vigY+VH/2+0.03+wireH/2,cz2); w.userData.dw=true; scene.add(w);
+      cz2+=1.22;
+    }
+    cx2+=0.61;
+  }
+
+  // ── Placas Gyplac ½" ──
+  const plateH=0.013;
+  const plateY=vigY+VH/2+plateH/2+0.005;
+  // Capa 1
+  const pm1=new THREE.MeshLambertMaterial({color:0xCC1A1A,transparent:true,opacity:plateOpacity,side:THREE.DoubleSide});
+  plateMats.push(pm1);
+  let px=0;
+  while(px<largo){
+    let pz=0;
+    while(pz<ancho){
+      const w=Math.min(1.22,largo-px), d=Math.min(2.44,ancho-pz);
+      const pg=box(w,plateH,d);
+      const pm=mk(pg,pm1,px+w/2,plateY,pz+d/2);
+      const el=new THREE.EdgesGeometry(pg);
+      const el2=new THREE.LineSegments(el,new THREE.LineBasicMaterial({color:0x880000}));
+      el2.position.copy(pm.position); el2.userData.dw=true; scene.add(el2);
+      pz+=2.44;
+    }
+    px+=1.22;
+  }
+
+  // Capa 2 (doble, offset media placa)
+  if(doble){
+    const pm2=new THREE.MeshLambertMaterial({color:0xff4444,transparent:true,opacity:plateOpacity*0.65,side:THREE.DoubleSide});
+    plateMats.push(pm2);
+    const plateY2=plateY+plateH+0.003;
+    px=0.61;
+    while(px<largo+0.61){
+      let pz=1.22;
+      while(pz<ancho+1.22){
+        const x0=Math.max(0,px-0.61), x1=Math.min(largo,px+0.61);
+        const z0=Math.max(0,pz-1.22), z1=Math.min(ancho,pz+1.22);
+        const w=x1-x0, d=z1-z0;
+        if(w>0.01&&d>0.01){
+          mk(box(w,plateH,d),pm2,x0+w/2,plateY2,z0+d/2);
+        }
+        pz+=2.44;
+      }
+      px+=1.22;
+    }
+  }
+}
+
+// ════════════════════════════════════
+//  CALCULAR
+// ════════════════════════════════════
+function calcular() {
+  const largo = parseFloat(document.getElementById('largo').value)||6;
+  const ancho  = parseFloat(document.getElementById('ancho').value)||4;
+  const altcm  = parseFloat(document.getElementById('altura').value)||30;
+  const desp   = parseFloat(document.getElementById('desp').value)||10;
+  const doble  = document.getElementById('doble').checked;
+  const capas  = doble?2:1;
+  const f      = 1+desp/100;
+  const area   = largo*ancho;
+  const perim  = 2*(largo+ancho);
+  const altM   = altcm/100;
+  const fmt = n => Math.ceil(n).toLocaleString('es-CO');
+
+  // — Estructura —
+  const nOmegaLineas = Math.floor(largo/0.61)+1;
+  const mlOmega = nOmegaLineas * ancho;
+  const uOmega  = Math.ceil(mlOmega/2.44*f);
+
+  const nVigLineas = Math.floor(ancho/1.22)+1;
+  const mlVig  = nVigLineas * largo;
+  const uVig   = Math.ceil(mlVig/2.44*f);
+
+  const uAng   = Math.ceil(perim/2.44*f);
+
+  // — Placas —
+  const uPlaca = Math.ceil((area*capas)/(1.22*2.44)*f);
+
+  // — Tornillería —
+  const uTornE = Math.ceil((mlOmega+mlVig)*3.3*f);
+  const uTornP = Math.ceil(area*3.5*capas*f);
+
+  // — Juntas —
+  const mlCinta=area*1.2*capas*f;
+  const uCinta150=Math.ceil(mlCinta/150);
+
+  // — Masilla —
+  const uMasilla=Math.ceil(area*capas*f/35);
+
+  // — Pintura —
+  const uVinilo=Math.ceil(area*f/6);
+
+  // — Lija —
+  const uLija=Math.ceil(area*f/15);
+
+  // — Cuelgues —
+  const cuelgues=Math.floor(largo/1.22)*Math.floor(ancho/1.22);
+
+  // Chips
+  document.getElementById('chip-area').textContent=area.toFixed(1)+' m²';
+  document.getElementById('chip-placas').textContent=uPlaca+' und';
+  document.getElementById('chip-omega').textContent=uOmega+' und';
+  document.getElementById('chip-vig').textContent=uVig+' und';
+  document.getElementById('qs-area').textContent=area.toFixed(1)+' m²';
+  document.getElementById('qs-placas').textContent=uPlaca+' und';
+  document.getElementById('qs-omega').textContent=uOmega+' und';
+
+  // Tabla
+  const tbody=document.getElementById('qty-body');
+  tbody.innerHTML=`
+    <tr class="cat-hdr"><td colspan="2">Estructura metálica — ${calibre==='038'?'0.38':'0.40'} mm</td></tr>
+    ${qr(IT.omega[calibre].cod,IT.omega[calibre].desc,'c/0.61 m · 2.44 m/und',uOmega,'und')}
+    ${qr(IT.vigueta[calibre].cod,IT.vigueta[calibre].desc,'c/1.22 m · 2.44 m/und',uVig,'und')}
+    ${qr(IT.angulo[calibre].cod,IT.angulo[calibre].desc,'Perimetral continuo · 2.44 m/und',uAng,'und')}
+    <tr class="cat-hdr"><td colspan="2">Placa de yeso</td></tr>
+    ${qr(IT.placa.cod,IT.placa.desc+(doble?' — 2 capas':''),'2.9768 m²/und · NSR-10 E.4',uPlaca,'und')}
+    <tr class="cat-hdr"><td colspan="2">Tornillería</td></tr>
+    ${qr(IT.tornP.cod,IT.tornP.desc,'~1 c/30 cm en bordes placa',fmt(uTornP),'und')}
+    ${qr(IT.tornE.cod,IT.tornE.desc,'~1 c/30 cm en estructura',fmt(uTornE),'und')}
+    <tr class="cat-hdr"><td colspan="2">Tratamiento de juntas</td></tr>
+    ${qr(IT.cinta.cod,IT.cinta.desc,'1.2 ml cinta/m² · 3 manos',uCinta150,'rollos')}
+    ${qr(IT.masilla.cod,IT.masilla.desc,'35 m²/saco · 3 manos',uMasilla,'sacos')}
+    <tr class="cat-hdr"><td colspan="2">Acabados superficiales</td></tr>
+    ${qr(IT.vinilo.cod,IT.vinilo.desc,'~6 m²/balde · 2 manos',uVinilo,'baldes')}
+    ${qr(IT.lija.cod,IT.lija.desc,'1 pliego c/15 m²',uLija,'pliegos')}
+  `;
+
+  document.getElementById('summ').innerHTML=`
+    <div class="srow"><span class="sk">Área de cielo</span><span class="sv">${area.toFixed(2)} m²</span></div>
+    <div class="srow"><span class="sk">Perímetro</span><span class="sv">${perim.toFixed(2)} ml</span></div>
+    <div class="srow"><span class="sk">Puntos de cuelgue</span><span class="sv">${cuelgues} und</span></div>
+    <div class="srow"><span class="sk">Capas de placa</span><span class="sv">${capas}</span></div>
+    <div class="srow"><span class="sk">Calibre</span><span class="sv">${calibre==='038'?'0.38 mm':'0.40 mm'}</span></div>
+    <div class="srow"><span class="sk">Desperdicio</span><span class="sv">${desp}%</span></div>
+    <div class="srow"><span class="sk">Total placas Gyplac</span><span class="sv">${uPlaca} und</span></div>
+  `;
+
+  buildScene(largo, ancho, altM, doble);
+}
+
+function qr(cod,desc,note,qty,unit){
+  return `<tr>
+    <td><span class="cod">${cod}</span><div class="iname">${desc}</div><div class="inote">${note}</div></td>
+    <td style="text-align:right;white-space:nowrap"><span class="qval">${qty}</span><span class="qunit">${unit}</span></td>
+  </tr>`;
+}
+
+// ════════════════════════════════════
+//  BOOT
+// ════════════════════════════════════
+window.addEventListener('load', ()=>{ initThree(); calcular(); });
+</script>
+</body>
+</html>
