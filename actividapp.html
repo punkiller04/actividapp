@@ -112,6 +112,35 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 /* LOADING */
 #app-loading{position:fixed;inset:0;background:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;color:#fff;gap:12px}
 #app-loading.hide{display:none}
+/* KANBAN */
+.kanban-wrap{display:flex;gap:10px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch}
+.kanban-wrap::-webkit-scrollbar{height:0}
+.kanban-col{min-width:220px;flex-shrink:0;background:var(--bg);border-radius:14px;border:0.5px solid var(--brd);display:flex;flex-direction:column;max-height:calc(100vh - 180px)}
+.kanban-col-hdr{padding:10px 12px;border-radius:14px 14px 0 0;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.kanban-col-body{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:7px}
+.kanban-col-body::-webkit-scrollbar{width:0}
+.kanban-card{background:var(--card);border-radius:11px;padding:11px;border:0.5px solid var(--brd);box-shadow:var(--sh);cursor:pointer;position:relative}
+.kanban-card-t{font-size:13px;font-weight:500;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kanban-card-s{font-size:11px;color:var(--muted)}
+.kanban-card-act{position:absolute;top:9px;right:9px;font-size:10px;font-weight:600;background:var(--rlight);color:var(--rdark);border-radius:10px;padding:2px 7px}
+.kanban-move{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.kanban-mv-btn{font-size:10px;padding:3px 8px;border-radius:8px;border:0.5px solid var(--brd);background:var(--bg);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif}
+.kanban-mv-btn:hover{background:var(--rlight);color:var(--rdark);border-color:var(--red)}
+.k0{background:linear-gradient(135deg,#2471A3,#1A5276);color:#fff}
+.k1{background:linear-gradient(135deg,#E67E22,#CA6F1E);color:#fff}
+.k2{background:linear-gradient(135deg,#8E44AD,#6C3483);color:#fff}
+.k3{background:linear-gradient(135deg,#219653,#1A7A42);color:#fff}
+.k4{background:linear-gradient(135deg,#555,#333);color:#fff}
+/* TRAZABILIDAD */
+.traz-timeline{padding:0 4px}
+.traz-item{display:flex;gap:10px;margin-bottom:0}
+.traz-line-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:28px}
+.traz-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:2px}
+.traz-vline{flex:1;width:2px;background:var(--brd);min-height:16px}
+.traz-body{flex:1;padding-bottom:14px}
+.traz-type{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.traz-desc{font-size:13px;font-weight:500;margin:2px 0}
+.traz-meta{font-size:11px;color:var(--muted)}
 /* FERRETERIAS */
 .ferr-card{background:var(--card);border-radius:14px;border:0.5px solid var(--brd);padding:13px;margin-bottom:9px;box-shadow:var(--sh);display:flex;gap:11px;align-items:center}
 .ferr-num{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -165,6 +194,8 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     </div>
     <div id="home-insights" style="display:none"></div>
     <div class="stl">Módulos</div>
+    <div class="card" style="cursor:pointer" onclick="go('kanban')"><div class="crow"><div class="cico" style="background:linear-gradient(135deg,#EAF4FB,#D6EAF8)">📊</div><div class="cbody"><div class="ct">Embudo Comercial</div><div class="cs" id="kanban-sub">Kanban de proyectos</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('trazabilidad')"><div class="crow"><div class="cico" style="background:linear-gradient(135deg,#F5EEF8,#EBD5F8)">🔍</div><div class="cbody"><div class="ct">Trazabilidad</div><div class="cs">Movimientos de proyectos</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('nueva')"><div class="crow"><div class="cico" style="background:var(--rlight)">📝</div><div class="cbody"><div class="ct">Nueva visita</div><div class="cs">Registrar actividad comercial</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('actividades')"><div class="crow"><div class="cico" style="background:var(--glight)">📋</div><div class="cbody"><div class="ct">Actividades</div><div class="cs" id="act-sub">Historial de visitas</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('proyectos')"><div class="crow"><div class="cico" style="background:var(--blight)">🏗️</div><div class="cbody"><div class="ct">Proyectos</div><div class="cs" id="proy-sub">Ver y gestionar</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
@@ -475,6 +506,43 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   </div>
 </div>
 
+<!-- KANBAN -->
+<div class="scr" id="s-kanban">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Embudo Comercial</div><button class="tb-a" onclick="openM('m-nuevo-proy')">+ Nuevo</button></div>
+  <div style="padding:8px 12px 4px;background:var(--card);flex-shrink:0;border-bottom:0.5px solid var(--brd)">
+    <div class="sw" style="margin-bottom:0"><input id="kb-q" placeholder="Buscar proyecto..." oninput="renderKanban()" style="width:100%;padding:8px 12px 8px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none"></div>
+  </div>
+  <div style="flex:1;overflow-x:auto;padding:12px;background:var(--bg)">
+    <div class="kanban-wrap" id="kanban-wrap"></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">📊</span>Kanban</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- TRAZABILIDAD -->
+<div class="scr" id="s-trazabilidad">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Trazabilidad</div></div>
+  <div class="cnt">
+    <div class="f">
+      <label>Buscar proyecto o cliente</label>
+      <div class="sw"><input id="traz-q" placeholder="Escribe nombre del proyecto o cliente..." oninput="renderTraz()" style="width:100%;padding:10px 12px 10px 32px;border:1px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
+    </div>
+    <div id="traz-result"></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b on"><span class="nb-i">🔍</span>Trazab.</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
 </div><!-- /app -->
 
 <!-- MODALES -->
@@ -495,6 +563,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <div class="f"><label>Barrio / Zona</label><input id="mnp-bar" placeholder="Barrio"></div>
   <div class="f"><label>NIT cliente</label><input id="mnp-nit" placeholder="NIT"></div>
   <div class="f"><label>Canal</label><select id="mnp-canal"><option value="OBRAS">Obras</option><option value="FERRETERIA">Ferretería</option></select></div>
+  <div class="f"><label>Etapa comercial</label><select id="mnp-etapa"><option value="PROSPECCIÓN">🔵 1. Prospección</option><option value="VISITA TÉCNICA">🟠 2. Visita Técnica</option><option value="COTIZACIÓN">🟣 3. Cotización</option><option value="PROYECTO GANADO">🟢 4. Proyecto Ganado</option><option value="CERRADO">⚫ 5. Cerrado</option></select></div>
   <div class="f"><label>Estado</label><div class="chips" id="mnp-est"><div class="chip on" data-v="ACTIVO">✅ Activo</div><div class="chip" data-v="INACTIVO">❌ Inactivo</div></div></div>
   <div class="f"><label>Observaciones</label><textarea id="mnp-obs" rows="2" placeholder="Notas..."></textarea></div>
   <button class="bp" type="button" onclick="saveNuevoProy()">Crear proyecto</button>
@@ -573,6 +642,23 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <div class="f"><label>Estado</label><div class="chips" id="mu-est"><div class="chip on" data-v="ACTIVO">✅ Activo</div><div class="chip" data-v="INACTIVO">❌ Inactivo</div></div></div>
   <button class="bp" type="button" id="mu-btn" onclick="saveUsuario()">Crear usuario</button>
   <button class="bs" onclick="closeM('m-usuario')">Cancelar</button>
+</div></div>
+
+<div class="mo" id="m-kanban-etapa"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="mke-t">Mover Etapa</div>
+  <input type="hidden" id="mke-pid">
+  <div class="f"><label>Etapa del embudo</label>
+    <div class="chips" id="mke-etapa" style="flex-direction:column;gap:8px">
+      <div class="chip" data-v="PROSPECCIÓN" onclick="selKanbanEtapa(this)">🔵 1. Prospección</div>
+      <div class="chip" data-v="VISITA TÉCNICA" onclick="selKanbanEtapa(this)">🟠 2. Visita Técnica</div>
+      <div class="chip" data-v="COTIZACIÓN" onclick="selKanbanEtapa(this)">🟣 3. Cotización</div>
+      <div class="chip" data-v="PROYECTO GANADO" onclick="selKanbanEtapa(this)">🟢 4. Proyecto Ganado</div>
+      <div class="chip" data-v="CERRADO" onclick="selKanbanEtapa(this)">⚫ 5. Cerrado</div>
+    </div>
+  </div>
+  <div class="f"><label>Observación del movimiento</label><textarea id="mke-obs" rows="2" placeholder="¿Qué pasó en esta etapa?"></textarea></div>
+  <button class="bp" type="button" onclick="saveKanbanEtapa()">Guardar movimiento</button>
+  <button class="bs" onclick="closeM('m-kanban-etapa')">Cancelar</button>
 </div></div>
 
 <div class="toast" id="toast"></div>
@@ -724,7 +810,8 @@ window.saveNuevoProy=async function(){
   const nom=document.getElementById('mnp-nom').value.trim();
   if(!nom){toast('Ingresa el nombre del proyecto');return;}
   const est=document.querySelector('#mnp-est .chip.on')?.dataset.v||'ACTIVO';
-  const data={'NOMBRE PROYECTO':nom,'DIRECCION':document.getElementById('mnp-dir').value,'BARRIO':document.getElementById('mnp-bar').value,'NIT':document.getElementById('mnp-nit').value,'CANAL':document.getElementById('mnp-canal').value,'ESTADO':est,'OBSERVACIONES':document.getElementById('mnp-obs').value};
+  const etapaInicial=document.getElementById('mnp-etapa')?.value||'PROSPECCIÓN';
+  const data={'NOMBRE PROYECTO':nom,'DIRECCION':document.getElementById('mnp-dir').value,'BARRIO':document.getElementById('mnp-bar').value,'NIT':document.getElementById('mnp-nit').value,'CANAL':document.getElementById('mnp-canal').value,'ESTADO':est,'OBSERVACIONES':document.getElementById('mnp-obs').value,'ETAPA':etapaInicial,'HISTORIAL_ETAPAS':[{etapa:etapaInicial,fecha:new Date().toISOString(),asesor:window.CU?.nombre||'',obs:'Proyecto creado'}]};
   try{
     const r2=window.FS.doc(collection(db,'proyectos'));
     await window.FS.setDoc(r2,data);
@@ -737,6 +824,7 @@ window.saveNuevoProy=async function(){
     closeM('m-nuevo-proy');
     document.getElementById('proy-sub').textContent=window.Proyectos.length.toLocaleString()+' proyectos';
     ['mnp-nom','mnp-dir','mnp-bar','mnp-nit','mnp-obs'].forEach(function(id){document.getElementById(id).value='';});
+    var et=document.getElementById('mnp-etapa');if(et)et.value='PROSPECCIÓN';;
   }catch(e){toast('Error: '+e.message);}
 };
 
@@ -1063,6 +1151,8 @@ window.go=function(id){
   if(id==='usuarios')renderUsrLista();
   if(id==='ferreterias')initFerreterias();
   if(id==='muestras')renderMuestras();
+  if(id==='kanban')renderKanban();
+  if(id==='trazabilidad'){document.getElementById('traz-q').value='';document.getElementById('traz-result').innerHTML='<div class="em"><div class="em-i">🔍</div><div>Escribe el nombre de un proyecto o cliente para ver su historial</div></div>';}
 };
 
 // ── LOGIN ───────────────────────────────────────────────
@@ -1444,20 +1534,28 @@ window.renderProyLista=function(list){
   var el=document.getElementById('proy-list');
   if(!list||!list.length){el.innerHTML='<div class="em"><div class="em-i">🏗️</div><div>Sin proyectos</div></div>';return;}
   var isA=window.CU?.tipo==='ADMINISTRADOR';
+  var ETAPA_ICO={'PROSPECCIÓN':'🔵','VISITA TÉCNICA':'🟠','COTIZACIÓN':'🟣','PROYECTO GANADO':'🟢','CERRADO':'⚫'};
   var html='';
   list.forEach(function(p){
     var n=p['NOMBRE PROYECTO']||'';
     var c=p['CODIGO']||'';
     var b=p['BARRIO']||'';
     var e=p['ESTADO']||'ACTIVO';
+    var etapa=p['ETAPA']||'';
+    var dir=p['DIRECCION']||p['COORDENADAS']||'';
     var cnt=(window.Actividades||[]).filter(function(a){return a.PROYECTO===n;}).length;
     var editBtn=isA?'<button class="bg2" style="margin-top:8px;width:100%" onclick="editProy(\''+p.id+'\')">✏️ Editar estado</button>':'';
+    var navBtn=dir?'<button class="bg2" style="margin-top:6px;width:100%;color:var(--blue);border-color:var(--blue)" onclick="navegarA(\''+dir.replace(/'/g,'')+'\')">🧭 Navegar al proyecto</button>':'';
+    var kanbanBtn='<button class="bg2" style="margin-top:6px;width:100%;color:#8E44AD;border-color:#8E44AD" onclick="abrirKanbanEtapa(\''+p.id+'\')">📊 Mover etapa</button>';
     html+='<div class="card">'
       +'<div style="display:flex;justify-content:space-between;align-items:start">'
         +'<div style="flex:1;min-width:0"><div class="ct">'+n+'</div><div class="cs">'+(c?'Cód: '+c+' · ':'')+( b||p.CANAL||'')+'</div></div>'
         +'<span class="b '+(e==='INACTIVO'?'ba1':'bg1')+'" style="margin-left:8px;flex-shrink:0">'+e+'</span>'
       +'</div>'
-      +(cnt>0?'<div style="font-size:11px;color:var(--blue);margin-top:6px">📋 '+cnt+' visita'+(cnt!==1?'s':'')+' registradas</div>':'')
+      +(etapa?'<div style="font-size:11px;margin-top:5px">'+(ETAPA_ICO[etapa]||'')+'<b style="color:var(--text)"> '+etapa+'</b></div>':'')
+      +(cnt>0?'<div style="font-size:11px;color:var(--blue);margin-top:4px">📋 '+cnt+' visita'+(cnt!==1?'s':'')+' registradas</div>':'')
+      +navBtn
+      +kanbanBtn
       +editBtn
     +'</div>';
   });
@@ -1626,7 +1724,7 @@ window.renderMap=function(){
     var aBg=aEst==='VISITADO'?'#27AE60':aEst==='CERRADO'?'#888':'#F39C12';
     var icon=L.divIcon({html:'<div style="background:'+aBg+';border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)">'+aIco+'</div>',iconSize:[28,28],iconAnchor:[14,14],className:''});
     var m=L.marker([lat,lng],{icon});
-    m.bindPopup('<b>'+a.PROYECTO+'</b><br><b>'+a.ASESOR+'</b><br><span style="font-weight:600;color:'+aBg+'">'+aEst+'</span><br><a href="#" onclick="editAsig(\''+a.id+'\');window.leafMap.closePopup();return false" style="color:#C0392B;font-weight:600">✏️ Actualizar</a>');
+    m.bindPopup('<b>'+a.PROYECTO+'</b><br><b>'+a.ASESOR+'</b><br><span style="font-weight:600;color:'+aBg+'">'+aEst+'</span><br><a href="#" onclick="editAsig(\''+a.id+'\');window.leafMap.closePopup();return false" style="color:#C0392B;font-weight:600">✏️ Actualizar</a>&nbsp;&nbsp;<a href="https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng+'&travelmode=driving" target="_blank" style="color:#2471A3;font-weight:600">🧭 Navegar</a>');
     m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
   });
   // Visitas en mapa
@@ -1640,7 +1738,7 @@ window.renderMap=function(){
     var icon=L.divIcon({html:'<div style="background:'+color+';border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.4)">'+emoji+'</div>',iconSize:[30,30],iconAnchor:[15,15],className:''});
     var m=L.marker([lat,lng],{icon});
     var f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    m.bindPopup('<b>'+(a.PROYECTO||a.CLIENTE||'—')+'</b><br>'+(a.ASESOR||'')+'<br>'+f.toLocaleDateString('es-CO')+'<br><span style="color:'+color+';font-weight:600">'+(a.IMPACTO||'')+'</span>'+(a.OBSERVACION?'<br>'+a.OBSERVACION:'')+'<br><a href="#" onclick="editAct(\''+a.id+'\');window.leafMap.closePopup();return false" style="color:#C0392B;font-weight:600">✏️ Editar</a>');
+    m.bindPopup('<b>'+(a.PROYECTO||a.CLIENTE||'—')+'</b><br>'+(a.ASESOR||'')+'<br>'+f.toLocaleDateString('es-CO')+'<br><span style="color:'+color+';font-weight:600">'+(a.IMPACTO||'')+'</span>'+(a.OBSERVACION?'<br>'+a.OBSERVACION:'')+'<br><a href="#" onclick="editAct(\''+a.id+'\');window.leafMap.closePopup();return false" style="color:#C0392B;font-weight:600">✏️ Editar</a>&nbsp;&nbsp;<a href="https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng+'&travelmode=driving" target="_blank" style="color:#2471A3;font-weight:600">🧭 Navegar</a>');
     m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
   });
   if(lats.length>1){
@@ -1896,6 +1994,179 @@ window.regVisitaFerr=function(nombre,addr,lat,lng){
   toast('📝 Datos prellenados. Completa la visita.');
   go('nueva');
 };
+
+// ── KANBAN EMBUDO COMERCIAL ─────────────────────────────
+var KANBAN_ETAPAS=[
+  {key:'PROSPECCIÓN',label:'Prospección',cls:'k0',ico:'🔵'},
+  {key:'VISITA TÉCNICA',label:'Visita Técnica',cls:'k1',ico:'🟠'},
+  {key:'COTIZACIÓN',label:'Cotización',cls:'k2',ico:'🟣'},
+  {key:'PROYECTO GANADO',label:'Proyecto Ganado',cls:'k3',ico:'🟢'},
+  {key:'CERRADO',label:'Cerrado',cls:'k4',ico:'⚫'}
+];
+window.renderKanban=function(){
+  var q=(document.getElementById('kb-q')?.value||'').toLowerCase().trim();
+  var isA=window.CU?.tipo==='ADMINISTRADOR';
+  var mi=window.CU?.nombre||'';
+  var proyectos=(window.Proyectos||[]).filter(function(p){
+    var n=(p['NOMBRE PROYECTO']||'').toLowerCase();
+    if(q&&!n.includes(q))return false;
+    return true;
+  });
+  var wrap=document.getElementById('kanban-wrap');
+  if(!wrap)return;
+  var html='';
+  KANBAN_ETAPAS.forEach(function(etapa){
+    var cards=proyectos.filter(function(p){return (p['ETAPA']||'PROSPECCIÓN')===etapa.key;});
+    html+='<div class="kanban-col">';
+    html+='<div class="kanban-col-hdr '+etapa.cls+'"><span>'+etapa.ico+' '+etapa.label+'</span><span style="background:rgba(255,255,255,.25);border-radius:10px;padding:1px 8px;font-size:12px">'+cards.length+'</span></div>';
+    html+='<div class="kanban-col-body">';
+    if(!cards.length){
+      html+='<div style="text-align:center;padding:16px;color:var(--muted);font-size:12px">Sin proyectos</div>';
+    }
+    cards.forEach(function(p){
+      var n=p['NOMBRE PROYECTO']||'';
+      var dir=p['DIRECCION']||p['COORDENADAS']||'';
+      var cnt=(window.Actividades||[]).filter(function(a){return a.PROYECTO===n;}).length;
+      var safeId=p.id;
+      var moveOpts='';
+      KANBAN_ETAPAS.forEach(function(e2){
+        if(e2.key!==etapa.key)moveOpts+='<span class="kanban-mv-btn" onclick="event.stopPropagation();moverEtapaRapido(\''+safeId+'\',\''+e2.key+'\')">'+e2.ico+' '+e2.label+'</span>';
+      });
+      html+='<div class="kanban-card">'
+        +'<div class="kanban-card-t" title="'+n+'">'+n+'</div>'
+        +(p['BARRIO']||p['CANAL']?'<div class="kanban-card-s">'+(p['BARRIO']||p['CANAL']||'')+'</div>':'')
+        +(cnt>0?'<div style="font-size:10px;color:var(--blue);margin-top:3px">📋 '+cnt+' visita'+(cnt!==1?'s':'')+' </div>':'')
+        +(dir?'<button class="bg2" style="width:100%;margin-top:7px;font-size:11px;color:var(--blue);border-color:var(--blue);padding:5px 0" onclick="event.stopPropagation();navegarA(\''+dir.replace(/'/g,'')+'\')">🧭 Navegar</button>':'')
+        +'<div style="margin-top:7px"><div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Mover a:</div><div style="display:flex;gap:4px;flex-wrap:wrap">'+moveOpts+'</div></div>'
+        +'<button class="bg2" style="width:100%;margin-top:6px;font-size:11px;color:#8E44AD;border-color:#D7BDE2;padding:5px 0" onclick="event.stopPropagation();abrirKanbanEtapa(\''+safeId+'\')">✏️ Cambiar con nota</button>'
+      +'</div>';
+    });
+    html+='</div></div>';
+  });
+  wrap.innerHTML=html;
+  document.getElementById('kanban-sub').textContent=(window.Proyectos||[]).length+' proyectos en embudo';
+};
+window.abrirKanbanEtapa=function(pid){
+  var p=window.Proyectos.find(function(x){return x.id===pid;});
+  if(!p)return;
+  document.getElementById('mke-pid').value=pid;
+  document.getElementById('mke-t').textContent=(p['NOMBRE PROYECTO']||'').substring(0,28);
+  document.getElementById('mke-obs').value='';
+  var etActual=p['ETAPA']||'PROSPECCIÓN';
+  document.querySelectorAll('#mke-etapa .chip').forEach(function(c){c.classList.remove('on');if(c.dataset.v===etActual)c.classList.add('on');});
+  openM('m-kanban-etapa');
+};
+window.selKanbanEtapa=function(el){
+  document.querySelectorAll('#mke-etapa .chip').forEach(function(c){c.classList.remove('on');});
+  el.classList.add('on');
+};
+window.saveKanbanEtapa=async function(){
+  var pid=document.getElementById('mke-pid').value;
+  var etapa=document.querySelector('#mke-etapa .chip.on')?.dataset.v;
+  var obs=document.getElementById('mke-obs').value.trim();
+  if(!pid||!etapa){toast('Selecciona una etapa');return;}
+  var p=window.Proyectos.find(function(x){return x.id===pid;});
+  if(!p)return;
+  var hist=p['HISTORIAL_ETAPAS']||[];
+  var entrada={etapa:etapa,fecha:new Date().toISOString(),asesor:window.CU?.nombre||'',obs:obs||''};
+  hist.push(entrada);
+  try{
+    await window.FS.updateDoc(window.FS.doc(window.db,'proyectos',pid),{ETAPA:etapa,HISTORIAL_ETAPAS:hist});
+    p['ETAPA']=etapa;p['HISTORIAL_ETAPAS']=hist;
+    toast('✅ Etapa actualizada: '+etapa);
+    closeM('m-kanban-etapa');
+    renderKanban();fltPL();
+  }catch(e){toast('Error: '+e.message);}
+};
+window.moverEtapaRapido=async function(pid,etapa){
+  var p=window.Proyectos.find(function(x){return x.id===pid;});
+  if(!p)return;
+  var hist=p['HISTORIAL_ETAPAS']||[];
+  hist.push({etapa:etapa,fecha:new Date().toISOString(),asesor:window.CU?.nombre||'',obs:''});
+  try{
+    await window.FS.updateDoc(window.FS.doc(window.db,'proyectos',pid),{ETAPA:etapa,HISTORIAL_ETAPAS:hist});
+    p['ETAPA']=etapa;p['HISTORIAL_ETAPAS']=hist;
+    toast('✅ Movido a: '+etapa);
+    renderKanban();
+  }catch(e){toast('Error: '+e.message);}
+};
+
+// ── TRAZABILIDAD ────────────────────────────────────────
+var TRAZ_COLORS={'PROSPECCIÓN':'#2471A3','VISITA TÉCNICA':'#E67E22','COTIZACIÓN':'#8E44AD','PROYECTO GANADO':'#219653','CERRADO':'#555','VISITA':'#219653','SEGUIMIENTO':'#E67E22','CIERRE':'#C0392B','LLAMADA':'#2471A3','MUESTRA':'#8E44AD','ASIGNACIÓN':'#E67E22','default':'#aaa'};
+window.renderTraz=function(){
+  var q=(document.getElementById('traz-q')?.value||'').toLowerCase().trim();
+  var el=document.getElementById('traz-result');
+  if(!q||q.length<2){el.innerHTML='<div class="em"><div class="em-i">🔍</div><div>Escribe al menos 2 caracteres para buscar</div></div>';return;}
+  // Buscar proyectos y clientes que coincidan
+  var proyMatch=(window.Proyectos||[]).filter(function(p){return (p['NOMBRE PROYECTO']||'').toLowerCase().includes(q);}).slice(0,5);
+  var cliMatch=[...new Set((window.Actividades||[]).map(function(a){return a.CLIENTE||'';}).filter(function(c){return c.toLowerCase().includes(q);}))].slice(0,5);
+  if(!proyMatch.length&&!cliMatch.length){el.innerHTML='<div class="em"><div class="em-i">🔍</div><div>Sin resultados para "'+q+'"</div></div>';return;}
+  var html='';
+  proyMatch.forEach(function(p){
+    var n=p['NOMBRE PROYECTO']||'';
+    html+=buildTrazHtml(n,'proyecto',p);
+  });
+  cliMatch.forEach(function(cli){
+    if(proyMatch.some(function(p){return p['NOMBRE PROYECTO']===cli;}))return;
+    html+=buildTrazHtml(cli,'cliente',null);
+  });
+  el.innerHTML=html||'<div class="em"><div class="em-i">🔍</div><div>Sin movimientos encontrados</div></div>';
+};
+function buildTrazHtml(nombre,tipo,proy){
+  // Recopilar todos los eventos
+  var eventos=[];
+  // Historial de etapas
+  if(proy&&proy['HISTORIAL_ETAPAS']){
+    proy['HISTORIAL_ETAPAS'].forEach(function(h){
+      eventos.push({tipo:'ETAPA',etapa:h.etapa||'',fecha:h.fecha?new Date(h.fecha):new Date(0),asesor:h.asesor||'',obs:h.obs||''});
+    });
+  }
+  // Actividades
+  (window.Actividades||[]).filter(function(a){
+    return tipo==='proyecto'?a.PROYECTO===nombre:a.CLIENTE===nombre;
+  }).forEach(function(a){
+    eventos.push({tipo:a['TIPO DE VISITA']||'VISITA',desc:a.PROYECTO||a.CLIENTE||'',fecha:a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0),asesor:a.ASESOR||'',obs:a.OBSERVACION||'',impacto:a.IMPACTO||''});
+  });
+  // Asignaciones
+  (window.Asignaciones||[]).filter(function(a){return a.PROYECTO===nombre;}).forEach(function(a){
+    eventos.push({tipo:'ASIGNACIÓN',desc:'Asignado a '+a.ASESOR,fecha:a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0),asesor:a.ASIGNADO_POR||a.ASESOR||'',obs:a.INSTRUCCIONES||''});
+  });
+  // Muestras
+  (window.Muestras||[]).filter(function(m){return tipo==='proyecto'?m.PROYECTO===nombre:m.CLIENTE===nombre;}).forEach(function(m){
+    eventos.push({tipo:'MUESTRA',desc:'Muestra: '+m.PRODUCTO,fecha:m.fecha?.toDate?m.fecha.toDate():new Date(m.fecha||0),asesor:m.ASESOR||'',obs:'Cant: '+(m.CANTIDAD||1)});
+  });
+  // Ordenar más reciente primero
+  eventos.sort(function(a,b){return b.fecha-a.fecha;});
+  if(!eventos.length){
+    return '<div class="card" style="margin-bottom:12px"><div style="font-size:13px;font-weight:600">'+nombre+'</div><div class="em" style="padding:14px 0"><div class="em-i" style="font-size:24px">📭</div><div style="font-size:12px">Sin movimientos registrados</div></div></div>';
+  }
+  var html='<div class="card" style="margin-bottom:12px">'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
+      +'<div style="width:36px;height:36px;border-radius:10px;background:'+(tipo==='proyecto'?'var(--blight)':'var(--rlight)')+';display:flex;align-items:center;justify-content:center;font-size:18px">'+(tipo==='proyecto'?'🏗️':'👤')+'</div>'
+      +'<div><div style="font-size:14px;font-weight:600">'+nombre+'</div><div style="font-size:11px;color:var(--muted)">'+eventos.length+' movimiento'+(eventos.length!==1?'s':'')+' · '+tipo+'</div></div>'
+    +'</div>'
+    +'<div class="traz-timeline">';
+  eventos.forEach(function(ev,i){
+    var color=TRAZ_COLORS[ev.tipo]||TRAZ_COLORS['default'];
+    var isLast=i===eventos.length-1;
+    var fd=ev.fecha.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
+    var fh=ev.fecha.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    html+='<div class="traz-item">'
+      +'<div class="traz-line-wrap">'
+        +'<div class="traz-dot" style="background:'+color+'"></div>'
+        +(!isLast?'<div class="traz-vline"></div>':'')
+      +'</div>'
+      +'<div class="traz-body">'
+        +'<div class="traz-type" style="color:'+color+'">'+ev.tipo+(ev.etapa?' → '+ev.etapa:'')+(ev.impacto?' · '+ev.impacto:'')+'</div>'
+        +(ev.desc?'<div class="traz-desc">'+ev.desc+'</div>':'')
+        +(ev.obs?'<div class="traz-meta" style="margin-top:2px;color:var(--text)">'+ev.obs+'</div>':'')
+        +'<div class="traz-meta">'+fd+' '+fh+(ev.asesor?' · <b>'+ev.asesor.split(' ')[0]+'</b>':'')+'</div>'
+      +'</div>'
+    +'</div>';
+  });
+  html+='</div></div>';
+  return html;
+}
 
 // ── TOAST ───────────────────────────────────────────────
 window.toast=function(msg){
