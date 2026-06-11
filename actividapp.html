@@ -457,15 +457,15 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 <div class="scr" id="s-ferreterias">
   <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Ferreterías Cercanas</div><button class="tb-a" onclick="buscarFerreterias()">🔄 Actualizar</button></div>
   <div class="cnt">
-    <div id="ferr-status" style="background:var(--blight);border-radius:12px;padding:11px 14px;margin-bottom:12px;font-size:13px;color:var(--blue);display:flex;align-items:center;gap:8px">
+    <div id="ferr-status" style="border-radius:12px;padding:11px 14px;margin-bottom:10px;font-size:13px;display:flex;align-items:center;gap:8px;background:var(--blight);color:var(--blue)">
       <span>📍</span><span id="ferr-st-txt">Obteniendo ubicación...</span>
     </div>
-    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
       <button class="chip on" id="ft-todas" onclick="setFT('todas')">🔧 Todas</button>
       <button class="chip" id="ft-ferreteria" onclick="setFT('ferreteria')">Ferreterías</button>
-      <button class="chip" id="ft-materiales" onclick="setFT('materiales')">Materiales</button>
+      <button class="chip" id="ft-materiales" onclick="setFT('materiales')">🧱 Materiales</button>
     </div>
-    <div id="ferr-lista"><div class="ld"><div class="bounce" style="font-size:32px;text-align:center">🔍</div><div style="margin-top:10px">Buscando ferreterías...</div></div></div>
+    <div id="ferr-lista"><div class="ld"><div style="font-size:36px;text-align:center;animation:bounce .8s infinite alternate">🔍</div><div style="margin-top:10px;font-size:13px">Buscando ferreterías...</div></div></div>
   </div>
   <div class="nb">
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
@@ -627,11 +627,76 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 </div></div>
 
 <div class="mo" id="m-act-edit"><div class="md"><div class="md-pull"></div>
-  <div class="mdt">Editar Actividad</div>
+  <div class="mdt" id="mae-title">Editar Visita</div>
+
+  <!-- Info del proyecto asociado -->
+  <div id="mae-proy-panel" style="display:none;background:var(--blight);border:1px solid #C3D8EE;border-radius:12px;padding:12px;margin-bottom:12px">
+    <div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🏗️ Proyecto</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:6px" id="mae-pn"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+      <div style="background:rgba(255,255,255,.7);border-radius:8px;padding:7px">
+        <div style="font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase">Canal</div>
+        <div id="mae-pcanal" style="font-size:12px;font-weight:600">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,.7);border-radius:8px;padding:7px">
+        <div style="font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase">Etapa</div>
+        <div id="mae-petapa" style="font-size:12px;font-weight:600">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,.7);border-radius:8px;padding:7px">
+        <div style="font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase">Estado</div>
+        <div id="mae-pestado" style="font-size:12px;font-weight:600">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,.7);border-radius:8px;padding:7px">
+        <div style="font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase">Total visitas</div>
+        <div id="mae-pvis" style="font-size:12px;font-weight:600">0</div>
+      </div>
+    </div>
+    <div id="mae-pdir" style="font-size:11px;color:var(--muted)"></div>
+    <!-- Barra de impacto del proyecto -->
+    <div id="mae-pimp-wrap" style="margin-top:8px">
+      <div style="font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:3px">Tasa de impacto del proyecto</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;background:rgba(0,0,0,.1);border-radius:4px;height:7px;overflow:hidden"><div id="mae-pbar" style="height:100%;border-radius:4px;background:var(--green)"></div></div>
+        <div id="mae-ppct" style="font-size:12px;font-weight:700;color:var(--green);min-width:34px;text-align:right">0%</div>
+      </div>
+      <div id="mae-pimp-det" style="font-size:10px;color:var(--muted);margin-top:2px"></div>
+    </div>
+    <!-- Cotización y Factura si existen -->
+    <div id="mae-pcot-wrap" style="display:none;margin-top:8px;background:rgba(255,255,255,.7);border-radius:8px;padding:8px">
+      <div style="font-size:9px;color:#8E44AD;font-weight:700;text-transform:uppercase;margin-bottom:3px">💜 Cotización</div>
+      <div id="mae-pcot" style="font-size:12px;font-weight:600"></div>
+    </div>
+    <div id="mae-pfac-wrap" style="display:none;margin-top:6px;background:rgba(255,255,255,.7);border-radius:8px;padding:8px">
+      <div style="font-size:9px;color:var(--green);font-weight:700;text-transform:uppercase;margin-bottom:3px">🟢 Factura / Venta</div>
+      <div id="mae-pfac" style="font-size:12px;font-weight:600"></div>
+    </div>
+    <!-- Observaciones del proyecto -->
+    <div id="mae-pobs-wrap" style="display:none;margin-top:6px;background:rgba(255,255,255,.7);border-radius:8px;padding:8px">
+      <div style="font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:2px">Observaciones del proyecto</div>
+      <div id="mae-pobs" style="font-size:12px"></div>
+    </div>
+    <!-- Historial de etapas compacto -->
+    <div id="mae-phist-wrap" style="display:none;margin-top:8px">
+      <div style="font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:5px">Historial de etapas</div>
+      <div id="mae-phist" style="font-size:11px"></div>
+    </div>
+    <!-- Botón mover etapa -->
+    <button class="bg2" style="width:100%;margin-top:10px;color:#8E44AD;border-color:#8E44AD;font-size:12px" onclick="closeM('m-act-edit');setTimeout(function(){abrirKanbanEtapa(window._editPIDfromAct||'')},200)">📊 Mover etapa del proyecto</button>
+  </div>
+
+  <!-- Info del cliente (cuando NO hay proyecto) -->
+  <div id="mae-cli-panel" style="display:none;background:var(--rlight);border:1px solid #F0C0B0;border-radius:12px;padding:12px;margin-bottom:12px">
+    <div style="font-size:10px;font-weight:700;color:var(--rdark);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">👤 Cliente</div>
+    <div style="font-size:14px;font-weight:600" id="mae-cn"></div>
+    <div id="mae-cdet" style="font-size:11px;color:var(--muted);margin-top:3px"></div>
+  </div>
+
+  <!-- Datos de la visita a editar -->
+  <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Editar esta visita</div>
   <div class="f"><label>Impacto</label><div class="chips" id="mae-imp"><div class="chip on" data-v="IMPACTADO">🟢 Impactado</div><div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div></div></div>
   <div class="f"><label>Tipo de visita</label><select id="mae-tv"><option>VISITA</option><option>SEGUIMIENTO</option><option>CIERRE</option><option>LLAMADA</option><option>OTRO</option></select></div>
   <div class="f"><label>Observación</label><textarea id="mae-obs" rows="3"></textarea></div>
-  <button class="bp" type="button" onclick="saveAct()">Guardar</button>
+  <button class="bp" type="button" onclick="saveAct()">Guardar visita</button>
   <button class="bs" onclick="closeM('m-act-edit')">Cancelar</button>
 </div></div>
 
@@ -730,6 +795,18 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <div class="chip" data-v="PROYECTO GANADO" onclick="selKanbanEtapa(this)">🟢 4. Proyecto Ganado</div>
       <div class="chip" data-v="CERRADO" onclick="selKanbanEtapa(this)">⚫ 5. Cerrado</div>
     </div>
+  </div>
+  <!-- Campos Cotización (solo aparecen cuando se elige COTIZACIÓN) -->
+  <div id="mke-cot-fields" style="display:none;background:#F5EEF8;border:1px solid #D2B4DE;border-radius:12px;padding:12px;margin-bottom:10px">
+    <div style="font-size:10px;font-weight:700;color:#8E44AD;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💜 Datos de Cotización</div>
+    <div class="f" style="margin-bottom:8px"><label>N° de Cotización</label><input id="mke-cot-num" placeholder="Ej: COT-2024-001" style="background:#fff"></div>
+    <div class="f" style="margin-bottom:0"><label>Valor cotizado (COP $)</label><input id="mke-cot-valor" type="number" min="0" placeholder="Ej: 15000000" style="background:#fff" oninput="fmtValorCot()"><div id="mke-cot-fmt" style="font-size:12px;color:#8E44AD;font-weight:600;margin-top:4px"></div></div>
+  </div>
+  <!-- Campos Proyecto Ganado -->
+  <div id="mke-gan-fields" style="display:none;background:#E8F5EE;border:1px solid #A9DFBF;border-radius:12px;padding:12px;margin-bottom:10px">
+    <div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🟢 Datos de Facturación</div>
+    <div class="f" style="margin-bottom:8px"><label>N° de Factura</label><input id="mke-fac-num" placeholder="Ej: FV-2024-0234" style="background:#fff"></div>
+    <div class="f" style="margin-bottom:0"><label>Valor facturado (COP $)</label><input id="mke-fac-valor" type="number" min="0" placeholder="Ej: 18000000" style="background:#fff" oninput="fmtValorFac()"><div id="mke-fac-fmt" style="font-size:12px;color:var(--green);font-weight:600;margin-top:4px"></div></div>
   </div>
   <div class="f"><label>Observación del movimiento</label><textarea id="mke-obs" rows="2" placeholder="¿Qué pasó en esta etapa?"></textarea></div>
   <button class="bp" type="button" onclick="saveKanbanEtapa()">Guardar movimiento</button>
@@ -1233,6 +1310,16 @@ window.generarPDF=async function(){
   kpiBox(bx+kw2+gap,y,kw2,kh,ferret,'FERRETERÍAS',230,126,34);
   kpiBox(bx+(kw2+gap)*2,y,kw2,kh,muestras.length,'MUESTRAS',17,122,101);
   kpiBox(bx+(kw2+gap)*3,y,kw2,kh,proyAll.length,'PROYECTOS',100,100,100);
+  y+=kh+4;
+
+  // Fila comercial: cotizaciones y ventas
+  var totalCotV2=0,cotC2=0,totalFacV2=0,facC2=0;
+  proyAll.forEach(function(p){if(p['COT_VALOR']){totalCotV2+=parseFloat(p['COT_VALOR'])||0;cotC2++;}if(p['FAC_VALOR']){totalFacV2+=parseFloat(p['FAC_VALOR'])||0;facC2++;}});
+  function fmtCOPshort(n){if(!n)return '$0';if(n>=1000000000)return '$'+(n/1000000000).toFixed(1)+'B';if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return '$'+(n/1000).toFixed(0)+'K';return '$'+Math.round(n);}
+  var kw3b=(CW-6)/3;
+  kpiBox(bx,y,kw3b,kh,fmtCOPshort(totalCotV2),'VALOR COTIZADO',142,68,173);
+  kpiBox(bx+kw3b+3,y,kw3b,kh,fmtCOPshort(totalFacV2),'VENTA CERRADA',33,150,83);
+  kpiBox(bx+(kw3b+3)*2,y,kw3b,kh,(totalCotV2>0?Math.round(totalFacV2/totalCotV2*100):0)+'%','CONVERSIÓN',totalCotV2>0&&totalFacV2/totalCotV2>=0.7?33:totalCotV2>0&&totalFacV2/totalCotV2>=0.4?230:192,totalCotV2>0&&totalFacV2/totalCotV2>=0.7?150:totalCotV2>0&&totalFacV2/totalCotV2>=0.4?126:57,totalCotV2>0&&totalFacV2/totalCotV2>=0.7?83:totalCotV2>0&&totalFacV2/totalCotV2>=0.4?34:43);
   y+=kh+8;
 
   // ── Barra impacto visual ─
@@ -1404,6 +1491,38 @@ window.generarPDF=async function(){
 
   sectionTitle('4. EMBUDO KANBAN — ESTADO DE PROYECTOS',33,150,83);
 
+  // ── KPIs Comerciales: Cotizaciones y Ventas ──
+  var totalCotValor=0,cotCount=0,totalFacValor=0,facCount=0;
+  proyAll.forEach(function(p){
+    if(p['COT_VALOR']){totalCotValor+=parseFloat(p['COT_VALOR'])||0;cotCount++;}
+    if(p['FAC_VALOR']){totalFacValor+=parseFloat(p['FAC_VALOR'])||0;facCount++;}
+  });
+  function fmtCOPpdf(n){
+    if(!n)return '$0';
+    if(n>=1000000000)return '$'+(n/1000000000).toFixed(1)+'B';
+    if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M';
+    if(n>=1000)return '$'+(n/1000).toFixed(0)+'K';
+    return '$'+Math.round(n);
+  }
+  chk(28);
+  var kw4=(CW-6)/3,kh4=20;
+  kpiBox(M,y,kw4,kh4,cotCount,'COTIZACIONES',142,68,173);
+  kpiBox(M+kw4+3,y,kw4,kh4,fmtCOPpdf(totalCotValor),'VALOR COTIZADO',142,68,173);
+  kpiBox(M+(kw4+3)*2,y,kw4,kh4,fmtCOPpdf(totalFacValor),'VENTA CERRADA',33,150,83);
+  y+=kh4+4;
+  // Tasa de conversión cotización → venta
+  var convRate=totalCotValor>0?Math.round(totalFacValor/totalCotValor*100):0;
+  pdf.setFillColor(248,245,242);pdf.rect(M,y,CW,10,'F');
+  pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(60,60,60);
+  pdf.text('CONVERSIÓN COTIZACIÓN → VENTA',M+3,y+4);
+  pdf.setTextColor(convRate>=70?33:convRate>=40?230:192,convRate>=70?150:convRate>=40?126:57,convRate>=70?83:convRate>=40?34:43);
+  pdf.text(convRate+'%',M+CW,y+4,{align:'right'});
+  pdf.setTextColor(30,30,30);
+  drawBar(M+100,y+2,CW-110,6,Math.min(convRate,100),100,convRate>=70?33:convRate>=40?230:192,convRate>=70?150:convRate>=40?126:57,convRate>=70?83:convRate>=40?34:43);
+  pdf.setFont('helvetica','normal');pdf.setFontSize(7);pdf.setTextColor(100,100,100);
+  pdf.text(facCount+' proyectos facturados · '+cotCount+' cotizados',M+3,y+8.5);
+  pdf.setTextColor(30,30,30);y+=14;
+
   var ETAPAS=['PROSPECCIÓN','VISITA TÉCNICA','COTIZACIÓN','PROYECTO GANADO','CERRADO'];
   var ETAPA_RGB={
     'PROSPECCIÓN':[36,113,163],'VISITA TÉCNICA':[230,126,34],
@@ -1449,40 +1568,44 @@ window.generarPDF=async function(){
   pdf.setFillColor(50,50,50);pdf.rect(M,y,CW,7,'F');
   pdf.setTextColor(255,255,255);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
   pdf.text('PROYECTO',M+1,y+4.8);
-  pdf.text('ETAPA',M+80,y+4.8);
-  pdf.text('CANAL',M+108,y+4.8);
-  pdf.text('VIS',M+128,y+4.8,{align:'center'});
-  pdf.text('IMP',M+142,y+4.8,{align:'center'});
-  pdf.text('TASA',M+158,y+4.8,{align:'center'});
-  pdf.text('ASIG',M+174,y+4.8,{align:'center'});
+  pdf.text('ETAPA',M+72,y+4.8);
+  pdf.text('VIS',M+108,y+4.8,{align:'center'});
+  pdf.text('IMP',M+120,y+4.8,{align:'center'});
+  pdf.text('COTIZACIÓN',M+142,y+4.8,{align:'center'});
+  pdf.text('FACTURA',M+170,y+4.8,{align:'center'});
   y+=7;pdf.setTextColor(30,30,30);
 
   topP.forEach(function(e,idx){
-    chk(9);
+    chk(10);
     var nm=e[0];var d=e[1];
     var t2=pct(d.i,d.v);
     var tCol2=t2>=70?[33,150,83]:t2>=40?[230,126,34]:[192,57,43];
     var pObj=proyAll.find(function(p){return p['NOMBRE PROYECTO']===nm;});
     var etapa=(pObj&&pObj['ETAPA'])||'—';
-    var canalP=(pObj&&pObj['CANAL'])||'—';
-    var asigCnt=(window.Asignaciones||[]).filter(function(a){return a.PROYECTO===nm;}).length;
+    var cotStr='';
+    if(pObj&&pObj['COT_VALOR'])cotStr=fmtCOPpdf(pObj['COT_VALOR'])+(pObj['COT_NUM']?' ('+pObj['COT_NUM']+')'  :'');
+    var facStr='';
+    if(pObj&&pObj['FAC_VALOR'])facStr=fmtCOPpdf(pObj['FAC_VALOR'])+(pObj['FAC_NUM']?' ('+pObj['FAC_NUM']+')'  :'');
     if(idx%2===0)pdf.setFillColor(248,248,245);else pdf.setFillColor(255,255,255);
-    pdf.rect(M,y,CW,8,'F');
+    pdf.rect(M,y,CW,9,'F');
     pdf.setFont('helvetica','normal');pdf.setFontSize(7.5);
-    pdf.text(safe(nm,28),M+1,y+5.2);
+    pdf.text(safe(nm,26),M+1,y+6);
     pdf.setFontSize(6.5);
     var eRgb=ETAPA_RGB[etapa]||[100,100,100];
     pdf.setTextColor(eRgb[0],eRgb[1],eRgb[2]);pdf.setFont('helvetica','bold');
-    pdf.text(safe(etapa,16),M+80,y+5.2);
+    pdf.text(safe(etapa,14),M+72,y+6);
     pdf.setTextColor(30,30,30);pdf.setFont('helvetica','normal');
-    pdf.text(safe(canalP,10),M+108,y+5.2);
-    pdf.text(String(d.v),M+128,y+5.2,{align:'center'});
+    pdf.text(String(d.v),M+108,y+6,{align:'center'});
     pdf.setTextColor(tCol2[0],tCol2[1],tCol2[2]);pdf.setFont('helvetica','bold');
-    pdf.text(String(d.i),M+142,y+5.2,{align:'center'});
-    pdf.text(t2+'%',M+158,y+5.2,{align:'center'});
+    pdf.text(String(d.i),M+120,y+6,{align:'center'});
     pdf.setTextColor(30,30,30);pdf.setFont('helvetica','normal');
-    pdf.text(String(asigCnt),M+174,y+5.2,{align:'center'});
-    y+=8;
+    // Cotización
+    if(cotStr){pdf.setTextColor(142,68,173);pdf.setFont('helvetica','bold');pdf.text(cotStr,M+142,y+6,{align:'center'});pdf.setTextColor(30,30,30);pdf.setFont('helvetica','normal');}
+    else{pdf.setTextColor(180,180,180);pdf.text('—',M+142,y+6,{align:'center'});pdf.setTextColor(30,30,30);}
+    // Factura
+    if(facStr){pdf.setTextColor(33,150,83);pdf.setFont('helvetica','bold');pdf.text(facStr,M+170,y+6,{align:'center'});pdf.setTextColor(30,30,30);pdf.setFont('helvetica','normal');}
+    else{pdf.setTextColor(180,180,180);pdf.text('—',M+170,y+6,{align:'center'});pdf.setTextColor(30,30,30);}
+    y+=9;
   });
   if(!topP.length){pdf.setTextColor(150,150,150);pdf.text('Sin actividades en proyectos en el período.',M,y+5);y+=10;pdf.setTextColor(30,30,30);}
   y+=4;
@@ -2400,9 +2523,107 @@ window.editAct=function(id){
   var a=window.Actividades.find(function(x){return x.id===id;});
   if(!a)return;
   window._editAID=id;
+  // Título modal
+  document.getElementById('mae-title').textContent='Visita: '+(a.PROYECTO||a.CLIENTE||'Sin nombre').substring(0,28);
+  // Precargar campos edición
   document.querySelectorAll('#mae-imp .chip').forEach(function(c){c.classList.remove('on');if(c.dataset.v===a.IMPACTO)c.classList.add('on');});
   document.getElementById('mae-tv').value=a['TIPO DE VISITA']||'VISITA';
   document.getElementById('mae-obs').value=a.OBSERVACION||'';
+  var proyPanel=document.getElementById('mae-proy-panel');
+  var cliPanel=document.getElementById('mae-cli-panel');
+  var ETAPA_ICO={'PROSPECCIÓN':'🔵','VISITA TÉCNICA':'🟠','COTIZACIÓN':'🟣','PROYECTO GANADO':'🟢','CERRADO':'⚫'};
+  // Es un proyecto de obras (CANAL === OBRAS o hay proyecto en la lista)
+  var pNom=a.PROYECTO||'';
+  var pObj=pNom&&window.Proyectos?window.Proyectos.find(function(x){return x['NOMBRE PROYECTO']===pNom;}):null;
+  // Determinar si es proyecto real (obra de construcción)
+  var esObra=(a.CANAL||'')==='OBRAS'||(pObj&&(pObj['CANAL']||'')==='OBRAS')||(!!(pNom&&pObj));
+  if(esObra&&pObj){
+    window._editPIDfromAct=pObj.id;
+    proyPanel.style.display='block';
+    cliPanel.style.display='none';
+    document.getElementById('mae-pn').textContent=pNom;
+    document.getElementById('mae-pcanal').textContent=(pObj['CANAL']||'—');
+    var etapa=pObj['ETAPA']||'PROSPECCIÓN';
+    document.getElementById('mae-petapa').textContent=(ETAPA_ICO[etapa]||'')+' '+etapa;
+    document.getElementById('mae-pestado').innerHTML='<span style="color:'+(pObj['ESTADO']==='ACTIVO'?'var(--green)':'var(--amber)')+'">'+( pObj['ESTADO']||'ACTIVO')+'</span>';
+    var visitas=(window.Actividades||[]).filter(function(x){return x.PROYECTO===pNom;});
+    var impOk=visitas.filter(function(x){return !(x.IMPACTO||'').toUpperCase().includes('NO')&&(x.IMPACTO||'')!=='';}).length;
+    var pct2=visitas.length?Math.round(impOk/visitas.length*100):0;
+    var barColor=pct2>=70?'var(--green)':pct2>=40?'var(--amber)':'var(--red)';
+    document.getElementById('mae-pvis').textContent=visitas.length;
+    document.getElementById('mae-pbar').style.width=pct2+'%';
+    document.getElementById('mae-pbar').style.background=barColor;
+    document.getElementById('mae-ppct').textContent=pct2+'%';
+    document.getElementById('mae-ppct').style.color=barColor;
+    document.getElementById('mae-pimp-det').textContent=impOk+' imp. · '+(visitas.length-impOk)+' no imp.';
+    var dirTxt=(pObj['DIRECCION']?'📍 '+pObj['DIRECCION']:'')+(pObj['BARRIO']?' · '+pObj['BARRIO']:'');
+    document.getElementById('mae-pdir').textContent=dirTxt||'';
+    // Cotización
+    var cotWrap=document.getElementById('mae-pcot-wrap');
+    var facWrap=document.getElementById('mae-pfac-wrap');
+    if(pObj['COT_NUM']||pObj['COT_VALOR']){
+      cotWrap.style.display='block';
+      var cotTxt='';
+      if(pObj['COT_NUM'])cotTxt+=pObj['COT_NUM'];
+      if(pObj['COT_VALOR'])cotTxt+=(cotTxt?' · ':'')+fmtCOP(pObj['COT_VALOR']);
+      document.getElementById('mae-pcot').textContent=cotTxt;
+    }else{cotWrap.style.display='none';}
+    if(pObj['FAC_NUM']||pObj['FAC_VALOR']){
+      facWrap.style.display='block';
+      var facTxt='';
+      if(pObj['FAC_NUM'])facTxt+=pObj['FAC_NUM'];
+      if(pObj['FAC_VALOR'])facTxt+=(facTxt?' · ':'')+fmtCOP(pObj['FAC_VALOR']);
+      document.getElementById('mae-pfac').textContent=facTxt;
+    }else{facWrap.style.display='none';}
+    // Observaciones
+    var obsEl=document.getElementById('mae-pobs-wrap');
+    if(pObj['OBSERVACIONES']){obsEl.style.display='block';document.getElementById('mae-pobs').textContent=pObj['OBSERVACIONES'];}
+    else{obsEl.style.display='none';}
+    // Historial etapas compacto
+    var hist=pObj['HISTORIAL_ETAPAS']||[];
+    var histWrap=document.getElementById('mae-phist-wrap');
+    if(hist.length>0){
+      histWrap.style.display='block';
+      var histHtml=hist.slice(-4).reverse().map(function(h){
+        var fd=h.fecha?new Date(h.fecha).toLocaleDateString('es-CO',{day:'2-digit',month:'short'}):'-';
+        var ico=ETAPA_ICO[h.etapa]||'•';
+        return '<div style="display:flex;gap:6px;align-items:start;margin-bottom:4px"><span>'+ico+'</span><span style="flex:1"><b>'+h.etapa+'</b>'+(h.asesor?' · '+h.asesor.split(' ')[0]:'')+'<br><span style="color:var(--muted)">'+fd+(h.obs?' — '+h.obs.substring(0,40):'')+'</span></span></div>';
+      }).join('');
+      document.getElementById('mae-phist').innerHTML=histHtml;
+    }else{histWrap.style.display='none';}
+  } else if(pNom&&!pObj&&(a.CANAL||'')==='OBRAS'){
+    // Proyecto mencionado pero no encontrado en BD
+    window._editPIDfromAct=null;
+    proyPanel.style.display='block';
+    cliPanel.style.display='none';
+    document.getElementById('mae-pn').textContent=pNom;
+    document.getElementById('mae-pcanal').textContent='OBRAS';
+    document.getElementById('mae-petapa').textContent='—';
+    document.getElementById('mae-pestado').textContent='—';
+    document.getElementById('mae-pvis').textContent='—';
+    document.getElementById('mae-pdir').textContent='';
+    document.getElementById('mae-pcot-wrap').style.display='none';
+    document.getElementById('mae-pfac-wrap').style.display='none';
+    document.getElementById('mae-pobs-wrap').style.display='none';
+    document.getElementById('mae-phist-wrap').style.display='none';
+    document.getElementById('mae-pimp-wrap').style.display='none';
+  } else {
+    // Es ferretería o cliente sin proyecto
+    window._editPIDfromAct=null;
+    proyPanel.style.display='none';
+    cliPanel.style.display='block';
+    var cliNom=a.CLIENTE||'Sin cliente';
+    document.getElementById('mae-cn').textContent=cliNom;
+    var cliObj=window.Clientes?window.Clientes.find(function(c){return c['NOMBRE CLIENTE']===cliNom;}):null;
+    var cdet='';
+    if(cliObj){
+      if(cliObj['NIT CLIENTE'])cdet+='NIT: '+cliObj['NIT CLIENTE'];
+      if(cliObj['PERSONA ENCARGADA'])cdet+=(cdet?' · ':'')+cliObj['PERSONA ENCARGADA'];
+      if(cliObj['CELULAR'])cdet+=(cdet?' · ':'')+'📞 '+cliObj['CELULAR'];
+    }
+    if(a['TAMAÑO FERRETERIA'])cdet+=(cdet?' · ':'')+'Tamaño: '+a['TAMAÑO FERRETERIA'];
+    document.getElementById('mae-cdet').textContent=cdet||'Visita de ferretería';
+  }
   openM('m-act-edit');
 };
 
@@ -2709,6 +2930,9 @@ window.renderDash=function(){
 
   // ── KPI cards ──
   var KPI_COLOR=['#C0392B','#219653','#2471A3','#E67E22','#8E44AD','#117A65'];
+  // Calcular comercial
+  var totalCotV3=0,cotC3=0,totalFacV3=0,facC3=0;
+  (window.Proyectos||[]).forEach(function(p){if(p['COT_VALOR']){totalCotV3+=parseFloat(p['COT_VALOR'])||0;cotC3++;}if(p['FAC_VALOR']){totalFacV3+=parseFloat(p['FAC_VALOR'])||0;facC3++;}});
   var kpis=[
     {ico:'📋',val:tot,lbl:'Visitas total',color:KPI_COLOR[0]},
     {ico:'✅',val:imp,lbl:'Impactadas',color:KPI_COLOR[1]},
@@ -2727,6 +2951,17 @@ window.renderDash=function(){
       +'<div style="font-size:11px;color:var(--muted);margin-top:2px">'+k.lbl+'</div></div>'
     +'</div>';
   });
+  // Tarjetas comerciales span 2 columnas
+  kpiHtml+='<div style="grid-column:span 2;background:linear-gradient(135deg,#F5EEF8,#EAD5F5);border-radius:13px;padding:13px 12px;border:0.5px solid #D2B4DE;box-shadow:var(--sh)">'
+    +'<div style="font-size:10px;font-weight:700;color:#8E44AD;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💜 Valor cotizado</div>'
+    +'<div style="font-size:20px;font-weight:700;color:#8E44AD">'+(totalCotV3>=1000000?'$'+(totalCotV3/1000000).toFixed(1)+'M':totalCotV3>=1000?'$'+(totalCotV3/1000).toFixed(0)+'K':'$'+totalCotV3.toLocaleString('es-CO'))+'</div>'
+    +'<div style="font-size:11px;color:var(--muted);margin-top:2px">'+cotC3+' proyectos cotizados</div>'
+  +'</div>';
+  kpiHtml+='<div style="grid-column:span 2;background:linear-gradient(135deg,var(--glight),#C8EDD8);border-radius:13px;padding:13px 12px;border:0.5px solid #A9DFBF;box-shadow:var(--sh)">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🟢 Venta cerrada</div>'
+    +'<div style="font-size:20px;font-weight:700;color:var(--green)">'+(totalFacV3>=1000000?'$'+(totalFacV3/1000000).toFixed(1)+'M':totalFacV3>=1000?'$'+(totalFacV3/1000).toFixed(0)+'K':'$'+totalFacV3.toLocaleString('es-CO'))+'</div>'
+    +'<div style="font-size:11px;color:var(--muted);margin-top:2px">'+facC3+' proyectos facturados · Conv. '+(totalCotV3>0?Math.round(totalFacV3/totalCotV3*100):0)+'%</div>'
+  +'</div>';
   document.getElementById('d-kpi-row').innerHTML=kpiHtml;
 
   // ── Funnel Kanban ──
@@ -2961,86 +3196,17 @@ window.editUsuario=function(id){
 };
 
 // ── FERRETERÍAS CERCANAS ────────────────────────────────
-window.initFerreterias=function(){
-  document.getElementById('ferr-lista').innerHTML='<div class="ld"><div class="bounce" style="font-size:32px;text-align:center">🔍</div><div style="margin-top:10px">Buscando ferreterías...</div></div>';
-  document.getElementById('ferr-st-txt').textContent='Obteniendo ubicación...';
-  document.getElementById('ferr-status').style.background='var(--blight)';
-  document.getElementById('ferr-status').style.color='var(--blue)';
-  if(!navigator.geolocation){
-    document.getElementById('ferr-st-txt').textContent='GPS no disponible';
-    document.getElementById('ferr-status').style.background='var(--rlight)';
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(
-    function(pos){
-      window._ferrLat=pos.coords.latitude;
-      window._ferrLng=pos.coords.longitude;
-      document.getElementById('ferr-st-txt').textContent='📍 '+pos.coords.latitude.toFixed(4)+', '+pos.coords.longitude.toFixed(4);
-      buscarFerreterias();
-    },
-    function(){
-      document.getElementById('ferr-st-txt').textContent='No se pudo obtener GPS. Active la ubicación.';
-      document.getElementById('ferr-status').style.background='var(--rlight)';
-      document.getElementById('ferr-lista').innerHTML='<div class="em"><div class="em-i">📍</div><div>Active el GPS para ver ferreterías cercanas</div></div>';
-    },
-    {timeout:15000,enableHighAccuracy:true}
-  );
-};
+window._ferrMap=null;
+window._ferrMapMarkers=[];
+window._ferrMapInited=false;
 
-window.buscarFerreterias=async function(){
-  if(!window._ferrLat){initFerreterias();return;}
-  var el=document.getElementById('ferr-lista');
-  var lat=window._ferrLat,lng=window._ferrLng;
-  el.innerHTML='<div class="ld">Consultando OpenStreetMap...</div>';
-  try{
-    var radio=5000;
-    var q='[out:json][timeout:25];(\n'
-      +'node["shop"="hardware"](around:'+radio+','+lat+','+lng+');\n'
-      +'node["shop"="doityourself"](around:'+radio+','+lat+','+lng+');\n'
-      +'node["shop"="building_materials"](around:'+radio+','+lat+','+lng+');\n'
-      +'node["name"~"[Ff]erret"](around:'+radio+','+lat+','+lng+');\n'
-      +'node["name"~"[Mm]aterial"](around:'+radio+','+lat+','+lng+');\n'
-      +'node["name"~"[Cc]onstruc"](around:'+radio+','+lat+','+lng+');\n'
-      +'way["shop"="hardware"](around:'+radio+','+lat+','+lng+');\n'
-      +'way["shop"="building_materials"](around:'+radio+','+lat+','+lng+');\n'
-      +'way["name"~"[Ff]erret"](around:'+radio+','+lat+','+lng+');\n'
-      +');out center 40;';
-    var resp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'}});
-    if(!resp.ok)throw new Error('Error API '+resp.status);
-    var data=await resp.json();
-    var results=(data.elements||[]).map(function(e){
-      var eLat=e.lat||e.center?.lat;var eLng=e.lon||e.center?.lon;
-      if(!eLat||!eLng)return null;
-      var tags=e.tags||{};
-      var name=tags.name||tags['name:es']||'Ferretería';
-      var addr=[tags['addr:street'],tags['addr:housenumber'],tags['addr:city']].filter(Boolean).join(', ')||tags['addr:full']||'';
-      var phone=tags.phone||tags['contact:phone']||tags['contact:mobile']||'';
-      var hours=tags.opening_hours||'';
-      var shop=tags.shop||'';
-      var tipo='ferreteria';
-      if((name+shop).toLowerCase().includes('material')||shop==='building_materials')tipo='materiales';
-      var dist=calcDistFerr(lat,lng,eLat,eLng);
-      return{id:e.id,name:name,lat:eLat,lng:eLng,dist:dist,addr:addr,phone:phone,hours:hours,tipo:tipo};
-    }).filter(Boolean);
-    // Dedup
-    var seen=new Set();
-    results=results.filter(function(f){
-      var k=f.name.toLowerCase().replace(/\s+/g,'')+Math.round(f.lat*1000)+Math.round(f.lng*1000);
-      if(seen.has(k))return false;seen.add(k);return true;
-    });
-    results.sort(function(a,b){return a.dist-b.dist;});
-    results=results.slice(0,20);
-    window._ferrAll=results;
-    document.getElementById('ferr-st-txt').textContent='✅ '+results.length+' ferreterías encontradas en 5km';
-    document.getElementById('ferr-status').style.background='var(--glight)';
-    document.getElementById('ferr-status').style.color='var(--green)';
-    renderFerreterias();
-  }catch(err){
-    el.innerHTML='<div class="em"><div class="em-i">⚠️</div><div>Error al buscar. Verifica tu internet.</div><button class="bs" style="margin-top:12px" onclick="buscarFerreterias()">Reintentar</button></div>';
-    document.getElementById('ferr-st-txt').textContent='Error. Toca Actualizar.';
-    document.getElementById('ferr-status').style.background='var(--rlight)';
-  }
-};
+// Múltiples endpoints Overpass por si uno falla
+var OVERPASS_ENDPOINTS=[
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
+];
+
 function calcDistFerr(lat1,lng1,lat2,lng2){
   var R=6371000;
   var dLat=(lat2-lat1)*Math.PI/180;
@@ -3049,59 +3215,364 @@ function calcDistFerr(lat1,lng1,lat2,lng2){
   return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
 }
 function fmtDist(m){return m<1000?m+'m':(m/1000).toFixed(1)+'km';}
+
+function setFerrStatus(txt,type){
+  var el=document.getElementById('ferr-status');
+  var tx=document.getElementById('ferr-st-txt');
+  if(!el||!tx)return;
+  tx.textContent=txt;
+  if(type==='ok'){el.style.background='var(--glight)';el.style.color='var(--green)';}
+  else if(type==='err'){el.style.background='var(--rlight)';el.style.color='var(--rdark)';}
+  else if(type==='warn'){el.style.background='var(--alight)';el.style.color='var(--amber)';}
+  else{el.style.background='var(--blight)';el.style.color='var(--blue)';}
+}
+
+window.initFerreterias=function(){
+  var el=document.getElementById('ferr-lista');
+  if(!el)return;
+  el.innerHTML='<div class="ld"><div style="font-size:36px;text-align:center;animation:bounce .8s infinite alternate">📍</div><div style="margin-top:10px;font-size:13px">Obteniendo tu ubicación...</div></div>';
+  setFerrStatus('Obteniendo ubicación GPS...','info');
+  if(!navigator.geolocation){
+    setFerrStatus('GPS no disponible en este dispositivo','err');
+    el.innerHTML='<div class="em"><div class="em-i">📍</div><div>GPS no disponible</div></div>';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      window._ferrLat=pos.coords.latitude;
+      window._ferrLng=pos.coords.longitude;
+      var acc=Math.round(pos.coords.accuracy);
+      setFerrStatus('📍 Ubicación obtenida (±'+acc+'m)','ok');
+      buscarFerreterias();
+    },
+    function(err){
+      var msg=err.code===1?'Permiso de ubicación denegado. Actívalo en la configuración del navegador.':
+               err.code===2?'GPS no disponible. Verifica que esté activo.':
+               'Tiempo de espera agotado. Intenta de nuevo.';
+      setFerrStatus('⚠️ '+msg,'err');
+      el.innerHTML='<div class="em"><div class="em-i">📍</div><div style="margin-bottom:12px">'+msg+'</div>'
+        +'<button class="bp" style="max-width:220px" onclick="initFerreterias()">🔄 Intentar de nuevo</button>'
+        +'<div style="margin-top:14px;font-size:12px;color:var(--muted)">¿Sin GPS? Ingresa tus coordenadas:</div>'
+        +'<div style="display:flex;gap:6px;margin-top:8px;max-width:300px;margin-left:auto;margin-right:auto">'
+          +'<input id="ferr-lat-m" placeholder="Latitud" style="flex:1;padding:8px 10px;border:1px solid var(--brd);border-radius:8px;font-size:13px;font-family:DM Sans,sans-serif">'
+          +'<input id="ferr-lng-m" placeholder="Longitud" style="flex:1;padding:8px 10px;border:1px solid var(--brd);border-radius:8px;font-size:13px;font-family:DM Sans,sans-serif">'
+        +'</div>'
+        +'<button class="bs" style="max-width:220px;margin-top:8px" onclick="usarCoordsManuales()">Usar estas coordenadas</button>'
+        +'</div>';
+    },
+    {timeout:12000,enableHighAccuracy:true,maximumAge:60000}
+  );
+};
+
+window.usarCoordsManuales=function(){
+  var lat=parseFloat(document.getElementById('ferr-lat-m')?.value||'');
+  var lng=parseFloat(document.getElementById('ferr-lng-m')?.value||'');
+  if(isNaN(lat)||isNaN(lng)){toast('Ingresa coordenadas válidas');return;}
+  window._ferrLat=lat;window._ferrLng=lng;
+  setFerrStatus('📍 Usando coordenadas manuales','ok');
+  buscarFerreterias();
+};
+
+async function queryOverpass(endpoint,q){
+  var ctrl=new AbortController();
+  var tid=setTimeout(function(){ctrl.abort();},20000);
+  try{
+    var resp=await fetch(endpoint,{
+      method:'POST',
+      body:'data='+encodeURIComponent(q),
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      signal:ctrl.signal
+    });
+    clearTimeout(tid);
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    var data=await resp.json();
+    return data;
+  }catch(e){clearTimeout(tid);throw e;}
+}
+
+window.buscarFerreterias=async function(){
+  if(!window._ferrLat){initFerreterias();return;}
+  var el=document.getElementById('ferr-lista');
+  var lat=window._ferrLat,lng=window._ferrLng;
+
+  el.innerHTML='<div class="ld">'
+    +'<div style="font-size:28px;text-align:center">🔍</div>'
+    +'<div style="margin-top:10px;font-size:13px" id="ferr-prog">Consultando base de datos...</div>'
+    +'<div style="margin-top:8px;background:var(--brd);border-radius:4px;height:4px;overflow:hidden;width:200px;margin-left:auto;margin-right:auto">'
+      +'<div id="ferr-bar" style="height:100%;background:var(--red);width:0%;transition:width .4s;border-radius:4px"></div>'
+    +'</div>'
+  +'</div>';
+
+  function setProg(txt,pct){
+    var p=document.getElementById('ferr-prog');var b=document.getElementById('ferr-bar');
+    if(p)p.textContent=txt;if(b)b.style.width=pct+'%';
+  }
+
+  // Query Overpass amplia — ferretería Colombia necesita búsqueda por nombre también
+  var radio=4000;
+  var q='[out:json][timeout:30];('
+    +'node["shop"="hardware"](around:'+radio+','+lat+','+lng+');'
+    +'node["shop"="doityourself"](around:'+radio+','+lat+','+lng+');'
+    +'node["shop"="building_materials"](around:'+radio+','+lat+','+lng+');'
+    +'node["shop"="paint"](around:'+radio+','+lat+','+lng+');'
+    +'node["name"~"ferret",i](around:'+radio+','+lat+','+lng+');'
+    +'node["name"~"material",i](around:'+radio+','+lat+','+lng+');'
+    +'node["name"~"construc",i](around:'+radio+','+lat+','+lng+');'
+    +'node["name"~"electri",i](around:'+radio+','+lat+','+lng+');'
+    +'node["name"~"plomer",i](around:'+radio+','+lat+','+lng+');'
+    +'way["shop"="hardware"](around:'+radio+','+lat+','+lng+');'
+    +'way["shop"="building_materials"](around:'+radio+','+lat+','+lng+');'
+    +'way["name"~"ferret",i](around:'+radio+','+lat+','+lng+');'
+    +'way["name"~"material",i](around:'+radio+','+lat+','+lng+');'
+    +');out center 60;';
+
+  var data=null;
+  var endpointUsado='';
+  for(var ei=0;ei<OVERPASS_ENDPOINTS.length;ei++){
+    setProg('Servidor '+(ei+1)+'/'+OVERPASS_ENDPOINTS.length+'...',Math.round((ei+1)/OVERPASS_ENDPOINTS.length*60));
+    setFerrStatus('🔍 Buscando en OpenStreetMap...','info');
+    try{
+      data=await queryOverpass(OVERPASS_ENDPOINTS[ei],q);
+      endpointUsado=OVERPASS_ENDPOINTS[ei];
+      break;
+    }catch(e){
+      console.warn('Overpass endpoint failed:',OVERPASS_ENDPOINTS[ei],e.message);
+      if(ei===OVERPASS_ENDPOINTS.length-1){
+        // Todos fallaron — mostrar error con opciones
+        setFerrStatus('❌ Sin conexión a OpenStreetMap','err');
+        el.innerHTML='<div class="em">'
+          +'<div class="em-i">⚠️</div>'
+          +'<div style="margin-bottom:6px;font-weight:600">No se pudo conectar al servicio de mapas</div>'
+          +'<div style="font-size:12px;color:var(--muted);margin-bottom:16px">Verifica tu conexión a internet e intenta de nuevo.</div>'
+          +'<button class="bp" style="max-width:240px" onclick="buscarFerreterias()">🔄 Reintentar búsqueda</button>'
+          +'<div style="margin-top:12px;font-size:12px;color:var(--muted)">También puedes buscar en Google Maps:</div>'
+          +'<a href="https://www.google.com/maps/search/ferreter%C3%ADas/@'+lat+','+lng+',15z" target="_blank" class="bs" style="display:block;max-width:240px;margin-top:8px;text-align:center">🗺️ Ver en Google Maps</a>'
+        +'</div>';
+        return;
+      }
+    }
+  }
+
+  setProg('Procesando resultados...',80);
+
+  var results=(data.elements||[]).map(function(e){
+    var eLat=e.lat||(e.center&&e.center.lat);
+    var eLng=e.lon||(e.center&&e.center.lon);
+    if(!eLat||!eLng)return null;
+    var tags=e.tags||{};
+    var name=tags.name||tags['name:es']||tags['brand']||null;
+    if(!name)return null; // Descartar sin nombre
+    var addr=[tags['addr:street'],tags['addr:housenumber']].filter(Boolean).join(' ');
+    if(!addr)addr=tags['addr:full']||tags['description']||'';
+    var phone=tags.phone||tags['contact:phone']||tags['contact:mobile']||tags['phone:CO']||'';
+    // Limpiar teléfono Colombia
+    if(phone)phone=phone.replace(/\s+/g,'').replace(/^(\+57)/,'').replace(/^57/,'');
+    var hours=tags.opening_hours||'';
+    var shop=tags.shop||'';
+    var nameLow=name.toLowerCase();
+    var tipo='ferreteria';
+    if(nameLow.includes('material')||shop==='building_materials')tipo='materiales';
+    else if(nameLow.includes('electri')||nameLow.includes('plomer'))tipo='materiales';
+    var dist=calcDistFerr(lat,lng,eLat,eLng);
+    return{id:e.id,name:name,lat:eLat,lng:eLng,dist:dist,addr:addr,phone:phone,hours:hours,tipo:tipo,tags:tags};
+  }).filter(Boolean);
+
+  // Deduplicar por nombre+posición aproximada
+  var seen=new Set();
+  results=results.filter(function(f){
+    var k=f.name.toLowerCase().trim().replace(/\s+/g,'').substring(0,12)+','+Math.round(f.lat*1000)+','+Math.round(f.lng*1000);
+    if(seen.has(k))return false;seen.add(k);return true;
+  });
+
+  results.sort(function(a,b){return a.dist-b.dist;});
+  results=results.slice(0,25);
+  window._ferrAll=results;
+
+  setProg('Listo',100);
+
+  if(!results.length){
+    setFerrStatus('⚠️ Sin resultados en '+fmtDist(radio),'warn');
+    el.innerHTML='<div class="em">'
+      +'<div class="em-i">🔧</div>'
+      +'<div style="margin-bottom:6px">No encontramos ferreterías en '+fmtDist(radio)+' de radio</div>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:14px">Es posible que no estén en OpenStreetMap aún.</div>'
+      +'<a href="https://www.google.com/maps/search/ferreter%C3%ADas/@'+lat+','+lng+',15z" target="_blank" class="bp" style="display:block;max-width:240px;text-align:center">🗺️ Buscar en Google Maps</a>'
+    +'</div>';
+    return;
+  }
+
+  setFerrStatus('✅ '+results.length+' encontradas cerca de ti','ok');
+  renderFerreterias();
+  // Iniciar mini-mapa después de renderizar lista
+  setTimeout(function(){initFerrMap(lat,lng,results);},400);
+};
+
+// Mini mapa de ferreterías
+function initFerrMap(myLat,myLng,ferrList){
+  var mapEl=document.getElementById('ferr-minimap');
+  if(!mapEl)return;
+  mapEl.style.display='block';
+  if(window._ferrMap){
+    window._ferrMapMarkers.forEach(function(m){m.remove();});
+    window._ferrMapMarkers=[];
+    window._ferrMap.setView([myLat,myLng],15);
+  }else{
+    window._ferrMap=L.map('ferr-minimap-inner').setView([myLat,myLng],15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:19}).addTo(window._ferrMap);
+    window._ferrMapInited=true;
+  }
+  // Marcador "yo estoy aquí"
+  var myIcon=L.divIcon({html:'<div style="background:#C0392B;border-radius:50%;width:18px;height:18px;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4);animation:bounce .8s infinite alternate"></div>',iconSize:[18,18],iconAnchor:[9,9],className:''});
+  var myM=L.marker([myLat,myLng],{icon:myIcon,zIndexOffset:1000}).addTo(window._ferrMap);
+  myM.bindPopup('<b style="font-size:13px">📍 Tú estás aquí</b>');
+  window._ferrMapMarkers.push(myM);
+
+  var TIPOS_COL={ferreteria:'#E67E22',materiales:'#2471A3'};
+  ferrList.slice(0,15).forEach(function(f,i){
+    var col=TIPOS_COL[f.tipo]||'#E67E22';
+    var ico=L.divIcon({
+      html:'<div style="background:'+col+';border-radius:50% 50% 50% 0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.35);transform:rotate(-45deg)">'
+          +'<span style="transform:rotate(45deg)">'+(f.tipo==='materiales'?'🧱':'🔧')+'</span></div>',
+      iconSize:[28,28],iconAnchor:[14,28],className:''
+    });
+    var m=L.marker([f.lat,f.lng],{icon:ico}).addTo(window._ferrMap);
+    var yaProg=window.Actividades&&window.Actividades.some(function(a){return a.CLIENTE&&a.CLIENTE.toLowerCase().includes(f.name.toLowerCase().substring(0,6));});
+    var safeName=f.name.replace(/'/g,'\\\'');
+    var safeAddr=(f.addr||'').replace(/'/g,'\\\'');
+    var popHtml='<div style="font-family:DM Sans,sans-serif;min-width:180px">'
+      +'<div style="font-size:13px;font-weight:700;margin-bottom:5px;color:#1A1A1A">'+(i+1)+'. '+f.name+'</div>'
+      +'<div style="font-size:11px;color:#888;margin-bottom:6px">📏 '+fmtDist(f.dist)+(f.addr?' · '+f.addr.substring(0,30):'')+'</div>'
+      +(yaProg?'<div style="font-size:10px;background:#E8F5EE;color:#219653;border-radius:5px;padding:3px 7px;margin-bottom:6px;font-weight:600">✅ Ya visitada</div>':'')
+      +'<div style="display:flex;gap:5px;margin-top:4px">'
+        +'<a href="https://www.google.com/maps/dir/?api=1&destination='+f.lat+','+f.lng+'&travelmode=driving" target="_blank" style="flex:1;text-align:center;background:#2471A3;color:#fff;border-radius:6px;padding:5px 4px;font-size:10px;font-weight:700;text-decoration:none">🧭 Ir</a>'
+        +(f.phone?'<a href="tel:'+f.phone+'" style="flex:1;text-align:center;background:#219653;color:#fff;border-radius:6px;padding:5px 4px;font-size:10px;font-weight:700;text-decoration:none">📞 Llamar</a>':'')
+        +'<a href="#" onclick="window._ferrMap.closePopup();regVisitaFerr(\''+safeName+'\',\''+safeAddr+'\','+f.lat+','+f.lng+');return false" style="flex:1;text-align:center;background:#C0392B;color:#fff;border-radius:6px;padding:5px 4px;font-size:10px;font-weight:700;text-decoration:none">📝 Visita</a>'
+      +'</div>'
+    +'</div>';
+    m.bindPopup(popHtml,{maxWidth:220});
+    window._ferrMapMarkers.push(m);
+  });
+  // Ajustar bounds
+  var lats2=[myLat].concat(ferrList.slice(0,10).map(function(f){return f.lat;}));
+  var lngs2=[myLng].concat(ferrList.slice(0,10).map(function(f){return f.lng;}));
+  window._ferrMap.fitBounds([[Math.min.apply(null,lats2),Math.min.apply(null,lngs2)],[Math.max.apply(null,lats2),Math.max.apply(null,lngs2)]],{padding:[20,20]});
+  setTimeout(function(){if(window._ferrMap)window._ferrMap.invalidateSize();},300);
+}
+
 window.setFT=function(t){
   window._ferrTab=t;
   ['todas','ferreteria','materiales'].forEach(function(x){var el=document.getElementById('ft-'+x);if(el)el.classList.remove('on');});
   var el=document.getElementById('ft-'+t);if(el)el.classList.add('on');
   renderFerreterias();
 };
+
 window.renderFerreterias=function(){
   var el=document.getElementById('ferr-lista');
   var all=window._ferrAll||[];
   var list=all;
-  if(window._ferrTab!=='todas')list=all.filter(function(f){return f.tipo===window._ferrTab;});
+  if(window._ferrTab&&window._ferrTab!=='todas')list=all.filter(function(f){return f.tipo===window._ferrTab;});
   if(!list.length){el.innerHTML='<div class="em"><div class="em-i">🔧</div><div>Sin resultados en este filtro</div></div>';return;}
-  var top=list.slice(0,10);
-  var TICOS={ferreteria:'🔧',materiales:'🧱',construccion:'🏗️'};
+  var top=list.slice(0,15);
+  var TICOS={ferreteria:'🔧',materiales:'🧱'};
   var html='';
-  top.forEach(function(f,i){
-    var yaProg=window.Actividades&&window.Actividades.some(function(a){return a.CLIENTE&&a.CLIENTE.toLowerCase().includes(f.name.toLowerCase().substring(0,8));});
-    var ico=TICOS[f.tipo]||'🔧';
-    var safeName=f.name.replace(/'/g,'').replace(/"/g,'');
-    var safeAddr=(f.addr||'').replace(/'/g,'').replace(/"/g,'');
-    html+='<div class="ferr-card">'
-      +'<div class="ferr-num">'+(i+1)+'</div>'
-      +'<div class="ferr-body">'
-        +'<div class="ferr-name">'+ico+' '+f.name+'</div>'
-        +'<div class="ferr-dist">📏 '+fmtDist(f.dist)+'</div>'
-        +(f.addr?'<div class="ferr-addr">📍 '+f.addr+'</div>':'')
-        +(f.hours?'<div class="ferr-addr">🕒 '+f.hours.substring(0,30)+'</div>':'')
-        +(yaProg?'<span class="b bg1" style="margin-top:3px;display:inline-block">✅ Ya visitada</span>':'')
+
+  // Mini mapa container (se inicializa después)
+  html+='<div id="ferr-minimap" style="display:none;border-radius:14px;overflow:hidden;margin-bottom:12px;border:0.5px solid var(--brd);box-shadow:var(--sh)">'
+      +'<div style="background:var(--red);color:#fff;padding:7px 12px;font-size:11px;font-weight:600;display:flex;justify-content:space-between;align-items:center">'
+        +'<span>🗺️ Mapa de ferreterías</span>'
+        +'<button onclick="document.getElementById(\'ferr-minimap\').style.display=\'none\'" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:5px;padding:2px 8px;font-size:11px;cursor:pointer">✕</button>'
       +'</div>'
-      +'<div class="ferr-btns">'
-        +'<button class="bg2" style="padding:6px 8px;font-size:13px;color:var(--blue)" onclick="navegarA(\''+f.lat+','+f.lng+'\')" title="Navegar">🧭</button>'
-        +'<button class="bg2" style="padding:6px 8px;font-size:13px;color:var(--green)" onclick="regVisitaFerr(\''+safeName+'\',\''+safeAddr+'\','+f.lat+','+f.lng+')" title="Registrar visita">📝</button>'
-        +(f.phone?'<a href="tel:'+f.phone+'" class="bg2" style="padding:6px 8px;font-size:13px;color:var(--red);text-decoration:none;display:block;text-align:center" title="Llamar">📞</a>':'')
+      +'<div id="ferr-minimap-inner" style="width:100%;height:220px"></div>'
+    +'</div>';
+
+  top.forEach(function(f,i){
+    var yaProg=window.Actividades&&window.Actividades.some(function(a){
+      return a.CLIENTE&&a.CLIENTE.toLowerCase().includes(f.name.toLowerCase().substring(0,Math.min(6,f.name.length)));
+    });
+    var ico=TICOS[f.tipo]||'🔧';
+    var safeName=f.name.replace(/'/g,'').replace(/"/g,'&quot;');
+    var safeAddr=(f.addr||'').replace(/'/g,'').replace(/"/g,'');
+    // Color badge distancia
+    var distCol=f.dist<500?'var(--green)':f.dist<1500?'var(--amber)':'var(--muted)';
+
+    html+='<div class="card" style="margin-bottom:10px;border-left:3px solid '+(f.tipo==='materiales'?'var(--blue)':'var(--amber)')+'">'
+      // Header fila
+      +'<div style="display:flex;align-items:start;gap:10px;margin-bottom:8px">'
+        +'<div style="width:34px;height:34px;border-radius:10px;background:'+(f.tipo==='materiales'?'var(--blight)':'var(--alight)')+';display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">'+ico+'</div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(i+1)+'. '+f.name+'</div>'
+          +'<div style="display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap">'
+            +'<span style="font-size:11px;font-weight:600;color:'+distCol+'">📏 '+fmtDist(f.dist)+'</span>'
+            +(yaProg?'<span style="font-size:10px;background:var(--glight);color:var(--green);border-radius:10px;padding:1px 7px;font-weight:600">✅ Visitada</span>':'')
+            +(f.tipo==='materiales'?'<span style="font-size:10px;background:var(--blight);color:var(--blue);border-radius:10px;padding:1px 7px;font-weight:600">🧱 Materiales</span>':'')
+          +'</div>'
+        +'</div>'
+      +'</div>'
+      // Detalles
+      +(f.addr?'<div style="font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:start;gap:4px"><span>📍</span><span>'+f.addr+'</span></div>':'')
+      +(f.phone?'<div style="font-size:11px;color:var(--muted);margin-bottom:4px">📞 '+f.phone+'</div>':'')
+      +(f.hours?'<div style="font-size:10px;color:var(--muted);margin-bottom:6px;background:var(--bg);border-radius:6px;padding:3px 7px">🕒 '+f.hours.substring(0,50)+'</div>':'')
+      // Botones acción
+      +'<div style="display:grid;grid-template-columns:1fr 1fr'+(f.phone?' 1fr':'')+';gap:6px;margin-top:6px">'
+        +'<a href="https://www.google.com/maps/dir/?api=1&destination='+f.lat+','+f.lng+'&travelmode=driving" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:5px;background:var(--blight);color:var(--blue);border-radius:9px;padding:9px 6px;font-size:12px;font-weight:600;text-decoration:none;border:0.5px solid #C3D8EE">🧭 Navegar</a>'
+        +'<button onclick="regVisitaFerr(\''+safeName+'\',\''+safeAddr+'\','+f.lat+','+f.lng+')" style="display:flex;align-items:center;justify-content:center;gap:5px;background:var(--rlight);color:var(--rdark);border-radius:9px;padding:9px 6px;font-size:12px;font-weight:600;border:0.5px solid #F0C0B0;cursor:pointer;font-family:DM Sans,sans-serif">📝 Registrar</button>'
+        +(f.phone?'<a href="tel:'+f.phone+'" style="display:flex;align-items:center;justify-content:center;gap:5px;background:var(--glight);color:var(--green);border-radius:9px;padding:9px 6px;font-size:12px;font-weight:600;text-decoration:none;border:0.5px solid #A9DFBF">📞 Llamar</a>':'')
       +'</div>'
     +'</div>';
   });
-  html+='<div style="text-align:center;font-size:11px;color:var(--muted);padding:8px 0">'+top.length+' de '+list.length+' resultados · Datos: OpenStreetMap</div>';
+
+  html+='<div style="text-align:center;font-size:11px;color:var(--muted);padding:8px 0 4px">'
+    +top.length+' de '+list.length+' ferreterías · <a href="https://www.openstreetmap.org/#map=16/'+( window._ferrLat||0)+'/'+( window._ferrLng||0)+'" target="_blank" style="color:var(--blue)">OpenStreetMap</a>'
+  +'</div>';
+
   el.innerHTML=html;
 };
+
 window.regVisitaFerr=function(nombre,addr,lat,lng){
-  window._selCli=nombre;
-  document.getElementById('cli-sv-t').textContent=nombre;
+  // Registrar o buscar cliente existente
+  var cliExist=window.Clientes&&window.Clientes.find(function(c){
+    return (c['NOMBRE CLIENTE']||'').toLowerCase().includes((nombre||'').toLowerCase().substring(0,8));
+  });
+  var cliNombre=cliExist?(cliExist['NOMBRE CLIENTE']||nombre):nombre;
+  window._selCli=cliNombre;
+  document.getElementById('cli-sv-t').textContent=cliNombre;
   document.getElementById('cli-sv').classList.add('on');
   document.getElementById('cli-sw').style.display='none';
+  // Canal ferretería
   document.querySelectorAll('#ch-canal .chip').forEach(function(x){x.classList.remove('on');});
   var fc=document.querySelector('#ch-canal .chip[data-v="FERRETERIA"]');
-  if(fc)fc.classList.add('on');
+  if(fc){fc.classList.add('on');fc.click();}
   document.getElementById('fp-proy').style.display='none';
   document.getElementById('fp-fsize').style.display='block';
   document.getElementById('ntc').value='FERRETERIA';
-  if(lat&&lng){window.GPS=lat.toFixed(6)+', '+lng.toFixed(6);document.getElementById('loc-t').textContent=window.GPS+' ✓';}
-  toast('📝 Datos prellenados. Completa la visita.');
+  // Prellenar GPS con coordenadas de la ferretería
+  if(lat&&lng){
+    var latN=typeof lat==='number'?lat:parseFloat(lat);
+    var lngN=typeof lng==='number'?lng:parseFloat(lng);
+    if(!isNaN(latN)&&!isNaN(lngN)){
+      window.GPS=latN.toFixed(6)+', '+lngN.toFixed(6);
+      var ltEl=document.getElementById('loc-t');
+      var lbEl=document.getElementById('loc-box');
+      if(ltEl)ltEl.textContent=window.GPS+' ✓ (ferretería)';
+      if(lbEl)lbEl.className='loc';
+    }
+  }
+  toast('📝 '+cliNombre.substring(0,20)+' cargada. Completa los datos.');
   go('nueva');
+};
+
+// ── FORMATO COP ─────────────────────────────────────────
+window.fmtCOP=function(val){
+  if(!val&&val!==0)return '';
+  return '$ '+Number(val).toLocaleString('es-CO');
+};
+window.fmtValorCot=function(){
+  var v=document.getElementById('mke-cot-valor').value;
+  document.getElementById('mke-cot-fmt').textContent=v?fmtCOP(v):'';
+};
+window.fmtValorFac=function(){
+  var v=document.getElementById('mke-fac-valor').value;
+  document.getElementById('mke-fac-fmt').textContent=v?fmtCOP(v):'';
 };
 
 // ── KANBAN EMBUDO COMERCIAL ─────────────────────────────
@@ -3147,6 +3618,14 @@ window.renderKanban=function(){
       });
       // Color borde según impacto
       var bordeColor=cnt>0?(impOk/cnt>=0.7?'var(--green)':impOk/cnt>=0.4?'var(--amber)':'var(--red)'):'var(--brd)';
+      // Datos cotización/factura
+      var cotHtml='';
+      if(p['COT_NUM']||p['COT_VALOR']){
+        cotHtml='<div style="font-size:10px;margin-top:4px;padding:3px 7px;background:#F5EEF8;border-radius:6px;color:#8E44AD;font-weight:600">💜 '+(p['COT_NUM']||'')+(p['COT_VALOR']?' · '+fmtCOP(p['COT_VALOR']):'')+'</div>';
+      }
+      if(p['FAC_NUM']||p['FAC_VALOR']){
+        cotHtml+='<div style="font-size:10px;margin-top:3px;padding:3px 7px;background:var(--glight);border-radius:6px;color:var(--green);font-weight:600">🟢 '+(p['FAC_NUM']||'')+(p['FAC_VALOR']?' · '+fmtCOP(p['FAC_VALOR']):'')+'</div>';
+      }
       html+='<div class="kanban-card" style="border-left:3px solid '+bordeColor+'" onclick="abrirKanbanEtapa(\''+safeId+'\')">'
         +'<div class="kanban-card-t" title="'+n.replace(/"/g,'')+'">'+n+'</div>'
         +(p['BARRIO']||p['CANAL']?'<div class="kanban-card-s">'+(p['BARRIO']?p['BARRIO']+(p['CANAL']?' · '+p['CANAL']:''):(p['CANAL']||''))+'</div>':'')
@@ -3154,6 +3633,7 @@ window.renderKanban=function(){
           +(cnt>0?'<div style="font-size:10px;color:var(--blue)">📋 '+cnt+(impOk>0?' · 🟢'+impOk:'')+'</div>':'<div></div>')
           +(dir?'<button class="bg2" style="font-size:11px;padding:3px 8px;color:var(--blue);border-color:var(--blue)" onclick="event.stopPropagation();navegarA(\''+safeDir+'\')">🧭</button>':'')
         +'</div>'
+        +cotHtml
         +'<div style="margin-top:8px;display:flex;align-items:center;gap:4px;flex-wrap:wrap">'
           +'<span style="font-size:10px;color:var(--muted)">→</span>'
           +moveOpts
@@ -3173,11 +3653,26 @@ window.abrirKanbanEtapa=function(pid){
   document.getElementById('mke-obs').value='';
   var etActual=p['ETAPA']||'PROSPECCIÓN';
   document.querySelectorAll('#mke-etapa .chip').forEach(function(c){c.classList.remove('on');if(c.dataset.v===etActual)c.classList.add('on');});
+  // Mostrar/ocultar campos según etapa actual y prellenar datos existentes
+  var isCot=etActual==='COTIZACIÓN';var isGan=etActual==='PROYECTO GANADO';
+  document.getElementById('mke-cot-fields').style.display=isCot?'block':'none';
+  document.getElementById('mke-gan-fields').style.display=isGan?'block':'none';
+  // Prellenar cotización
+  document.getElementById('mke-cot-num').value=p['COT_NUM']||'';
+  document.getElementById('mke-cot-valor').value=p['COT_VALOR']||'';
+  document.getElementById('mke-cot-fmt').textContent=p['COT_VALOR']?fmtCOP(p['COT_VALOR']):'';
+  // Prellenar factura
+  document.getElementById('mke-fac-num').value=p['FAC_NUM']||'';
+  document.getElementById('mke-fac-valor').value=p['FAC_VALOR']||'';
+  document.getElementById('mke-fac-fmt').textContent=p['FAC_VALOR']?fmtCOP(p['FAC_VALOR']):'';
   openM('m-kanban-etapa');
 };
 window.selKanbanEtapa=function(el){
   document.querySelectorAll('#mke-etapa .chip').forEach(function(c){c.classList.remove('on');});
   el.classList.add('on');
+  var v=el.dataset.v;
+  document.getElementById('mke-cot-fields').style.display=(v==='COTIZACIÓN'?'block':'none');
+  document.getElementById('mke-gan-fields').style.display=(v==='PROYECTO GANADO'?'block':'none');
 };
 window.saveKanbanEtapa=async function(){
   var pid=document.getElementById('mke-pid').value;
@@ -3188,10 +3683,35 @@ window.saveKanbanEtapa=async function(){
   if(!p)return;
   var hist=p['HISTORIAL_ETAPAS']||[];
   var entrada={etapa:etapa,fecha:new Date().toISOString(),asesor:window.CU?.nombre||'',obs:obs||''};
+  // Datos cotización
+  var cotNum=document.getElementById('mke-cot-num').value.trim();
+  var cotValor=document.getElementById('mke-cot-valor').value;
+  if(etapa==='COTIZACIÓN'&&(cotNum||cotValor)){
+    entrada.cotNum=cotNum;entrada.cotValor=cotValor?parseFloat(cotValor):0;
+  }
+  // Datos factura
+  var facNum=document.getElementById('mke-fac-num').value.trim();
+  var facValor=document.getElementById('mke-fac-valor').value;
+  if(etapa==='PROYECTO GANADO'&&(facNum||facValor)){
+    entrada.facNum=facNum;entrada.facValor=facValor?parseFloat(facValor):0;
+  }
   hist.push(entrada);
   try{
-    await window.FS.updateDoc(window.FS.doc(window.db,'proyectos',pid),{ETAPA:etapa,HISTORIAL_ETAPAS:hist});
-    p['ETAPA']=etapa;p['HISTORIAL_ETAPAS']=hist;
+    var upd={ETAPA:etapa,HISTORIAL_ETAPAS:hist};
+    if(etapa==='COTIZACIÓN'&&(cotNum||cotValor)){
+      if(cotNum)upd['COT_NUM']=cotNum;
+      if(cotValor)upd['COT_VALOR']=parseFloat(cotValor);
+    }
+    if(etapa==='PROYECTO GANADO'&&(facNum||facValor)){
+      if(facNum)upd['FAC_NUM']=facNum;
+      if(facValor)upd['FAC_VALOR']=parseFloat(facValor);
+    }
+    await window.FS.updateDoc(window.FS.doc(window.db,'proyectos',pid),upd);
+    Object.assign(p,upd);
+    // Limpiar campos
+    document.getElementById('mke-cot-num').value='';document.getElementById('mke-cot-valor').value='';document.getElementById('mke-cot-fmt').textContent='';
+    document.getElementById('mke-fac-num').value='';document.getElementById('mke-fac-valor').value='';document.getElementById('mke-fac-fmt').textContent='';
+    document.getElementById('mke-cot-fields').style.display='none';document.getElementById('mke-gan-fields').style.display='none';
     toast('✅ Etapa actualizada: '+etapa);
     closeM('m-kanban-etapa');
     renderKanban();fltPL();
