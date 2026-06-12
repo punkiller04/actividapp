@@ -203,12 +203,14 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <div class="card" style="cursor:pointer" onclick="go('trazabilidad')"><div class="crow"><div class="cico" style="background:linear-gradient(135deg,#F5EEF8,#EBD5F8)">🔍</div><div class="cbody"><div class="ct">Trazabilidad</div><div class="cs">Movimientos de proyectos</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('nueva')"><div class="crow"><div class="cico" style="background:var(--rlight)">📝</div><div class="cbody"><div class="ct">Nueva visita</div><div class="cs">Registrar actividad comercial</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('actividades')"><div class="crow"><div class="cico" style="background:var(--glight)">📋</div><div class="cbody"><div class="ct">Actividades</div><div class="cs" id="act-sub">Historial de visitas</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
-    <div class="card" style="cursor:pointer" onclick="go('proyectos')"><div class="crow"><div class="cico" style="background:var(--blight)">🏗️</div><div class="cbody"><div class="ct">Proyectos</div><div class="cs" id="proy-sub">Ver y gestionar</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('proyectos')"><div class="crow"><div class="cico" style="background:var(--blight)">🏗️</div><div class="cbody"><div class="ct">Proyectos Obras</div><div class="cs" id="proy-sub">Ver y gestionar</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="go('clientes')"><div class="crow"><div class="cico" style="background:#F5EEF8">👤</div><div class="cbody"><div class="ct">Clientes</div><div class="cs" id="cli-sub">Ferreterías y distribuidores</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('asignaciones')"><div class="crow"><div class="cico" style="background:var(--alight)">📌</div><div class="cbody"><div class="ct">Asignaciones</div><div class="cs" id="asig-sub">Proyectos pendientes</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('mapa')"><div class="crow"><div class="cico" style="background:#F5EEF8">🗺️</div><div class="cbody"><div class="ct">Mapa de cobertura</div><div class="cs">Zonas visitadas</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('muestras')"><div class="crow"><div class="cico" style="background:#F0FFF4">📦</div><div class="cbody"><div class="ct">Muestras</div><div class="cs">Productos entregados</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" style="cursor:pointer" onclick="go('ferreterias')"><div class="crow"><div class="cico" style="background:#FDEBD0">🔍</div><div class="cbody"><div class="ct">Ferreterías cercanas</div><div class="cs">Las 10 más cercanas a ti</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" id="c-dash" style="cursor:pointer;display:none" onclick="go('dashboard')"><div class="crow"><div class="cico" style="background:#FEF5E7">📊</div><div class="cbody"><div class="ct">Dashboard</div><div class="cs">Gestión integral</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
+    <div class="card" id="c-presup" style="cursor:pointer;display:none" onclick="go('presupuestos')"><div class="crow"><div class="cico" style="background:linear-gradient(135deg,#E8F5EE,#C8EDD8)">🎯</div><div class="cbody"><div class="ct">Presupuestos</div><div class="cs">Metas y cumplimiento mensual</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" id="c-rep" style="cursor:pointer;display:none" onclick="go('reportes')"><div class="crow"><div class="cico" style="background:#EAF3DE">📄</div><div class="cbody"><div class="ct">Informe PDF</div><div class="cs">Reporte gerencial</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" id="c-asig-admin" style="cursor:pointer;display:none" onclick="go('asig-admin')"><div class="crow"><div class="cico" style="background:#F5EEF8">🏗️</div><div class="cbody"><div class="ct">Asignar proyectos</div><div class="cs">Gestión de obras</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
     <div class="card" id="c-usuarios" style="cursor:pointer;display:none" onclick="go('usuarios')"><div class="crow"><div class="cico" style="background:var(--blight)">👤</div><div class="cbody"><div class="ct">Usuarios y roles</div><div class="cs">Gestión del equipo</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>
@@ -324,11 +326,11 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   </div>
 </div>
 
-<!-- PROYECTOS -->
+<!-- PROYECTOS (solo OBRAS) -->
 <div class="scr" id="s-proyectos">
-  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Proyectos</div><button class="tb-a" onclick="openM('m-nuevo-proy')">+ Nuevo</button></div>
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Proyectos Obras</div><button class="tb-a" onclick="openM('m-nuevo-proy')">+ Nuevo</button></div>
   <div class="cnt">
-    <div class="sw" style="margin-bottom:8px"><input id="ps" placeholder="Buscar proyecto..." oninput="fltPL()" style="width:100%;padding:9px 12px 9px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
+    <div class="sw" style="margin-bottom:8px"><input id="ps" placeholder="Buscar proyecto de obra..." oninput="fltPL()" style="width:100%;padding:9px 12px 9px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
     <div style="display:flex;gap:6px;margin-bottom:12px">
       <button class="chip on" id="pf-t" onclick="setPF('todos')">Todos</button>
       <button class="chip" id="pf-a" onclick="setPF('activo')">Activos</button>
@@ -340,7 +342,23 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
     <button class="nb-b on"><span class="nb-i">🏗️</span>Proyectos</button>
-    <button class="nb-b" onclick="go('asignaciones')"><span class="nb-i">📌</span>Asign.</button>
+    <button class="nb-b" onclick="go('clientes')"><span class="nb-i">👤</span>Clientes</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- CLIENTES (ferreterías / distribución) -->
+<div class="scr" id="s-clientes">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Clientes</div><button class="tb-a" onclick="openM('m-cli')">+ Nuevo</button></div>
+  <div class="cnt">
+    <div class="sw" style="margin-bottom:8px"><input id="cls-q" placeholder="Buscar cliente, NIT..." oninput="renderCliLista()" style="width:100%;padding:9px 12px 9px 32px;border:0.5px solid var(--brd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"></div>
+    <div id="cli-list"><div class="ld">Cargando...</div></div>
+  </div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b on"><span class="nb-i">👤</span>Clientes</button>
     <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
   </div>
 </div>
@@ -410,6 +428,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <div class="mleg">
       <div>🏗️🟢 Obra imp. &nbsp;🏗️🔴 No imp.</div>
       <div>🔧🟢 Ferret. imp. &nbsp;🔧🔴 No imp.</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:2px">🔧 = 1ª visita/mes por cliente</div>
       <div style="border-top:0.5px solid var(--brd);margin-top:4px;padding-top:4px">Borde Kanban:</div>
       <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#2471A3;border:2px solid #fff;vertical-align:middle"></span> Prospección &nbsp;<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#E67E22;border:2px solid #fff;vertical-align:middle"></span> Visita</div>
       <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#8E44AD;border:2px solid #fff;vertical-align:middle"></span> Cotización &nbsp;<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#219653;border:2px solid #fff;vertical-align:middle"></span> Ganado</div>
@@ -585,6 +604,23 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
     <button class="nb-b" onclick="go('actividades')"><span class="nb-i">📋</span>Visitas</button>
     <button class="nb-b on"><span class="nb-i">🔍</span>Trazab.</button>
+    <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
+    <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
+  </div>
+</div>
+
+<!-- PRESUPUESTOS -->
+<div class="scr" id="s-presupuestos">
+  <div class="tb"><span class="tb-bk" onclick="go('home')">‹</span><div class="tb-t">Presupuestos</div><button class="tb-a" onclick="openM('m-presup')">+ Registrar</button></div>
+  <div style="background:var(--card);border-bottom:0.5px solid var(--brd);padding:6px 12px;flex-shrink:0;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+    <select id="presup-mes" onchange="renderPresupuestos()" style="padding:5px 8px;border:0.5px solid var(--brd);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--card);outline:none"></select>
+    <select id="presup-asesor-f" onchange="renderPresupuestos()" style="padding:5px 8px;border:0.5px solid var(--brd);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--card);outline:none"><option value="">Todos los asesores</option></select>
+  </div>
+  <div class="cnt"><div id="presup-list"><div class="ld">Cargando...</div></div></div>
+  <div class="nb">
+    <button class="nb-b" onclick="go('home')"><span class="nb-i">🏠</span>Inicio</button>
+    <button class="nb-b" onclick="go('dashboard')"><span class="nb-i">📊</span>Dashboard</button>
+    <button class="nb-b on"><span class="nb-i">🎯</span>Presup.</button>
     <button class="nb-b" onclick="go('proyectos')"><span class="nb-i">🏗️</span>Proyectos</button>
     <button class="nb-b" onclick="go('mapa')"><span class="nb-i">🗺️</span>Mapa</button>
   </div>
@@ -813,6 +849,36 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <button class="bs" onclick="closeM('m-kanban-etapa')">Cancelar</button>
 </div></div>
 
+<div class="mo" id="m-presup"><div class="md"><div class="md-pull"></div>
+  <div class="mdt" id="mp-title">Registrar Presupuesto</div>
+  <input type="hidden" id="mp-id">
+  <div class="f">
+    <label>Asesor *</label>
+    <select id="mp-asesor" style="width:100%;padding:10px 12px;border:1px solid var(--brd);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none"><option value="">Seleccionar asesor</option></select>
+  </div>
+  <div class="f">
+    <label>Mes y año *</label>
+    <input type="month" id="mp-mes" style="width:100%;padding:10px 12px;border:1px solid var(--brd);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);outline:none">
+  </div>
+  <div class="f">
+    <label>Presupuesto de visitas</label>
+    <input id="mp-vis" type="number" min="0" placeholder="Ej: 80">
+  </div>
+  <div class="f">
+    <label>Presupuesto de ventas (COP $)</label>
+    <input id="mp-venta" type="number" min="0" placeholder="Ej: 50000000" oninput="fmtPresupVenta()">
+    <div id="mp-venta-fmt" style="font-size:12px;color:var(--green);font-weight:600;margin-top:4px"></div>
+  </div>
+  <div class="f">
+    <label>Venta real del mes (COP $) <span style="color:var(--muted);font-size:10px">— ingresar al cierre</span></label>
+    <input id="mp-real" type="number" min="0" placeholder="Ej: 42000000" oninput="fmtPresupReal()">
+    <div id="mp-real-fmt" style="font-size:12px;color:var(--blue);font-weight:600;margin-top:4px"></div>
+  </div>
+  <div class="f"><label>Observación</label><textarea id="mp-obs" rows="2" placeholder="Notas del mes..."></textarea></div>
+  <button class="bp" type="button" onclick="savePresupuesto()">Guardar presupuesto</button>
+  <button class="bs" onclick="closeM('m-presup')">Cancelar</button>
+</div></div>
+
 <div class="toast" id="toast"></div>
 
 <!-- ═══════════════════════════════════════════════════════ -->
@@ -850,7 +916,7 @@ async function loadAll(){
     });
     // Poblamos selectores de asesor
     const asesores=window.Usuarios.filter(function(u){return (u['TIPO']||u.tipo||'ASESOR')==='ASESOR';});
-    ['ma-as','r-a','mep-asesor'].forEach(function(sid){
+    ['ma-as','r-a','mep-asesor','mp-asesor'].forEach(function(sid){
       const s=document.getElementById(sid);
       if(!s)return;
       const first=s.options[0]?s.options[0].outerHTML:'';
@@ -896,6 +962,11 @@ async function loadAll(){
     const gSnap=await getDocs(query(collection(db,'asignaciones'),orderBy('fecha','desc')));
     window.Asignaciones=[];
     gSnap.forEach(function(d){window.Asignaciones.push({id:d.id,...d.data()});});
+
+    // Presupuestos
+    const bSnap=await getDocs(collection(db,'presupuestos'));
+    window.Presupuestos=[];
+    bSnap.forEach(function(d){window.Presupuestos.push({id:d.id,...d.data()});});
 
     window._dataReady=true;
     refreshStats();
@@ -1155,7 +1226,47 @@ window.saveUsuario=async function(){
   }catch(e){toast('Error: '+e.message);}
 };
 
-// ── GENERAR PDF GERENCIAL ────────────────────────────────
+// ── GUARDAR PRESUPUESTO ─────────────────────────────────
+window.savePresupuesto=async function(){
+  var id=document.getElementById('mp-id').value;
+  var asesor=document.getElementById('mp-asesor').value;
+  var mes=document.getElementById('mp-mes').value;
+  var vis=parseInt(document.getElementById('mp-vis').value)||0;
+  var venta=parseFloat(document.getElementById('mp-venta').value)||0;
+  var real=parseFloat(document.getElementById('mp-real').value)||0;
+  var obs=document.getElementById('mp-obs').value.trim();
+  if(!asesor||!mes){toast('Selecciona asesor y mes');return;}
+  var docId=id||(asesor.replace(/\s+/g,'_')+'_'+mes);
+  var data={ASESOR:asesor,MES:mes,PRESUP_VISITAS:vis,PRESUP_VENTA:venta,VENTA_REAL:real,OBSERVACION:obs};
+  try{
+    await window.FS.setDoc(window.FS.doc(db,'presupuestos',docId),data);
+    var existing=window.Presupuestos.findIndex(function(x){return x.id===docId;});
+    if(existing>=0)window.Presupuestos[existing]=Object.assign({id:docId},data);
+    else window.Presupuestos.push(Object.assign({id:docId},data));
+    toast('✅ Presupuesto guardado');closeM('m-presup');renderPresupuestos();
+    ['mp-id','mp-vis','mp-venta','mp-real','mp-obs'].forEach(function(x){document.getElementById(x).value='';});
+    document.getElementById('mp-venta-fmt').textContent='';document.getElementById('mp-real-fmt').textContent='';
+  }catch(e){toast('Error: '+e.message);}
+};
+
+window.fmtPresupVenta=function(){var v=document.getElementById('mp-venta').value;document.getElementById('mp-venta-fmt').textContent=v?fmtCOP(v):'';}
+window.fmtPresupReal=function(){var v=document.getElementById('mp-real').value;document.getElementById('mp-real-fmt').textContent=v?fmtCOP(v):'';}
+
+window.abrirPresupuesto=function(id){
+  var p=window.Presupuestos.find(function(x){return x.id===id;});
+  if(!p)return;
+  document.getElementById('mp-id').value=id;
+  document.getElementById('mp-title').textContent='Editar Presupuesto';
+  document.getElementById('mp-asesor').value=p.ASESOR||'';
+  document.getElementById('mp-mes').value=p.MES||'';
+  document.getElementById('mp-vis').value=p.PRESUP_VISITAS||'';
+  document.getElementById('mp-venta').value=p.PRESUP_VENTA||'';
+  document.getElementById('mp-real').value=p.VENTA_REAL||'';
+  document.getElementById('mp-obs').value=p.OBSERVACION||'';
+  document.getElementById('mp-venta-fmt').textContent=p.PRESUP_VENTA?fmtCOP(p.PRESUP_VENTA):'';
+  document.getElementById('mp-real-fmt').textContent=p.VENTA_REAL?fmtCOP(p.VENTA_REAL):'';
+  openM('m-presup');
+};
 window.generarPDF=async function(){
   var ini=document.getElementById('r-i').value;
   var fin=document.getElementById('r-f').value;
@@ -1452,6 +1563,50 @@ window.generarPDF=async function(){
     pdf.setTextColor(30,30,30);
   }
   y+=6;
+
+  // ─ Cumplimiento vs Presupuesto ─
+  var mesPDF=ini?ini.substring(0,7):'';
+  var presupPDF=(window.Presupuestos||[]).filter(function(p){return p.MES===mesPDF;});
+  if(presupPDF.length){
+    sectionTitle('2B. CUMPLIMIENTO VS PRESUPUESTO DEL MES',33,150,83);
+    chk(10);
+    pdf.setFillColor(50,50,50);pdf.rect(M,y,CW,7,'F');
+    pdf.setTextColor(255,255,255);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+    pdf.text('ASESOR',M+1,y+4.8);
+    pdf.text('PRESUP. VIS',M+70,y+4.8,{align:'center'});
+    pdf.text('REAL VIS',M+92,y+4.8,{align:'center'});
+    pdf.text('% VIS',M+112,y+4.8,{align:'center'});
+    pdf.text('PRESUP. VENTA',M+140,y+4.8,{align:'center'});
+    pdf.text('VENTA REAL',M+165,y+4.8,{align:'center'});
+    pdf.text('% VENTA',M+CW,y+4.8,{align:'right'});
+    y+=7;pdf.setTextColor(30,30,30);
+    presupPDF.forEach(function(p,idx){
+      chk(9);
+      var nom=p.ASESOR||'';
+      var visR=acts.filter(function(a){return a.ASESOR===nom;}).length;
+      var pVis=p.PRESUP_VISITAS||0;var pVen=p.PRESUP_VENTA||0;var vReal=p.VENTA_REAL||0;
+      var cumplV=pVis>0?Math.round(visR/pVis*100):null;
+      var cumplVen2=pVen>0?Math.round(vReal/pVen*100):null;
+      var cColV=cumplV===null?[150,150,150]:cumplV>=100?[33,150,83]:cumplV>=70?[230,126,34]:[192,57,43];
+      var cColVen=cumplVen2===null?[150,150,150]:cumplVen2>=100?[33,150,83]:cumplVen2>=70?[230,126,34]:[192,57,43];
+      if(idx%2===0)pdf.setFillColor(248,248,245);else pdf.setFillColor(255,255,255);
+      pdf.rect(M,y,CW,8,'F');
+      pdf.setFont('helvetica','normal');pdf.setFontSize(7.5);pdf.setTextColor(30,30,30);
+      pdf.text(safe(nom,22),M+1,y+5.2);
+      pdf.text(pVis>0?String(pVis):'—',M+70,y+5.2,{align:'center'});
+      pdf.text(String(visR),M+92,y+5.2,{align:'center'});
+      pdf.setTextColor(cColV[0],cColV[1],cColV[2]);pdf.setFont('helvetica','bold');
+      pdf.text(cumplV!==null?cumplV+'%':'—',M+112,y+5.2,{align:'center'});
+      pdf.setTextColor(30,30,30);pdf.setFont('helvetica','normal');
+      pdf.text(pVen>0?fmtCOPpdf(pVen):'—',M+140,y+5.2,{align:'center'});
+      pdf.text(vReal>0?fmtCOPpdf(vReal):'—',M+165,y+5.2,{align:'center'});
+      pdf.setTextColor(cColVen[0],cColVen[1],cColVen[2]);pdf.setFont('helvetica','bold');
+      pdf.text(cumplVen2!==null?cumplVen2+'%':'—',M+CW,y+5.2,{align:'right'});
+      pdf.setTextColor(30,30,30);
+      y+=8;
+    });
+    y+=4;
+  }
 
   // ─ Cruce asignados vs visitados ─
   sectionTitle('3. CUMPLIMIENTO DE ASIGNACIONES',142,68,173);
@@ -1934,6 +2089,7 @@ function applyU(cu){
   document.getElementById('c-rep').style.display=isA?'block':'none';
   document.getElementById('c-asig-admin').style.display=isA?'block':'none';
   document.getElementById('c-usuarios').style.display=isA?'block':'none';
+  document.getElementById('c-presup').style.display=isA?'block':'none';
   document.getElementById('act-fa').style.display=isA?'block':'none';
   var hr=new Date().getHours();
   var gr=hr<12?'Buenos días':hr<18?'Buenas tardes':'Buenas noches';
@@ -1963,10 +2119,12 @@ window.go=function(id){
   if(id==='asignaciones')renderAsigLista();
   if(id==='asig-admin')renderAsigAdminLista();
   if(id==='proyectos')fltPL();
+  if(id==='clientes')renderCliLista();
   if(id==='usuarios')renderUsrLista();
   if(id==='ferreterias')initFerreterias();
   if(id==='muestras')renderMuestras();
   if(id==='kanban')renderKanban();
+  if(id==='presupuestos')initPresupuestos();
   if(id==='trazabilidad'){document.getElementById('traz-q').value='';document.getElementById('traz-result').innerHTML='<div class="em"><div class="em-i">🔍</div><div>Escribe el nombre de un proyecto o cliente para ver su historial</div></div>';}
 };
 
@@ -2417,7 +2575,12 @@ window.fltPL=function(){
   var q=(document.getElementById('ps')?.value||'').toLowerCase();
   var f=window._proyF||'todos';
   if(!window.Proyectos)return;
-  var r=window.Proyectos.filter(function(p){return (p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q);});
+  // Solo proyectos de canal OBRAS
+  var r=window.Proyectos.filter(function(p){
+    var canal=(p['CANAL']||'').toUpperCase();
+    if(canal&&canal!=='OBRAS')return false;
+    return (p['NOMBRE PROYECTO']||'').toLowerCase().includes(q)||(String(p['CODIGO']||'')).includes(q);
+  });
   if(f==='activo')r=r.filter(function(p){return (p.ESTADO||'ACTIVO')!=='INACTIVO';});
   if(f==='inactivo')r=r.filter(function(p){return p.ESTADO==='INACTIVO';});
   renderProyLista(r.slice(0,80));
@@ -2778,6 +2941,9 @@ window.renderMap=function(){
   var fT=window.mapFiltros.tam||'';
   var isA=window.CU?.tipo==='ADMINISTRADOR';
   var mi=window.CU?.nombre||'';
+  // Para ferreterías: solo mostrar la primera visita del mes por cliente (evita saturación)
+  // Para obras: mostrar todas las visitas con GPS
+  var ferrVistosMes=new Set();
   var puntos=window.Actividades.filter(function(a){
     var ubi=a['UBICACION']||a['UBICACIÓN']||'';
     if(!ubi)return false;
@@ -2788,6 +2954,13 @@ window.renderMap=function(){
     if(fI&&(a.IMPACTO||'')!==fI)return false;
     if(fT&&(a['TAMAÑO FERRETERIA']||'')!==fT)return false;
     if(!isA&&a.ASESOR!==mi)return false;
+    // Lógica de deduplicación para ferreterías
+    if((a.CANAL||'').toUpperCase()==='FERRETERIA'){
+      var fDate=a.fecha&&a.fecha.toDate?a.fecha.toDate():new Date(a.fecha||0);
+      var mesKey=(a.CLIENTE||'?')+'_'+fDate.getFullYear()+'_'+fDate.getMonth();
+      if(ferrVistosMes.has(mesKey))return false; // ya hay una visita este mes de este cliente
+      ferrVistosMes.add(mesKey);
+    }
     return true;
   });
   if(!window.mapaInited){
@@ -2805,13 +2978,17 @@ window.renderMap=function(){
     window.mapaMarkers=[];
   }
   var lats=[],lngs=[];
-  // Asignaciones en mapa
+  // Asignaciones en mapa — SOLO canal OBRAS
   (window.Asignaciones||[]).filter(function(a){
     if(!isA&&a.ASESOR!==mi)return false;
     if(fa&&a.ASESOR!==fa)return false;
     if(a.ESTADO==='CERRADO')return false;
     var p=window.Proyectos?.find(function(x){return x['NOMBRE PROYECTO']===a.PROYECTO;});
-    return p&&p.COORDENADAS;
+    if(!p)return false;
+    // Solo proyectos de canal OBRAS
+    var canal=(p['CANAL']||'').toUpperCase();
+    if(canal&&canal!=='OBRAS')return false;
+    return p.COORDENADAS||p.DIRECCION;
   }).forEach(function(a){
     var p=window.Proyectos.find(function(x){return x['NOMBRE PROYECTO']===a.PROYECTO;});
     var cs=(p.COORDENADAS||'').toString().split(',');
@@ -3038,6 +3215,57 @@ window.renderDash=function(){
   asHtml+='</div>';
   document.getElementById('d-asesores').innerHTML=asHtml;
 
+  // ── Cumplimiento de presupuesto del mes ──
+  var mesActualKey=new Date().getFullYear()+'-'+(String(new Date().getMonth()+1).padStart(2,'0'));
+  var presupMes=(window.Presupuestos||[]).filter(function(p){return p.MES===mesActualKey;});
+  if(presupMes.length){
+    function fmtShort(n){if(!n)return '$0';if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return '$'+(n/1000).toFixed(0)+'K';return '$'+n;}
+    var pbHtml='<div style="background:var(--card);border-radius:13px;padding:14px;border:0.5px solid var(--brd);box-shadow:var(--sh);margin-bottom:10px">';
+    pbHtml+='<div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">🎯 Cumplimiento vs Presupuesto</div>';
+    var totPV=0,totVR=0,totPVis=0,totVis=0;
+    presupMes.forEach(function(p){
+      var nom=p.ASESOR||'';
+      var visR=(window.Actividades||[]).filter(function(a){
+        if(a.ASESOR!==nom)return false;
+        var f=a.fecha&&a.fecha.toDate?a.fecha.toDate():new Date(a.fecha||0);
+        return f>=mD;
+      }).length;
+      var pv=p.PRESUP_VENTA||0;var vr=p.VENTA_REAL||0;
+      var pvis=p.PRESUP_VISITAS||0;
+      totPV+=pv;totVR+=vr;totPVis+=pvis;totVis+=visR;
+      var cumplVen=pv>0?Math.min(Math.round(vr/pv*100),150):null;
+      var cumplVis2=pvis>0?Math.min(Math.round(visR/pvis*100),150):null;
+      var cCol=cumplVen===null?'var(--muted)':cumplVen>=100?'var(--green)':cumplVen>=70?'var(--amber)':'var(--red)';
+      pbHtml+='<div style="margin-bottom:10px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+          +'<span style="font-size:12px;font-weight:600">'+nom.split(' ')[0]+'</span>'
+          +'<div style="display:flex;gap:8px;font-size:11px">'
+            +(cumplVis2!==null?'<span style="color:var(--blue)">📋'+cumplVis2+'%</span>':'')
+            +(cumplVen!==null?'<span style="color:'+cCol+';font-weight:700">💰'+cumplVen+'%</span>':'<span style="color:var(--muted)">Sin meta</span>')
+          +'</div>'
+        +'</div>'
+        +(pvis>0?'<div style="background:#f0f0ec;border-radius:3px;height:5px;overflow:hidden;margin-bottom:3px"><div style="height:100%;background:var(--blue);border-radius:3px;width:'+Math.min(cumplVis2||0,100)+'%"></div></div>':'')
+        +(pv>0?'<div style="background:#f0f0ec;border-radius:3px;height:5px;overflow:hidden"><div style="height:100%;background:'+cCol+';border-radius:3px;width:'+Math.min(cumplVen||0,100)+'%"></div></div>':'')
+        +(pv>0?'<div style="font-size:10px;color:var(--muted);margin-top:3px">'+fmtShort(vr)+' / '+fmtShort(pv)+'</div>':'')
+      +'</div>';
+    });
+    // Totales
+    if(presupMes.length>1){
+      var totCumplVen=totPV>0?Math.round(totVR/totPV*100):null;
+      var totCumplVis=totPVis>0?Math.round(totVis/totPVis*100):null;
+      var totCol=totCumplVen===null?'var(--muted)':totCumplVen>=100?'var(--green)':totCumplVen>=70?'var(--amber)':'var(--red)';
+      pbHtml+='<div style="border-top:0.5px solid var(--brd);padding-top:8px;display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:12px;font-weight:700;color:var(--text)">TOTAL EQUIPO</span>'
+        +'<div style="display:flex;gap:8px;font-size:12px;font-weight:700">'
+          +(totCumplVis!==null?'<span style="color:var(--blue)">📋'+totCumplVis+'%</span>':'')
+          +(totCumplVen!==null?'<span style="color:'+totCol+'">💰'+totCumplVen+'%</span>':'')
+        +'</div>'
+      +'</div>';
+    }
+    pbHtml+='</div>';
+    document.getElementById('d-cruce').innerHTML=pbHtml+document.getElementById('d-cruce').innerHTML;
+  }
+
   // ── Cruce asignados vs visitados ──
   var asesAll=[...new Set((window.Asignaciones||[]).map(function(a){return a.ASESOR;}).filter(Boolean))];
   var crHtml='<div style="background:var(--card);border-radius:13px;padding:14px;border:0.5px solid var(--brd);box-shadow:var(--sh)">';
@@ -3195,7 +3423,193 @@ window.editUsuario=function(id){
   openM('m-usuario');
 };
 
-// ── FERRETERÍAS CERCANAS ────────────────────────────────
+// ── RENDER CLIENTES ─────────────────────────────────────
+window.renderCliLista=function(){
+  var el=document.getElementById('cli-list');
+  if(!el||!window.Clientes)return;
+  var q=(document.getElementById('cls-q')?.value||'').toLowerCase().trim();
+  var list=window.Clientes.filter(function(c){
+    var nom=(c['NOMBRE CLIENTE']||'').toLowerCase();
+    var nit=String(c['NIT CLIENTE']||'').toLowerCase();
+    return !q||nom.includes(q)||nit.includes(q);
+  });
+  document.getElementById('cli-sub').textContent=window.Clientes.length+' clientes';
+  if(!list.length){el.innerHTML='<div class="em"><div class="em-i">👤</div><div>Sin clientes</div></div>';return;}
+  el.innerHTML=list.slice(0,60).map(function(c){
+    var nom=c['NOMBRE CLIENTE']||'';
+    var nit=c['NIT CLIENTE']||'';
+    var enc=c['PERSONA ENCARGADA']||'';
+    var cel=c['CELULAR']||'';
+    var visitas=(window.Actividades||[]).filter(function(a){return a.CLIENTE===nom;});
+    var impOk=visitas.filter(function(a){return !(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='';}).length;
+    var pctI=visitas.length?Math.round(impOk/visitas.length*100):0;
+    var barCol=pctI>=70?'var(--green)':pctI>=40?'var(--amber)':'var(--red)';
+    var ini=nom.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();
+    return '<div class="card">'
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+        +'<div style="width:38px;height:38px;border-radius:50%;background:var(--alight);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--amber);font-size:13px;flex-shrink:0">'+ini+'</div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+nom+'</div>'
+          +'<div style="font-size:11px;color:var(--muted)">'+(nit?'NIT: '+nit+' · ':'')+( enc||'')+'</div>'
+        +'</div>'
+      +'</div>'
+      +(visitas.length>0?'<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span style="color:var(--muted)">'+visitas.length+' visitas · '+impOk+' imp.</span><span style="font-weight:700;color:'+barCol+'">'+pctI+'%</span></div><div style="background:#f0f0ec;border-radius:3px;height:6px;overflow:hidden"><div style="height:100%;border-radius:3px;background:'+barCol+';width:'+pctI+'%"></div></div></div>':'')
+      +'<div style="display:flex;gap:6px">'
+        +(cel?'<a href="tel:'+cel+'" style="flex:1;text-align:center;background:var(--glight);color:var(--green);border-radius:8px;padding:7px;font-size:12px;font-weight:600;text-decoration:none">📞 Llamar</a>':'')
+        +'<button onclick="regVisitaCli(\''+nom.replace(/'/g,'').replace(/"/g,'')+'\',\''+cel+'\')" style="flex:1;background:var(--rlight);color:var(--rdark);border-radius:8px;padding:7px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:DM Sans,sans-serif">📝 Visitar</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+};
+
+window.regVisitaCli=function(nombre,cel){
+  window._selCli=nombre;
+  document.getElementById('cli-sv-t').textContent=nombre;
+  document.getElementById('cli-sv').classList.add('on');
+  document.getElementById('cli-sw').style.display='none';
+  document.querySelectorAll('#ch-canal .chip').forEach(function(x){x.classList.remove('on');});
+  var fc=document.querySelector('#ch-canal .chip[data-v="FERRETERIA"]');
+  if(fc){fc.classList.add('on');fc.click();}
+  toast('📝 '+nombre.substring(0,20)+' listo para visitar');
+  go('nueva');
+};
+
+// ── PRESUPUESTOS ─────────────────────────────────────────
+window.initPresupuestos=function(){
+  // Poblar selector de mes
+  var selMes=document.getElementById('presup-mes');
+  var selAse=document.getElementById('presup-asesor-f');
+  var mp=document.getElementById('mp-asesor');
+  // Asesores
+  var asesores=(window.Usuarios||[]).filter(function(u){return (u['TIPO']||u.tipo||'ASESOR')==='ASESOR';});
+  [selAse,mp].forEach(function(sel){
+    if(!sel)return;
+    var first=sel===selAse?'<option value="">Todos los asesores</option>':'<option value="">Seleccionar asesor</option>';
+    sel.innerHTML=first;
+    asesores.forEach(function(u){
+      var o=document.createElement('option');
+      o.value=u['NOMBRE EMPLEADO']||u.nombre||'';
+      o.textContent=u['NOMBRE EMPLEADO']||u.nombre||'';
+      sel.appendChild(o);
+    });
+  });
+  // Meses: últimos 12
+  var now=new Date();
+  selMes.innerHTML='';
+  for(var i=0;i<12;i++){
+    var d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    var val=d.getFullYear()+'-'+(String(d.getMonth()+1).padStart(2,'0'));
+    var lbl=d.toLocaleDateString('es-CO',{month:'long',year:'numeric'});
+    var o=document.createElement('option');
+    o.value=val;o.textContent=lbl;
+    selMes.appendChild(o);
+  }
+  // Mes actual en modal
+  var mesActual=now.getFullYear()+'-'+(String(now.getMonth()+1).padStart(2,'0'));
+  if(document.getElementById('mp-mes'))document.getElementById('mp-mes').value=mesActual;
+  renderPresupuestos();
+};
+
+window.renderPresupuestos=function(){
+  var el=document.getElementById('presup-list');if(!el)return;
+  var mes=document.getElementById('presup-mes')?.value||'';
+  var filtAse=document.getElementById('presup-asesor-f')?.value||'';
+  var asesores=(window.Usuarios||[]).filter(function(u){
+    var tipo=(u['TIPO']||u.tipo||'ASESOR');
+    if(tipo!=='ASESOR')return false;
+    if(filtAse&&(u['NOMBRE EMPLEADO']||u.nombre)!==filtAse)return false;
+    return true;
+  });
+  if(!asesores.length){el.innerHTML='<div class="em"><div class="em-i">👤</div><div>Sin asesores</div></div>';return;}
+  // Calcular visitas reales del mes para cada asesor
+  var mD=mes?new Date(mes+'-01'):new Date();
+  var mFin=new Date(mD.getFullYear(),mD.getMonth()+1,0,23,59,59);
+  function fmtM(n){if(!n)return '$0';if(n>=1000000000)return '$'+(n/1000000000).toFixed(1)+'B';if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return '$'+(n/1000).toFixed(0)+'K';return '$'+Math.round(n);}
+  var html='<div style="font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">'+
+    (mes?new Date(mes+'-15').toLocaleDateString('es-CO',{month:'long',year:'numeric'}).toUpperCase():'Mes actual')+'</div>';
+  // Totales globales del mes
+  var totalPresupVisitas=0,totalVisitasReal=0,totalPresupVenta=0,totalVentaReal=0;
+  asesores.forEach(function(u){
+    var nom=u['NOMBRE EMPLEADO']||u.nombre||'';
+    var presup=window.Presupuestos.find(function(p){return p.ASESOR===nom&&p.MES===mes;});
+    var visReales=(window.Actividades||[]).filter(function(a){
+      if(a.ASESOR!==nom)return false;
+      var f=a.fecha&&a.fecha.toDate?a.fecha.toDate():new Date(a.fecha||0);
+      return f>=mD&&f<=mFin;
+    }).length;
+    var impReal=(window.Actividades||[]).filter(function(a){
+      if(a.ASESOR!==nom)return false;
+      var f=a.fecha&&a.fecha.toDate?a.fecha.toDate():new Date(a.fecha||0);
+      if(f<mD||f>mFin)return false;
+      return !(a.IMPACTO||'').toUpperCase().includes('NO')&&(a.IMPACTO||'')!=='';
+    }).length;
+    var pVisit=presup?presup.PRESUP_VISITAS||0:0;
+    var pVenta=presup?presup.PRESUP_VENTA||0:0;
+    var vReal=presup?presup.VENTA_REAL||0:0;
+    var cumplVis=pVisit>0?Math.min(Math.round(visReales/pVisit*100),150):null;
+    var cumplVen=pVenta>0?Math.min(Math.round(vReal/pVenta*100),150):null;
+    totalPresupVisitas+=pVisit;totalVisitasReal+=visReales;totalPresupVenta+=pVenta;totalVentaReal+=vReal;
+    var visCol=cumplVis===null?'var(--muted)':cumplVis>=100?'var(--green)':cumplVis>=70?'var(--amber)':'var(--red)';
+    var venCol=cumplVen===null?'var(--muted)':cumplVen>=100?'var(--green)':cumplVen>=70?'var(--amber)':'var(--red)';
+    var ini=nom.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();
+    var impPct=visReales>0?Math.round(impReal/visReales*100):0;
+    html+='<div class="card" style="margin-bottom:10px">'
+      // Header
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+        +'<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--rdark));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;flex-shrink:0">'+ini+'</div>'
+        +'<div style="flex:1"><div style="font-size:14px;font-weight:600">'+nom+'</div><div style="font-size:11px;color:var(--muted)">Asesor · '+mes+'</div></div>'
+        +'<button onclick="abrirPresupuesto(\''+( presup?presup.id:(nom.replace(/\s+/g,'_')+'_'+mes))+'\')" style="background:var(--blight);color:var(--blue);border:none;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">✏️ Editar</button>'
+      +'</div>'
+      // KPIs en grid 2x2
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">'
+        // Visitas
+        +'<div style="background:var(--bg);border-radius:10px;padding:10px">'
+          +'<div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:4px">📋 Visitas</div>'
+          +'<div style="display:flex;align-items:baseline;gap:4px">'
+            +'<span style="font-size:22px;font-weight:700;color:var(--text)">'+visReales+'</span>'
+            +(pVisit>0?'<span style="font-size:12px;color:var(--muted)">/ '+pVisit+'</span>':'<span style="font-size:11px;color:var(--muted)">sin meta</span>')
+          +'</div>'
+          +(pVisit>0?'<div style="background:#e0e0d8;border-radius:3px;height:6px;margin-top:4px;overflow:hidden"><div style="height:100%;border-radius:3px;background:'+visCol+';width:'+Math.min(cumplVis,100)+'%"></div></div><div style="font-size:11px;font-weight:700;color:'+visCol+';margin-top:3px">'+cumplVis+'% cumpl.</div>':'')
+        +'</div>'
+        // Impacto
+        +'<div style="background:var(--bg);border-radius:10px;padding:10px">'
+          +'<div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:4px">🎯 Impacto</div>'
+          +'<div style="font-size:22px;font-weight:700;color:'+(impPct>=70?'var(--green)':impPct>=40?'var(--amber)':'var(--red)')+'">'+impPct+'%</div>'
+          +'<div style="font-size:11px;color:var(--muted);margin-top:3px">'+impReal+' / '+visReales+' imp.</div>'
+        +'</div>'
+        // Presupuesto venta
+        +'<div style="background:var(--bg);border-radius:10px;padding:10px">'
+          +'<div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:4px">💜 Presup. venta</div>'
+          +'<div style="font-size:16px;font-weight:700;color:#8E44AD">'+(pVenta>0?fmtM(pVenta):'Sin meta')+'</div>'
+        +'</div>'
+        // Venta real
+        +'<div style="background:var(--bg);border-radius:10px;padding:10px">'
+          +'<div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:4px">🟢 Venta real</div>'
+          +'<div style="font-size:16px;font-weight:700;color:'+(vReal>0?'var(--green)':'var(--muted)')+'">'+(vReal>0?fmtM(vReal):'—')+'</div>'
+          +(pVenta>0&&vReal>0?'<div style="font-size:11px;font-weight:700;color:'+venCol+';margin-top:3px">'+cumplVen+'% cumpl.</div>':'')
+        +'</div>'
+      +'</div>'
+      // Barra de cumplimiento venta
+      +(pVenta>0?'<div style="background:var(--bg);border-radius:9px;padding:8px 10px">'
+        +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:var(--muted)">Cumplimiento de venta</span><span style="font-weight:700;color:'+venCol+'">'+(cumplVen!==null?cumplVen+'%':'Sin dato')+'</span></div>'
+        +'<div style="background:#e0e0d8;border-radius:4px;height:10px;overflow:hidden"><div style="height:100%;border-radius:4px;background:'+venCol+';width:'+(cumplVen!==null?Math.min(cumplVen,100):0)+'%;transition:width .5s"></div></div>'
+        +(presup&&presup.OBSERVACION?'<div style="font-size:11px;color:var(--muted);margin-top:5px">📝 '+presup.OBSERVACION+'</div>':'')
+      +'</div>':'')
+    +'</div>';
+  });
+  // Resumen total del equipo
+  var cumplTotalVis=totalPresupVisitas>0?Math.round(totalVisitasReal/totalPresupVisitas*100):null;
+  var cumplTotalVen=totalPresupVenta>0?Math.round(totalVentaReal/totalPresupVenta*100):null;
+  var resHtml='<div style="background:linear-gradient(135deg,#1A1A2E,#16213E);border-radius:14px;padding:14px;margin-bottom:12px;color:#fff">'
+    +'<div style="font-size:11px;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">📊 Resumen del equipo</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
+      +'<div style="text-align:center"><div style="font-size:20px;font-weight:700">'+totalVisitasReal+(totalPresupVisitas?'<span style="font-size:11px;opacity:.6">/'+totalPresupVisitas+'</span>':'')+'</div><div style="font-size:10px;opacity:.7;margin-top:2px">Visitas</div>'+(cumplTotalVis!==null?'<div style="font-size:12px;font-weight:700;margin-top:2px;color:'+(cumplTotalVis>=100?'#2ECC71':cumplTotalVis>=70?'#F39C12':'#E74C3C')+'">'+cumplTotalVis+'%</div>':'')+'</div>'
+      +'<div style="text-align:center"><div style="font-size:14px;font-weight:700;color:#9B59B6">'+fmtM(totalPresupVenta)+'</div><div style="font-size:10px;opacity:.7;margin-top:2px">Presupuesto</div></div>'
+      +'<div style="text-align:center"><div style="font-size:14px;font-weight:700;color:#2ECC71">'+fmtM(totalVentaReal)+'</div><div style="font-size:10px;opacity:.7;margin-top:2px">Venta real</div>'+(cumplTotalVen!==null?'<div style="font-size:12px;font-weight:700;margin-top:2px;color:'+(cumplTotalVen>=100?'#2ECC71':cumplTotalVen>=70?'#F39C12':'#E74C3C')+'">'+cumplTotalVen+'%</div>':'')+'</div>'
+    +'</div>'
+  +'</div>';
+  el.innerHTML=resHtml+html;
+};
 window._ferrMap=null;
 window._ferrMapMarkers=[];
 window._ferrMapInited=false;
