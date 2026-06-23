@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<title>ADL Drywall · Catálogo Virtual de Productos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ADL DRYWALL — Catálogo Virtual
+   Tokens de diseño — paleta corporativa ADL (blanco + rojo)
+   ============================================================ */
+:root{
+  --bg:#F7F7F8;
+  --surface:#FFFFFF;
+  --surface-2:#FBF4F4;
+  --ink:#1A1A1A;
+  --steel:#B40F1E;
+  --steel-2:#8F0C18;
+  --steel-3:#D41B2B;
+  --accent:#E2131F;
+  --accent-dark:#A60D17;
+  --accent-light:#FBE0E2;
+  --line:#E7E1E1;
+  --line-soft:#F1EBEB;
+  --good:#2F8359;
+  --good-bg:#E6F2EC;
+  --muted:#6B6B6F;
+  --muted-2:#9A9598;
+  --radius:10px;
+  --shadow-sm:0 1px 2px rgba(20,8,9,.06);
+  --shadow-md:0 6px 18px rgba(20,8,9,.10);
+  --shadow-lg:0 18px 40px rgba(20,8,9,.18);
+  --maxw:1280px;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+h1,h2,h3,.display{
+  font-family:'Oswald','Arial Narrow',sans-serif;
+  letter-spacing:.01em;
+  margin:0;
+}
+.num, .price-value, .spec-chip, input[type=number]{
+  font-family:'Oswald','Arial Narrow',sans-serif;
+  font-variant-numeric:tabular-nums;
+}
+a{color:inherit;}
+button{font-family:inherit;}
+:focus-visible{outline:3px solid var(--accent); outline-offset:2px;}
+img,svg{display:block;max-width:100%;}
+
+/* ============================================================
+   LOGIN SCREEN
+   ============================================================ */
+.login-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:
+    radial-gradient(900px 500px at 85% -10%, #5c0009 0%, transparent 60%),
+    radial-gradient(700px 500px at 0% 110%, #6e0712 0%, transparent 55%),
+    var(--steel);
+  position:relative;
+  overflow:hidden;
+}
+.login-screen::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 2px, transparent 2px 26px);
+  pointer-events:none;
+}
+.login-card{
+  background:var(--surface);
+  border-radius:18px;
+  max-width:480px;
+  width:100%;
+  padding:42px 34px 34px;
+  box-shadow:var(--shadow-lg);
+  position:relative;
+  overflow:hidden;
+  z-index:1;
+}
+.login-card::before{
+  content:"";
+  position:absolute; top:0; left:0; right:0; height:7px;
+  background:repeating-linear-gradient(135deg, var(--accent) 0 14px, var(--accent-dark) 14px 28px);
+}
+.brand-mark{
+  display:inline-flex; align-items:center; gap:12px;
+  margin-bottom:8px;
+}
+.brand-badge{
+  width:48px; height:48px; border-radius:9px;
+  background:var(--steel);
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Oswald',sans-serif; font-weight:600; font-size:17px;
+  letter-spacing:.02em;
+  flex-shrink:0;
+}
+.brand-name{
+  font-family:'Oswald',sans-serif;
+  font-size:24px; font-weight:600; color:var(--ink);
+  text-transform:uppercase; letter-spacing:.03em;
+}
+.brand-name small{
+  display:block; font-size:11px; font-weight:500; color:var(--muted);
+  text-transform:none; letter-spacing:0; font-family:'Inter',sans-serif; margin-top:1px;
+}
+.login-sub{
+  color:var(--muted); font-size:14px; margin:14px 0 26px; line-height:1.55;
+}
+.role-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+  margin-bottom:18px;
+}
+.role-btn{
+  border:1.5px solid var(--line);
+  background:var(--surface-2);
+  border-radius:var(--radius);
+  padding:20px 14px;
+  text-align:left;
+  cursor:pointer;
+  transition:border-color .15s, transform .1s, box-shadow .15s;
+}
+.role-btn:hover{ border-color:var(--accent); box-shadow:var(--shadow-sm); transform:translateY(-1px); }
+.role-btn:active{ transform:scale(.98); }
+.role-btn .role-icon{
+  font-size:22px; display:block; margin-bottom:8px;
+}
+.role-btn .role-title{
+  font-family:'Oswald',sans-serif; font-size:16px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.02em; display:block;
+}
+.role-btn .role-desc{ font-size:12.5px; color:var(--muted); display:block; margin-top:4px; line-height:1.4; }
+.role-btn.is-admin .role-title{ color:var(--accent-dark); }
+
+.admin-pass-box{
+  display:none;
+  margin-top:4px;
+  padding:16px;
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+}
+.admin-pass-box.show{ display:block; animation:fadeIn .18s ease; }
+.admin-pass-box label{
+  display:block; font-size:12.5px; font-weight:600; color:var(--steel); margin-bottom:6px;
+  text-transform:uppercase; letter-spacing:.03em;
+}
+.admin-pass-row{ display:flex; gap:8px; }
+.admin-pass-row input{
+  flex:1; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px;
+  font-size:15px; background:#fff;
+}
+.admin-pass-row input:focus{ border-color:var(--accent); }
+.btn-enter{
+  background:var(--accent); color:#fff; border:none; border-radius:8px;
+  padding:10px 18px; font-weight:600; font-size:14px; cursor:pointer;
+  font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.02em;
+}
+.btn-enter:hover{ background:var(--accent-dark); }
+.pass-error{ color:#C0392B; font-size:12.5px; margin-top:8px; display:none; }
+.pass-error.show{ display:block; }
+@keyframes fadeIn{ from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:none;} }
+
+.login-foot{
+  margin-top:22px; padding-top:16px; border-top:1px dashed var(--line);
+  font-size:11.5px; color:var(--muted-2); text-align:center;
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.app{ display:none; min-height:100vh; flex-direction:column; }
+.app.show{ display:flex; }
+
+.topbar{
+  background:var(--steel);
+  color:#fff;
+  position:sticky; top:0; z-index:40;
+  box-shadow:0 2px 10px rgba(0,0,0,.18);
+}
+.topbar-row1{
+  max-width:var(--maxw); margin:0 auto;
+  display:flex; align-items:center; gap:14px;
+  padding:12px 20px;
+}
+.topbar-brand{ display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
+.topbar-brand .brand-badge{ width:34px; height:34px; font-size:13px; background:var(--accent); flex-shrink:0; }
+.topbar-brand .brand-name{ color:#fff; font-size:16px; white-space:nowrap; }
+.topbar-brand .brand-name small{
+  display:block; font-size:10px; color:#F3C7CA; text-transform:none; letter-spacing:0; font-family:'Inter',sans-serif;
+}
+.role-pill{
+  display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,.08);
+  border-radius:999px; padding:5px 6px 5px 12px;
+  font-size:12.5px; white-space:nowrap;
+}
+.role-pill .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); }
+.role-pill.is-admin .dot{ background:#FFFFFF; }
+.logout-btn{
+  background:rgba(255,255,255,.12); border:none; color:#fff;
+  border-radius:999px; padding:5px 12px; font-size:12px; cursor:pointer;
+}
+.logout-btn:hover{ background:rgba(255,255,255,.22); }
+
+.topbar-row2{
+  max-width:var(--maxw); margin:0 auto;
+  padding:0 20px 12px;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+}
+
+/* Channel selector — "tag switch" signature element */
+.channel-switch{
+  display:inline-flex;
+  background:rgba(0,0,0,.22);
+  border-radius:999px;
+  padding:3px;
+  gap:2px;
+}
+.channel-switch button{
+  border:none; background:transparent; color:#F6D9DB;
+  font-family:'Oswald',sans-serif; font-size:12.5px; font-weight:500;
+  text-transform:uppercase; letter-spacing:.02em;
+  padding:7px 14px; border-radius:999px; cursor:pointer;
+  transition:background .15s, color .15s;
+  white-space:nowrap;
+}
+.channel-switch button.active{
+  background:var(--accent); color:#fff;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);
+}
+.channel-switch button:not(.active):hover{ color:#fff; }
+
+.search-wrap{ position:relative; flex:1; min-width:180px; max-width:340px; }
+.search-wrap input{
+  width:100%; padding:8px 12px 8px 32px;
+  border-radius:999px; border:1.5px solid transparent;
+  background:rgba(255,255,255,.12); color:#fff;
+  font-size:13.5px;
+}
+.search-wrap input::placeholder{ color:#E8B9BC; }
+.search-wrap input:focus{ background:#fff; color:var(--ink); }
+.search-wrap input:focus::placeholder{ color:var(--muted-2); }
+.search-wrap .ic{ position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:13px; opacity:.7; }
+
+.admin-tools{
+  display:flex; gap:8px; align-items:center; margin-left:auto; flex-wrap:wrap;
+}
+.tool-btn{
+  background:rgba(255,255,255,.10); color:#fff; border:1px solid rgba(255,255,255,.18);
+  border-radius:8px; padding:7px 12px; font-size:12px; cursor:pointer;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.tool-btn:hover{ background:rgba(255,255,255,.2); }
+.tool-btn.danger:hover{ background:#C0392B; border-color:#C0392B; }
+input[type=file].hidden-file{ display:none; }
+
+/* ============================================================
+   HERO / INTRO BANNER
+   ============================================================ */
+.hero{
+  background:
+    linear-gradient(100deg, var(--steel) 0%, var(--steel-2) 58%, var(--steel-3) 100%);
+  color:#fff;
+  padding:28px 20px 26px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 3px, transparent 3px 30px);
+}
+.hero-inner{ max-width:var(--maxw); margin:0 auto; position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+.hero-text{ max-width:560px; }
+.hero-eyebrow{
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:10px;
+}
+.hero-eyebrow::before{ content:""; width:18px; height:2px; background:var(--accent); display:inline-block; }
+.hero h1{ font-size:26px; line-height:1.2; color:#fff; margin-bottom:8px; }
+.hero p{ font-size:13.5px; color:#F6D9DB; line-height:1.6; margin:0; }
+.hero-stats{ display:flex; gap:18px; flex-wrap:wrap; }
+.hero-stat{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  padding:14px 20px;
+  min-width:108px;
+  text-align:center;
+}
+.hero-stat .hs-num{ font-family:'Oswald',sans-serif; font-size:24px; font-weight:600; color:var(--accent); }
+.hero-stat .hs-label{ font-size:10.5px; color:#F6D9DB; text-transform:uppercase; letter-spacing:.04em; margin-top:2px; }
+
+/* ============================================================
+   CATEGORY RAIL — visual sublínea picker
+   ============================================================ */
+.cat-rail-wrap{
+  background:var(--surface);
+  border-bottom:1px solid var(--line);
+}
+.cat-rail-head{
+  max-width:var(--maxw); margin:0 auto;
+  padding:16px 20px 4px;
+  display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;
+}
+.cat-rail-head h2{ font-size:15px; text-transform:uppercase; letter-spacing:.03em; color:var(--steel); }
+.cat-rail-head .clear-cat{
+  font-size:12px; color:var(--accent-dark); cursor:pointer; font-weight:600; background:none; border:none; padding:2px;
+  display:none;
+}
+.cat-rail-head .clear-cat.show{ display:inline; }
+.cat-rail{
+  max-width:var(--maxw); margin:0 auto;
+  padding:10px 20px 18px;
+  display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x proximate;
+}
+.cat-rail::-webkit-scrollbar{ height:6px; }
+.cat-rail::-webkit-scrollbar-thumb{ background:var(--line); border-radius:3px; }
+.cat-card{
+  flex:0 0 auto;
+  width:128px;
+  scroll-snap-align:start;
+  border:1.5px solid var(--line);
+  background:var(--surface-2);
+  border-radius:12px;
+  padding:12px 10px 10px;
+  cursor:pointer;
+  text-align:center;
+  transition:border-color .15s, box-shadow .15s, transform .12s, background .15s;
+}
+.cat-card:hover{ border-color:var(--accent); box-shadow:var(--shadow-sm); transform:translateY(-2px); }
+.cat-card.active{
+  border-color:var(--accent);
+  background:var(--accent-light);
+  box-shadow:var(--shadow-sm);
+}
+.cat-card .cc-icon{
+  width:56px; height:56px; margin:0 auto 8px;
+  display:flex; align-items:center; justify-content:center;
+  background:#fff; border-radius:10px; border:1px solid var(--line-soft);
+}
+.cat-card.active .cc-icon{ border-color:var(--accent-light); background:#fff; }
+.cat-card .cc-icon svg{ width:38px; height:38px; }
+.cat-card .cc-name{
+  font-size:11px; font-weight:700; color:var(--steel); line-height:1.3;
+  text-transform:uppercase; letter-spacing:.01em;
+  display:block; min-height:28px;
+}
+.cat-card.active .cc-name{ color:var(--accent-dark); }
+.cat-card .cc-count{
+  font-size:10px; color:var(--muted); margin-top:3px; display:block;
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main{
+  flex:1;
+  max-width:var(--maxw); margin:0 auto; width:100%;
+  padding:20px 20px 64px;
+}
+.summary-bar{
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:10px;
+  margin-bottom:16px;
+  font-size:13px; color:var(--muted);
+}
+.summary-bar .channel-tag{
+  font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase;
+  letter-spacing:.02em; color:var(--accent-dark); font-size:12.5px;
+}
+.empty-state{
+  text-align:center; padding:60px 20px; color:var(--muted);
+}
+.empty-state .e-icon{ font-size:34px; margin-bottom:10px; display:block; }
+
+/* Category section */
+.cat-section{
+  margin-bottom:16px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.cat-header{
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px;
+  cursor:pointer;
+  background:var(--surface-2);
+  border-bottom:1px solid var(--line-soft);
+  user-select:none;
+}
+.cat-header .ch-icon{
+  width:36px; height:36px; flex-shrink:0; border-radius:8px;
+  background:#fff; border:1px solid var(--line-soft);
+  display:flex; align-items:center; justify-content:center;
+}
+.cat-header .ch-icon svg{ width:24px; height:24px; }
+.cat-header .chev{
+  transition:transform .15s; color:var(--muted); font-size:11px; flex-shrink:0;
+}
+.cat-section.collapsed .chev{ transform:rotate(-90deg); }
+.cat-header h2{
+  font-size:14.5px; text-transform:uppercase; letter-spacing:.02em;
+  color:var(--steel); flex:1; min-width:0;
+}
+.cat-header h2 small{
+  display:block; font-size:10.5px; color:var(--muted); text-transform:none; letter-spacing:0; font-weight:500; margin-top:1px;
+}
+.cat-count{
+  font-size:11.5px; color:var(--muted); background:var(--line-soft);
+  border-radius:999px; padding:2px 9px; flex-shrink:0;
+}
+.cat-items{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1px;
+  background:var(--line-soft);
+}
+.cat-section.collapsed .cat-items{ display:none; }
+
+/* ============================================================
+   ITEM CARD
+   ============================================================ */
+.item-card{
+  background:var(--surface);
+  display:flex; align-items:stretch; gap:16px;
+  padding:14px 16px;
+  position:relative;
+}
+.item-thumb{
+  width:84px; height:84px; flex-shrink:0; border-radius:10px;
+  background:var(--surface-2); border:1.5px solid var(--line-soft);
+  display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+  cursor:pointer;
+}
+.item-thumb svg{ width:40px; height:40px; }
+.item-thumb img{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.item-thumb .thumb-overlay{
+  position:absolute; inset:0;
+  background:rgba(20,8,9,.0);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity .15s, background .15s;
+  color:#fff; font-size:10px; font-weight:700; text-align:center;
+  text-transform:uppercase; letter-spacing:.02em; line-height:1.3;
+  padding:4px;
+}
+.item-thumb:hover .thumb-overlay{ opacity:1; background:rgba(20,8,9,.55); }
+.item-thumb.has-photo .thumb-overlay{ background:rgba(20,8,9,.0); }
+.item-thumb.has-photo:hover .thumb-overlay{ background:rgba(20,8,9,.45); }
+.item-thumb .thumb-badge{
+  position:absolute; bottom:3px; right:3px;
+  width:20px; height:20px; border-radius:50%;
+  background:var(--accent); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; box-shadow:0 1px 3px rgba(0,0,0,.3);
+  pointer-events:none;
+}
+.item-thumb .thumb-remove{
+  position:absolute; top:3px; right:3px;
+  width:18px; height:18px; border-radius:50%;
+  background:rgba(20,8,9,.7); color:#fff; border:none;
+  font-size:11px; line-height:1; cursor:pointer;
+  display:none; align-items:center; justify-content:center;
+}
+.item-thumb.has-photo:hover .thumb-remove{ display:flex; }
+input[type=file].hidden-photo-input{ display:none; }
+.item-info{
+  flex:1; min-width:0;
+  display:flex; flex-direction:column; gap:5px;
+  padding-right:4px;
+  justify-content:center;
+}
+.item-name{
+  font-size:14px; font-weight:600; color:var(--ink); line-height:1.35;
+}
+.item-id{
+  font-size:10.5px; color:var(--muted-2); font-weight:500;
+}
+.item-meta{ display:flex; gap:6px; flex-wrap:wrap; margin-top:2px; }
+.spec-chip{
+  font-size:11px; background:var(--line-soft); color:var(--steel-2);
+  padding:3px 8px; border-radius:5px; font-weight:500;
+  font-family:'Inter',sans-serif;
+}
+.unit-chip{
+  font-size:11px; background:var(--accent-light); color:var(--accent-dark);
+  padding:3px 8px; border-radius:5px; font-weight:600;
+}
+.brand-chip{
+  font-size:11px; background:var(--steel); color:#fff;
+  padding:3px 8px; border-radius:5px; font-weight:600;
+  letter-spacing:.01em;
+}
+
+/* Price panel (asesor) — "price tag" signature */
+.price-tag{
+  flex-shrink:0;
+  width:172px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  position:relative;
+  background:var(--steel);
+  color:#fff;
+  border-radius:8px;
+  padding:10px 8px 10px 16px;
+  clip-path:polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
+}
+.price-tag::after{
+  content:""; position:absolute; left:6px; top:50%; transform:translateY(-50%);
+  width:5px; height:5px; border-radius:50%; background:var(--bg);
+}
+.price-tag .ptag-label{
+  font-size:9.5px; text-transform:uppercase; letter-spacing:.05em; color:#F3C7CA;
+  margin-bottom:2px;
+}
+.price-tag .ptag-value{
+  font-size:19px; font-weight:600; line-height:1.1; color:#fff;
+}
+.price-tag .ptag-value.zero{ color:#C98D90; font-size:13px; font-weight:500; }
+.price-tag .ptag-cta{
+  font-size:9.5px; color:var(--accent); font-weight:700; margin-top:4px;
+  text-transform:uppercase; letter-spacing:.02em;
+}
+
+/* Price panel (admin) — editable triple */
+.price-edit{
+  flex-shrink:0;
+  width:300px;
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;
+  align-items:stretch;
+}
+.price-field{
+  display:flex; flex-direction:column; gap:4px;
+  background:var(--surface-2);
+  border:1.5px solid var(--line);
+  border-radius:7px;
+  padding:6px 7px;
+  position:relative;
+}
+.price-field.is-active{
+  border-color:var(--accent);
+  background:var(--accent-light);
+}
+.price-field label{
+  font-size:8.8px; text-transform:uppercase; letter-spacing:.03em;
+  color:var(--muted); font-weight:700; font-family:'Inter',sans-serif;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.price-field.is-active label{ color:var(--accent-dark); }
+.price-input-row{ display:flex; align-items:center; gap:2px; }
+.price-input-row .cur{ font-size:11px; color:var(--muted); }
+.price-field input{
+  width:100%; border:none; background:transparent;
+  font-size:13.5px; font-weight:600; color:var(--ink);
+  padding:0; min-width:0;
+}
+.price-field input:focus{ outline:none; }
+.price-field input::-webkit-outer-spin-button,
+.price-field input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.price-field input[type=number]{ -moz-appearance:textfield; }
+.save-flag{
+  position:absolute; top:-7px; right:-5px;
+  background:var(--good); color:#fff; font-size:9px; font-weight:700;
+  border-radius:999px; padding:1px 6px; opacity:0; transition:opacity .2s;
+  pointer-events:none;
+}
+.save-flag.show{ opacity:1; }
+
+/* ============================================================
+   QUOTE TRAY (carrito de cotización para asesor)
+   ============================================================ */
+.quote-fab{
+  position:fixed; bottom:18px; right:18px; z-index:80;
+  background:var(--accent); color:#fff; border:none;
+  border-radius:999px; padding:13px 20px 13px 16px;
+  display:flex; align-items:center; gap:9px;
+  font-family:'Oswald',sans-serif; font-weight:600; font-size:13.5px;
+  text-transform:uppercase; letter-spacing:.02em;
+  box-shadow:var(--shadow-lg); cursor:pointer;
+  transition:transform .12s, background .15s;
+}
+.quote-fab:hover{ background:var(--accent-dark); transform:translateY(-2px); }
+.quote-fab .qf-badge{
+  background:#fff; color:var(--accent-dark); border-radius:999px;
+  font-size:11.5px; min-width:20px; height:20px; padding:0 5px;
+  display:flex; align-items:center; justify-content:center; font-weight:700;
+}
+.quote-fab.hide{ display:none; }
+
+.add-quote-btn{
+  position:absolute; top:8px; right:8px;
+  background:var(--surface); border:1.5px solid var(--line);
+  color:var(--steel); border-radius:7px;
+  width:28px; height:28px; font-size:15px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s, border-color .15s, color .15s;
+}
+.add-quote-btn:hover{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.add-quote-btn.added{ background:var(--good); border-color:var(--good); color:#fff; }
+
+.quote-drawer{
+  position:fixed; inset:0; z-index:95; display:none;
+}
+.quote-drawer.show{ display:block; }
+.quote-overlay{
+  position:absolute; inset:0; background:rgba(20,26,34,.5);
+}
+.quote-panel{
+  position:absolute; top:0; right:0; bottom:0;
+  width:min(420px, 100%);
+  background:var(--surface);
+  display:flex; flex-direction:column;
+  box-shadow:-12px 0 30px rgba(0,0,0,.18);
+  animation:slideIn .2s ease;
+}
+@keyframes slideIn{ from{ transform:translateX(100%); } to{ transform:none; } }
+.quote-head{
+  padding:18px 18px 14px; border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--steel); color:#fff;
+}
+.quote-head h3{ font-size:16px; text-transform:uppercase; letter-spacing:.02em; }
+.quote-head button{
+  background:rgba(255,255,255,.12); border:none; color:#fff; border-radius:8px;
+  width:30px; height:30px; cursor:pointer; font-size:16px;
+}
+.quote-body{ flex:1; overflow-y:auto; padding:10px 14px; }
+.quote-empty{ text-align:center; color:var(--muted); padding:50px 14px; font-size:13px; }
+.quote-row{
+  display:flex; align-items:center; gap:10px;
+  padding:11px 6px; border-bottom:1px solid var(--line-soft);
+}
+.quote-row .qr-name{ font-size:12.5px; font-weight:600; color:var(--ink); line-height:1.35; }
+.quote-row .qr-id{ font-size:10px; color:var(--muted-2); }
+.quote-row .qr-info{ flex:1; min-width:0; }
+.quote-row .qr-qty{
+  display:flex; align-items:center; gap:5px;
+}
+.quote-row .qr-qty button{
+  width:22px; height:22px; border-radius:6px; border:1px solid var(--line);
+  background:var(--surface-2); cursor:pointer; font-size:13px; color:var(--steel);
+}
+.quote-row .qr-qty span{ font-size:12.5px; min-width:22px; text-align:center; font-weight:600; }
+.quote-row .qr-price{ font-size:12.5px; font-weight:700; color:var(--accent-dark); min-width:74px; text-align:right; }
+.quote-row .qr-remove{
+  background:none; border:none; color:var(--muted-2); cursor:pointer; font-size:15px; padding:2px 4px;
+}
+.quote-row .qr-remove:hover{ color:#C0392B; }
+.quote-foot{
+  border-top:1px solid var(--line); padding:14px 18px 18px; background:var(--surface-2);
+}
+.quote-total-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
+.quote-total-row .qt-label{ font-size:12.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.02em; }
+.quote-total-row .qt-value{ font-family:'Oswald',sans-serif; font-size:22px; font-weight:600; color:var(--ink); }
+.quote-actions{ display:flex; gap:8px; }
+.qbtn{
+  flex:1; border:none; border-radius:8px; padding:11px; font-size:13px; cursor:pointer;
+  font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:.02em;
+}
+.qbtn.primary{ background:var(--accent); color:#fff; }
+.qbtn.primary:hover{ background:var(--accent-dark); }
+.qbtn.ghost{ background:transparent; color:var(--muted); border:1px solid var(--line); }
+.qbtn.ghost:hover{ background:var(--line-soft); }
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+.toast-wrap{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:90; display:flex; flex-direction:column; gap:8px; align-items:center;}
+.toast{
+  background:var(--steel); color:#fff; padding:10px 18px; border-radius:999px;
+  font-size:13px; box-shadow:var(--shadow-md);
+  opacity:0; transform:translateY(10px); transition:opacity .2s, transform .2s;
+}
+.toast.show{ opacity:1; transform:none; }
+
+/* ============================================================
+   RESPONSIVE — TABLET / MOBILE
+   ============================================================ */
+@media (max-width:900px){
+  .price-edit{ width:260px; }
+  .hero h1{ font-size:22px; }
+}
+
+@media (max-width:680px){
+  .topbar-row1{ padding:10px 12px; }
+  .topbar-row2{ padding:0 12px 10px; }
+  .topbar-brand .brand-name{ font-size:14px; }
+  .admin-tools{ width:100%; justify-content:flex-start; margin-left:0; }
+  .search-wrap{ order:3; max-width:none; flex:1 1 100%; }
+
+  .hero{ padding:22px 14px 20px; }
+  .hero-inner{ flex-direction:column; align-items:flex-start; }
+  .hero-stats{ width:100%; }
+  .hero-stat{ flex:1; min-width:0; padding:11px 8px; }
+  .hero-stat .hs-num{ font-size:19px; }
+
+  .cat-rail-head{ padding:14px 14px 2px; }
+  .cat-rail{ padding:8px 14px 16px; }
+  .cat-card{ width:104px; }
+
+  .item-card{
+    flex-direction:column;
+    gap:10px;
+  }
+  .item-thumb{ width:64px; height:64px; }
+  .item-thumb svg{ width:32px; height:32px; }
+  .item-info{ padding-right:0; }
+  .price-tag{
+    width:100%;
+    flex-direction:row;
+    justify-content:space-between;
+    padding:10px 16px;
+    clip-path:none;
+    border-radius:8px;
+  }
+  .price-tag::after{ display:none; }
+  .price-tag .ptag-label{ margin-bottom:0; }
+  .price-edit{
+    width:100%;
+    grid-template-columns:1fr 1fr 1fr;
+  }
+  .main{ padding:14px 12px 80px; }
+  .login-card{ padding:30px 22px 26px; }
+  .role-grid{ grid-template-columns:1fr; }
+  .add-quote-btn{ top:auto; bottom:8px; right:8px; }
+}
+
+@media (max-width:420px){
+  .price-edit{ grid-template-columns:1fr; gap:6px; }
+  .price-field{ flex-direction:row; align-items:center; justify-content:space-between; }
+  .price-field label{ overflow:visible; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion:reduce){
+  *{ transition:none !important; animation:none !important; }
+}
+
+/* Print (optional clean export look) */
+@media print{
+  .topbar, .toast-wrap, .quote-fab, .cat-rail-wrap, .hero{ display:none; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PANTALLA DE LOGIN
+     ============================================================ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="brand-mark">
+      <span class="brand-badge">ADL</span>
+      <span class="brand-name">Drywall<small>Sistemas constructivos en seco</small></span>
+    </div>
+    <p class="login-sub">Catálogo virtual de productos por canal de venta. Selecciona tu tipo de usuario para continuar.</p>
+
+    <div class="role-grid">
+      <button class="role-btn" id="btnAsesor" type="button">
+        <span class="role-icon">🗂️</span>
+        <span class="role-title">Asesor</span>
+        <span class="role-desc">Presenta el catálogo a clientes y arma cotizaciones. Solo lectura de precios.</span>
+      </button>
+      <button class="role-btn is-admin" id="btnAdmin" type="button">
+        <span class="role-icon">🔧</span>
+        <span class="role-title">Administrador</span>
+        <span class="role-desc">Edita precios, exporta e importa la lista. Requiere clave.</span>
+      </button>
+    </div>
+
+    <div class="admin-pass-box" id="adminPassBox">
+      <label for="adminPassInput">Clave de administrador</label>
+      <div class="admin-pass-row">
+        <input type="password" id="adminPassInput" placeholder="Ingresa la clave" autocomplete="off">
+        <button class="btn-enter" id="adminPassSubmit" type="button">Entrar</button>
+      </div>
+      <div class="pass-error" id="passError">Clave incorrecta. Inténtalo de nuevo.</div>
+    </div>
+
+    <div class="login-foot">354 productos · 6 grandes líneas · 39 sublíneas de especialidad</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     APLICACIÓN
+     ============================================================ -->
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="topbar-row1">
+      <div class="topbar-brand">
+        <span class="brand-badge">ADL</span>
+        <span class="brand-name">Catálogo Drywall<small>Precios por canal de venta</small></span>
+      </div>
+      <div class="role-pill" id="rolePill">
+        <span class="dot"></span>
+        <span id="rolePillText">Asesor</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn" type="button">Salir</button>
+    </div>
+    <div class="topbar-row2">
+      <div class="channel-switch" id="channelSwitch" role="group" aria-label="Seleccionar canal de precio"></div>
+
+      <div class="search-wrap">
+        <span class="ic">🔍</span>
+        <input type="text" id="searchInput" placeholder="Buscar producto, referencia, marca o categoría…" aria-label="Buscar producto">
+      </div>
+
+      <div class="admin-tools" id="adminTools">
+        <button class="tool-btn" id="btnExport" type="button">⬇️ Exportar CSV</button>
+        <button class="tool-btn" id="btnImport" type="button">⬆️ Importar CSV</button>
+        <button class="tool-btn danger" id="btnReset" type="button">♻️ Restablecer precios</button>
+        <input type="file" id="importFile" class="hidden-file" accept=".csv">
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="hero-eyebrow">Catálogo virtual ADL</span>
+        <h1>Todo el sistema drywall, en un solo lugar.</h1>
+        <p>Explora por categoría visual, compara especificaciones técnicas y arma la cotización de tu proyecto en minutos.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hs-num" id="heroTotal">354</div><div class="hs-label">Productos</div></div>
+        <div class="hero-stat"><div class="hs-num" id="heroCats">39</div><div class="hs-label">Categorías</div></div>
+        <div class="hero-stat"><div class="hs-num" id="heroBrands">—</div><div class="hs-label">Marcas</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cat-rail-wrap">
+    <div class="cat-rail-head">
+      <h2>Explora por categoría</h2>
+      <button class="clear-cat" id="clearCat" type="button">Ver todas las categorías ✕</button>
+    </div>
+    <div class="cat-rail" id="catRail"></div>
+  </div>
+
+  <main class="main">
+    <div class="summary-bar">
+      <span><strong id="resultCount">0</strong> productos · canal activo: <span class="channel-tag" id="activeChannelLabel">Constructor</span></span>
+    </div>
+    <div id="catalogList"></div>
+  </main>
+</div>
+
+<button class="quote-fab hide" id="quoteFab" type="button">
+  🧾 Mi cotización <span class="qf-badge" id="quoteBadge">0</span>
+</button>
+
+<div class="quote-drawer" id="quoteDrawer">
+  <div class="quote-overlay" id="quoteOverlay"></div>
+  <div class="quote-panel">
+    <div class="quote-head">
+      <h3>Resumen de cotización</h3>
+      <button id="quoteClose" type="button">✕</button>
+    </div>
+    <div class="quote-body" id="quoteBody"></div>
+    <div class="quote-foot">
+      <div class="quote-total-row">
+        <span class="qt-label">Total estimado</span>
+        <span class="qt-value" id="quoteTotal">$ 0</span>
+      </div>
+      <div class="quote-actions">
+        <button class="qbtn ghost" id="quoteClear" type="button">Vaciar</button>
+        <button class="qbtn primary" id="quotePrint" type="button">Imprimir / PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ============================================================
+   ICONOS SVG — representación didáctica por categoría (sublínea)
+   Trazos limpios tipo diagrama técnico, paleta de marca ADL
+   ============================================================ */
+var ICONS = {
+  // --- PLACAS ---
+  "PLACAS DE YESO": '<svg viewBox="0 0 64 64"><rect x="10" y="14" width="40" height="38" rx="2" fill="#FBE0E2" stroke="#A60D17" stroke-width="2"/><rect x="16" y="20" width="40" height="38" rx="2" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/><line x1="16" y1="32" x2="56" y2="32" stroke="#6B6B6F" stroke-width="1.4" stroke-dasharray="3 3"/><line x1="16" y1="46" x2="56" y2="46" stroke="#6B6B6F" stroke-width="1.4" stroke-dasharray="3 3"/></svg>',
+  "PLACAS FIBROCEMENTO": '<svg viewBox="0 0 64 64"><rect x="10" y="14" width="40" height="38" rx="2" fill="#E7E1E1" stroke="#6B6B6F" stroke-width="2"/><rect x="16" y="20" width="40" height="38" rx="2" fill="#9A9A9D" stroke="#1A1A1A" stroke-width="2"/><circle cx="24" cy="30" r="1.6" fill="#1A1A1A"/><circle cx="34" cy="30" r="1.6" fill="#1A1A1A"/><circle cx="44" cy="30" r="1.6" fill="#1A1A1A"/><circle cx="24" cy="42" r="1.6" fill="#1A1A1A"/><circle cx="34" cy="42" r="1.6" fill="#1A1A1A"/><circle cx="44" cy="42" r="1.6" fill="#1A1A1A"/></svg>',
+  "PLACAS FIBROYESO": '<svg viewBox="0 0 64 64"><rect x="10" y="14" width="40" height="38" rx="2" fill="#FBE0E2" stroke="#A60D17" stroke-width="2"/><rect x="16" y="20" width="40" height="38" rx="2" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><path d="M22 50 L34 28 L46 50" fill="none" stroke="#6B6B6F" stroke-width="1.6"/></svg>',
+  "TABLEROS ESTRUCTURALES": '<svg viewBox="0 0 64 64"><rect x="10" y="14" width="42" height="38" rx="2" fill="#E2131F" opacity=".18" stroke="#A60D17" stroke-width="2"/><rect x="16" y="20" width="42" height="38" rx="2" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/><path d="M20 50 L29 30 L37 44 L44 26 L52 50" fill="none" stroke="#6B6B6F" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  // --- PERFILERIA METALICA ---
+  "PERFILERIA MUROS ESTANDAR": '<svg viewBox="0 0 64 64"><path d="M14 12 H22 V20 H40 V12 H48 V52 H40 V44 H22 V52 H14 Z" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2" stroke-linejoin="round"/></svg>',
+  "PERFILERIA MUROS ESPECIAL": '<svg viewBox="0 0 64 64"><path d="M12 12 H20 V20 H44 V12 H52 V52 H44 V44 H20 V52 H12 Z" fill="#FBE0E2" stroke="#A60D17" stroke-width="2" stroke-linejoin="round"/><line x1="20" y1="26" x2="44" y2="26" stroke="#E2131F" stroke-width="1.4" stroke-dasharray="2 3"/><line x1="20" y1="38" x2="44" y2="38" stroke="#E2131F" stroke-width="1.4" stroke-dasharray="2 3"/></svg>',
+  "PERFILERIA CIELOS ESTANDAR": '<svg viewBox="0 0 64 64"><path d="M12 18 H52 V26 H38 V46 H26 V26 H12 Z" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2" stroke-linejoin="round"/></svg>',
+  "PERFILERIA CIELOS ESPECIAL": '<svg viewBox="0 0 64 64"><path d="M10 16 H54 V24 H40 V48 H24 V24 H10 Z" fill="#FBE0E2" stroke="#A60D17" stroke-width="2" stroke-linejoin="round"/></svg>',
+  "PERFILERIA PLASTICA": '<svg viewBox="0 0 64 64"><path d="M16 8 V56" stroke="#1A1A1A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M16 8 Q40 8 40 20" stroke="#6B6B6F" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M16 30 H36" stroke="#E2131F" stroke-width="4" fill="none" stroke-linecap="round"/></svg>',
+  "PERFILERIA AUTOENSAMBLE": '<svg viewBox="0 0 64 64"><path d="M8 32 H56 M32 8 V56" stroke="#1A1A1A" stroke-width="3"/><rect x="26" y="26" width="12" height="12" rx="1.5" fill="#E2131F"/></svg>',
+  "REFUERZOS DE MADERA": '<svg viewBox="0 0 64 64"><rect x="14" y="10" width="36" height="44" rx="2" fill="#FBE0E2" stroke="#A60D17" stroke-width="2"/><path d="M18 20 Q32 26 46 20 M18 32 Q32 38 46 32 M18 44 Q32 50 46 44" stroke="#A60D17" stroke-width="1.4" fill="none"/></svg>',
+  // --- ANCLAJES / TORNILLOS / CINTAS ---
+  "ANCLAJES": '<svg viewBox="0 0 64 64"><rect x="28" y="8" width="8" height="20" rx="2" fill="#6B6B6F"/><path d="M24 28 Q24 44 32 56 Q40 44 40 28 Z" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/></svg>',
+  "TORNILLOS": '<svg viewBox="0 0 64 64"><rect x="28" y="10" width="8" height="14" rx="1.5" fill="#6B6B6F"/><line x1="32" y1="24" x2="32" y2="50" stroke="#E2131F" stroke-width="4" stroke-linecap="round"/><path d="M27 27 L37 27 M27 33 L37 33 M28 39 L36 39 M29 45 L35 45" stroke="#1A1A1A" stroke-width="1.6"/></svg>',
+  "CINTAS": '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><circle cx="32" cy="32" r="7" fill="#FFFFFF" stroke="#6B6B6F" stroke-width="2"/><path d="M32 12 a20 20 0 0 1 16 27" fill="none" stroke="#E2131F" stroke-width="3" stroke-linecap="round"/></svg>',
+  "ADHESIVOS INSTANTANEOS": '<svg viewBox="0 0 64 64"><path d="M22 10 H42 V18 H38 V46 Q38 54 32 54 Q26 54 26 46 V18 H22 Z" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><rect x="24" y="6" width="16" height="6" rx="1.5" fill="#E2131F"/></svg>',
+  "SILICONAS, SELLADORES Y ADHERENTES": '<svg viewBox="0 0 64 64"><path d="M20 12 H38 L42 22 V50 Q42 56 32 56 Q22 56 22 50 V22 Z" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><rect x="20" y="8" width="18" height="6" rx="1.5" fill="#6B6B6F"/></svg>',
+  "PEGANTES": '<svg viewBox="0 0 64 64"><path d="M20 12 H38 L42 22 V50 Q42 56 32 56 Q22 56 22 50 V22 Z" fill="#FBE0E2" stroke="#A60D17" stroke-width="2"/><rect x="20" y="8" width="18" height="6" rx="1.5" fill="#1A1A1A"/></svg>',
+  // --- MASILLAS / ESTUCOS / MORTEROS ---
+  "MASILLAS PREMEZCLADAS": '<svg viewBox="0 0 64 64"><path d="M16 24 L20 54 H44 L48 24 Z" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><ellipse cx="32" cy="24" rx="16" ry="6" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/><path d="M22 18 Q32 8 42 18" fill="none" stroke="#E2131F" stroke-width="2"/></svg>',
+  "MASILLAS EN POLVO": '<svg viewBox="0 0 64 64"><path d="M20 14 H44 L48 54 H16 Z" fill="#FBE0E2" stroke="#A60D17" stroke-width="2"/><line x1="22" y1="26" x2="42" y2="26" stroke="#1A1A1A" stroke-width="1.4"/><line x1="22" y1="36" x2="42" y2="36" stroke="#1A1A1A" stroke-width="1.4"/></svg>',
+  "REVESTIMIENTO": '<svg viewBox="0 0 64 64"><rect x="12" y="14" width="40" height="36" rx="2" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><path d="M12 26 H52 M12 38 H52 M24 14 V50 M40 14 V50" stroke="#6B6B6F" stroke-width="1.2"/></svg>',
+  "MORTEROS DE REPARACIÓN": '<svg viewBox="0 0 64 64"><path d="M16 24 L20 54 H44 L48 24 Z" fill="#E7E1E1" stroke="#1A1A1A" stroke-width="2"/><ellipse cx="32" cy="24" rx="16" ry="6" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/></svg>',
+  // --- IMPERMEABILIZACION ---
+  "MANTOS": '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" fill="none" stroke="#1A1A1A" stroke-width="2"/><path d="M32 12 a20 20 0 0 1 0 40 a10 10 0 0 1 0 -20 a5 5 0 0 1 0 10" fill="none" stroke="#E2131F" stroke-width="2.4"/></svg>',
+  "IMPERMEABILIZANTES LIQUIDOS": '<svg viewBox="0 0 64 64"><path d="M32 10 Q46 30 46 42 Q46 54 32 54 Q18 54 18 42 Q18 30 32 10 Z" fill="#E2131F" opacity=".2" stroke="#A60D17" stroke-width="2"/></svg>',
+  "IMPERMEABILIZANTES CEMENTICIOS": '<svg viewBox="0 0 64 64"><path d="M32 10 Q46 30 46 42 Q46 54 32 54 Q18 54 18 42 Q18 30 32 10 Z" fill="#9A9A9D" opacity=".35" stroke="#6B6B6F" stroke-width="2"/></svg>',
+  "EPOXICOS": '<svg viewBox="0 0 64 64"><rect x="16" y="20" width="32" height="28" rx="3" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><circle cx="32" cy="34" r="7" fill="#E2131F" opacity=".75"/></svg>',
+  // --- AISLAMIENTOS ---
+  "FIBRA DE VIDRIO": '<svg viewBox="0 0 64 64"><rect x="10" y="20" width="44" height="24" rx="3" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/><path d="M14 24 Q20 30 14 36 Q20 42 14 40 M50 24 Q44 30 50 36 Q44 42 50 40" stroke="#E2131F" stroke-width="1.6" fill="none"/><path d="M22 26 Q32 32 22 38 M32 26 Q42 32 32 38 M42 26 Q50 32 42 38" stroke="#6B6B6F" stroke-width="1.2" fill="none"/></svg>',
+  // --- CUBIERTAS ---
+  "CUBIERTAS FIBROCEMENTO": '<svg viewBox="0 0 64 64"><path d="M8 44 Q14 32 20 44 Q26 32 32 44 Q38 32 44 44 Q50 32 56 44 V52 H8 Z" fill="#9A9A9D" stroke="#1A1A1A" stroke-width="2" stroke-linejoin="round"/></svg>',
+  // --- MOLDURAS ---
+  "MOLDURA POLIESTIRENO": '<svg viewBox="0 0 64 64"><path d="M10 50 V30 Q10 20 20 20 H30 Q30 14 38 14 H54 V50 Z" fill="#FBE0E2" stroke="#A60D17" stroke-width="2" stroke-linejoin="round"/></svg>',
+  // --- TAPAS / REJILLAS ---
+  "TAPAS DE REGISTRO": '<svg viewBox="0 0 64 64"><rect x="12" y="12" width="40" height="40" rx="3" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><rect x="20" y="20" width="24" height="24" rx="2" fill="#FFFFFF" stroke="#6B6B6F" stroke-width="1.6"/><circle cx="32" cy="32" r="2.4" fill="#E2131F"/></svg>',
+  // --- HERRAMIENTAS ---
+  "HERRAMIENTAS MANUALES": '<svg viewBox="0 0 64 64"><path d="M14 50 L34 30" stroke="#6B6B6F" stroke-width="5" stroke-linecap="round"/><path d="M30 14 L50 34 L42 42 L22 22 Z" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2" stroke-linejoin="round"/></svg>',
+  "HERRAMIENTAS ELECTRICAS": '<svg viewBox="0 0 64 64"><rect x="14" y="26" width="28" height="14" rx="3" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><rect x="40" y="22" width="10" height="22" rx="2" fill="#E2131F"/><circle cx="50" cy="33" r="4" fill="#6B6B6F"/></svg>',
+  "HERRAMIENTAS INALAMBRICAS": '<svg viewBox="0 0 64 64"><rect x="20" y="14" width="20" height="26" rx="3" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><rect x="24" y="40" width="12" height="14" rx="2" fill="#E2131F"/><line x1="24" y1="20" x2="36" y2="20" stroke="#6B6B6F" stroke-width="1.6"/></svg>',
+  "ACCESORIOS DE HERRAMIENTAS": '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" fill="none" stroke="#1A1A1A" stroke-width="2"/><path d="M32 18 v6 M32 40 v6 M18 32 h6 M40 32 h6" stroke="#E2131F" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  "BROCHAS Y RODILLOS": '<svg viewBox="0 0 64 64"><rect x="28" y="8" width="8" height="20" rx="2" fill="#6B6B6F"/><path d="M22 28 H42 V40 Q32 46 22 40 Z" fill="#E2131F" stroke="#A60D17" stroke-width="1.6"/></svg>',
+  "ABRASIVOS": '<svg viewBox="0 0 64 64"><rect x="12" y="22" width="40" height="20" rx="2" fill="#E7E1E1" stroke="#1A1A1A" stroke-width="2"/><circle cx="20" cy="28" r="1.3" fill="#6B6B6F"/><circle cx="28" cy="34" r="1.3" fill="#6B6B6F"/><circle cx="36" cy="28" r="1.3" fill="#6B6B6F"/><circle cx="44" cy="34" r="1.3" fill="#6B6B6F"/><circle cx="24" cy="38" r="1.3" fill="#6B6B6F"/></svg>',
+  // --- PINTURAS ---
+  "PINTURA AEROSOL": '<svg viewBox="0 0 64 64"><rect x="24" y="20" width="16" height="32" rx="5" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><rect x="28" y="10" width="8" height="10" rx="2" fill="#6B6B6F"/><path d="M40 26 Q48 24 50 30 M40 34 Q50 32 52 38" stroke="#E2131F" stroke-width="1.6" fill="none"/></svg>',
+  "PINTURA PARA EXTERIOR (ACRILICA)": '<svg viewBox="0 0 64 64"><path d="M16 24 L20 54 H44 L48 24 Z" fill="#E2131F" opacity=".22" stroke="#A60D17" stroke-width="2"/><ellipse cx="32" cy="24" rx="16" ry="6" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/></svg>',
+  "PINTURA PARA INTERIOR (VINILICA)": '<svg viewBox="0 0 64 64"><path d="M16 24 L20 54 H44 L48 24 Z" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><ellipse cx="32" cy="24" rx="16" ry="6" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/></svg>',
+  "SERVICIOS NACIONALES": '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" fill="none" stroke="#1A1A1A" stroke-width="2"/><path d="M16 32 H48 M32 16 Q40 24 40 32 Q40 40 32 48 Q24 40 24 32 Q24 24 32 16" stroke="#E2131F" stroke-width="1.6" fill="none"/></svg>'
+};
+var DEFAULT_ICON = '<svg viewBox="0 0 64 64"><rect x="14" y="14" width="36" height="36" rx="4" fill="#F1EBEB" stroke="#1A1A1A" stroke-width="2"/><path d="M22 42 L30 26 L36 36 L42 24" fill="none" stroke="#E2131F" stroke-width="2"/></svg>';
+
+function getIcon(cat){ return ICONS[cat] || DEFAULT_ICON; }
+
+/* Maestro de productos ADL Drywall — generado a partir de ITEM_CON_LINEA.xlsx (filtro ENKI/ADL = ADL) */
+var PRODUCTS = [{"id":"10","name":"TAPA DE INSPECCION PANEL YESO 0,60X0,60","brand":"GYPLAC DECO","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"10109","name":"EMULSION ASF 5GAL FL-50 PRO RF 25062","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"10762","name":"PARAL 3 1/2\" X 1 1/4\" X 1/4\" C24 X2.44 P","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"10869","name":"OMEGA 0.38 2 3/16X5/8 OM230620800 2.44M","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA CIELOS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"10891","name":"TAPA REGISTRO INVISIBLE TRG 30X30CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"10897","name":"PARAL2 1/2\"X1 1/4\" C24 X2.44 P2501250824","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11","name":"TAPA DE INSPECCION PANEL YESO 0,40X0,40","brand":"GYPLAC DECO","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11034","name":"TAPA REGISTRO INVISIBLE TRG 40X40CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11050","name":"PUNTA TOPE PARA DRYWALL #2 X 1  41794","brand":"STANLEY","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11057","name":"TAPA REGISTRO INVISIBLE TRG 60X60CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11058","name":"TAPA REGISTRO INVISIBLE TRG 20X20CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11060","name":"ANGULO 0.36 1 1/4\"x3/4\"X2.44 AL125750828","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA CIELOS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11103","name":"PARAL 3 1/2 X1 1/4 C20 P36212520 X2,44M","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11164","name":"PARAL 2 1/2\"x 1\"1/4  C20X3.05 P25012520","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11328","name":"ESPATULA 8\" DEWALT","brand":"DOCTOR DRYWALL","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11374","name":"REJILLA VENT ALETAS CURVAS L-RA 30X30CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11415","name":"MANTO SIN LLAMA 1Mx10M x 2\" - 00461","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11420","name":"EMULSION ASF 1GAL FL-50 PRO RF 25063","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11454","name":"MARCO PARA CIELO RASO 50X50 EN TEE 7/8","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11491","name":"TAPA REGISTRO PALANCA TECH-PARED 20X20CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11494","name":"CANAL 3 5/8\" X 1\"LONG 2.44 C24 C36210024","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11563","name":"CLAVO FIJADOR 1\"","brand":"EME","linea":"TORNILLOS Y ANCLAJES","cat":"ANCLAJES","unit":"Caja","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11576","name":"PARAL B9 3 5/8\"X1 5/8\"C20 3.05 P36216220","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11577","name":"PARAL 3 5/8\" X 1 5/8\" C20 2.44 P36216208","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11578","name":"CANAL 3 5/8\" X 1\" C20 2.44 C3621000820","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11579","name":"PARAL B9 3 5/8\"X1 5/8\"C24 X 3.05 P362162","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11580","name":"PARAL 3 5/8\"X1 1/4\" 3.05 P36212500","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11639","name":"TAPA REGISTRO PALANCA TECH-PARED 15X15","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11673","name":"CINTA MALLA 15CM X 45MT DELTA","brand":"DELTA","linea":"ACCESORIOS DE ACABADO","cat":"CINTAS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11674","name":"CANAL 40 0,40MM 2,44M C1621000800","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11675","name":"ANGULO 0,40 X1 5/8x3/4X2,44M AL162750800","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA CIELOS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11896","name":"TABLA PLASTICA 7,5X2,4X240 CMS VERDE","brand":"MADERPOL","linea":"PERFILERIA DRYWALL","cat":"REFUERZOS DE MADERA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11897","name":"VARETA PLASTICA 5,5X2,4X240 CMS VERDE","brand":"MADERPOL","linea":"PERFILERIA DRYWALL","cat":"REFUERZOS DE MADERA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"11956","name":"RODILLO ACEPINT 9\" 14MM SAN ISIDRO","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"12124","name":"PARAL 3 5/8\"X1 1/4\"X3.05C24 P3621251024","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"12290","name":"PARAL 3 1/2 X1 1/4 C20 P36212520 X3.05M","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"12354","name":"ESQUINERO PLASTICO VINYL-FLEX 2,44M","brand":"COEXPLAST","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"12355","name":"ESQUINERO PLASTICO VINYL-FLEX 3,05M","brand":"COEXPLAST","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"12356","name":"DILATACION PLAST EN Z 8MM 3.05M VINYL-FL","brand":"COEXPLAST","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"12357","name":"DILATACION PLAST Z 11MM X3,05M VINYL-FLE","brand":"COEXPLAST","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"12620","name":"MEDIACANA PLAST ENSAM COEXT 6CM UNIPE 3M","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"12634","name":"PUNTA #2 1\" MPTOOLS","brand":"IMPADOC","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1279","name":"ALICATE FORTE DE 7\" COD 897314","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1280","name":"ATORNILLADOR PALA 3/16X4\" FORTE 900068","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1281","name":"ATORNILLADOR PHILIPS 1/4X4\" COD 899922","brand":"PHILIPS","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1286","name":"FLEXOMETRO 8MT FORTE COD 885913","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1287","name":"MARTILLO 25MM FORTE COD 898536","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1288","name":"PUNTA ESTRELLA 1\" TOPE IRWIN COD 5119","brand":"IRWIN","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1289","name":"TIJERAS DE AVIACION RECTA FORTE COD 4218","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1290","name":"BROCA TUNGSTENO 3/16X4 IRWIN COD 2273","brand":"IRWIN","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1291","name":"BROCA TUNGSTENO 1/4X4 IRWIN COD 2274","brand":"IRWIN","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1299","name":"MOLDURA NOMASTYL A2 2M","brand":"NMC","linea":"MOLDURAS DECORATIVAS","cat":"MOLDURA POLIESTIRENO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1301","name":"MOLDURA NOMASTYL AT 2M","brand":"NMC","linea":"MOLDURAS DECORATIVAS","cat":"MOLDURA POLIESTIRENO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1303","name":"MOLDURA NOMASTYL D 2M","brand":"NMC","linea":"MOLDURAS DECORATIVAS","cat":"MOLDURA POLIESTIRENO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1304","name":"MOLDURA NOMASTYL J 2M","brand":"NMC","linea":"MOLDURAS DECORATIVAS","cat":"MOLDURA POLIESTIRENO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1321","name":"BROCHA PROFESIONAL AZUL 2\" BR023504","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1322","name":"BROCHA 2216 CERD MONA PROF CABO AZUL 3\"","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1323","name":"BROCHA POPUL 2234/224 MONA/GRIS 2\" NEG","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1324","name":"BROCHA POPUL 2236/226 MONA/GRIS 3\" NEG","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1325","name":"RODILLO FELPA ACR/POL MASTDER 9\" REF 902","brand":"MASTDER","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1326","name":"RODILLO FELPA VERDE MASTDER 3\" RF 312","brand":"MASTDER","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"13281","name":"DILATACION PLAST EN U 8MM 3,05M VINYL FL","brand":"COEXPLAST","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"133","name":"ANGULO 2X2 0,40MM 2,44M","brand":"COLPERFILES","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA CIELOS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"13383","name":"COMBO TALAD PERCU INAL PXC 1/2\" BRUSSLES","brand":"EINHELL","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS INALAMBRICAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"13390","name":"BROCA MULTICONSTRUCCIÓN 13/64 5,0MM","brand":"EINHELL","linea":"HERRAMIENTAS","cat":"ACCESORIOS DE HERRAMIENTAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"13393","name":"BROCA MULTICONSTRUCCIÓN 3/8 10MM","brand":"EINHELL","linea":"HERRAMIENTAS","cat":"ACCESORIOS DE HERRAMIENTAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"13394","name":"SET X 2 BROCA ESCALONADA COD 49525890","brand":"EINHELL","linea":"HERRAMIENTAS","cat":"ACCESORIOS DE HERRAMIENTAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"13398","name":"REJILLAS ABRASI P/ LIJADORAS X5 UND G120","brand":"EINHELL","linea":"HERRAMIENTAS","cat":"ACCESORIOS DE HERRAMIENTAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"13424","name":"MARCO PARA CIELO RASO 25x25 EN TEE 7/8","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"13464","name":"MARCO PARA CIELO RASO 61X61 EN TEE 7/8","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"13481","name":"SOTTOFONDO 3X1 CC COREV CUÑ","brand":"COREV","linea":"ESTUCOS Y MASILLAS","cat":"REVESTIMIENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"14338","name":"VIGUETA 1 1/2\"x3/4\" C24 VI1507524 X 3.05","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA CIELOS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"14390","name":"ALUMANTO AUTOADH 2.0MMX10M TEXSA","brand":"TEXSA","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"144","name":"PARAL 39 0,40MM 2,44M P1621250800","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"14401","name":"MARCO PARA CIELO RASO 30X30 EN TEE 7/8","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"14427","name":"TABLERO OSB APA 9,5mm 1,22X2,44 LP","brand":"LPCOLOMBIA","linea":"PLACAS","cat":"TABLEROS ESTRUCTURALES","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"14429","name":"TABLERO OSB APA 11,1mm 1,22X2,44 LP","brand":"LPCOLOMBIA","linea":"PLACAS","cat":"TABLEROS ESTRUCTURALES","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"14430","name":"TABLERO OSB APA 18,3mm 1,22 X 2,44M LP","brand":"LPCOLOMBIA","linea":"PLACAS","cat":"TABLEROS ESTRUCTURALES","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"14432","name":"TABLERO SMART R8'' 11,1 1,22X2,44 LP","brand":"LPCOLOMBIA","linea":"PLACAS","cat":"TABLEROS ESTRUCTURALES","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"14443","name":"REJILLA VENT ALETAS CURVAS L-RA 50X50CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1464","name":"MOLDURA NOMASTYL A1 2M","brand":"NMC","linea":"MOLDURAS DECORATIVAS","cat":"MOLDURA POLIESTIRENO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1465","name":"MOLDURA NOMASTYL F 2M","brand":"NMC","linea":"MOLDURAS DECORATIVAS","cat":"MOLDURA POLIESTIRENO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1481","name":"MOLDURA NOMASTYL K 2M","brand":"NMC","linea":"MOLDURAS DECORATIVAS","cat":"MOLDURA POLIESTIRENO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15","name":"PLACA FIBRO SB 6MMX1,22X2,44 105644","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15071","name":"CANAL 89x25x C20x2.440MM -DR-C8925085 FN","brand":"FANALCA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15075","name":"PARAL 89x31 C20X3.05 DR-P8931085-305 F","brand":"FANALCA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15275","name":"EPOTOC L KG TOX","brand":"TOXEMENT","linea":"IMPERMEABILIZACION","cat":"EPOXICOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15276","name":"AQUAZERO 8 GRIS CUN TOX","brand":"TOXEMENT","linea":"IMPERMEABILIZACION","cat":"IMPERMEABILIZANTES LIQUIDOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15280","name":"EUCOFELT ROLLO TOX","brand":"TOXEMENT","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15294","name":"EUCOPLUS 5000 GRIS TOX","brand":"TOXEMENT","linea":"IMPERMEABILIZACION","cat":"IMPERMEABILIZANTES CEMENTICIOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"153","name":"PARAL 89 0.40MM CPT 2,44MM","brand":"CPT","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15301","name":"MINI RODIL FELT EPOXICO 6\"/15CM MRC73461","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15302","name":"MINI RODILLO ANTIGOTA  4\"/11CM MRC25442","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15303","name":"ESPATULA PRO FLEXIBLE AZUL 3\" HS172603","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15304","name":"ESPATULA PRO FLEXIBLE AZUL 4\" HS172604","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15305","name":"ESPATULA PRO FLEXIBLE AZUL 5\" HS172605","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15307","name":"BANDEJA MEZCLADO 2 LAM  ACERO ADW21135","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15308","name":"LLANA LISA INOX MANGO MA 28X12CM HS30028","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15310","name":"CINTA ENMASCAR 24MMX40 YARDAS 563C2440","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15313","name":"LISSO LS05 COREV CUÑ","brand":"COREV","linea":"ESTUCOS Y MASILLAS","cat":"REVESTIMIENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15324","name":"PLACA DE YESO GYPLAC CIEL 1220X2440X8MM","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15365","name":"DURAL FAST SET GEL 600ML -TD5323122NC","brand":"TOXEMENT","linea":"IMPERMEABILIZACION","cat":"IMPERMEABILIZANTES LIQUIDOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15366","name":"DYMONIC FC BLANCO - 960806 323","brand":"TOXEMENT","linea":"MATERIALES OBRAS","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15601","name":"SOTTOPAINT COREV  X090 CUÑ","brand":"COREV","linea":"ESTUCOS Y MASILLAS","cat":"REVESTIMIENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15602","name":"COREVSAND LITE X090 CUN","brand":"COREV","linea":"ESTUCOS Y MASILLAS","cat":"REVESTIMIENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15633","name":"ADHESIVO INSTANT 5GR BLISTER 69957326446","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"ADHESIVOS INSTANTANEOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15634","name":"ADHESIVO INST SUPERCOLA 2GR X127326781","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"ADHESIVOS INSTANTANEOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15635","name":"ADHESIVO JUNTAS 425GR/280ML 69957321917","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15636","name":"ADHESIVO INSTA 793 20GR 69957321708","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"ADHESIVOS INSTANTANEOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15639","name":"ESPUMA LIMPIA TOD 370G/400ML 78072713042","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15640","name":"ESPUMA EXPAN BEI 500ML/320GR 69957326993","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15641","name":"ESPUMA EXPAN BEI 750ML/740GR 69957326996","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15646","name":"PINT AER CROM METAL 350ML/250GR 7327167","brand":"TEK BOND","linea":"PINTURAS","cat":"PINTURA AEROSOL","unit":"Galón","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15651","name":"PINT AER USOGR ALUM 350ML/250GR 7327106","brand":"TEK BOND","linea":"PINTURAS","cat":"PINTURA AEROSOL","unit":"Galón","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15659","name":"PINT AER  NEG BRILL 350ML/250GR327011","brand":"TEK BOND","linea":"PINTURAS","cat":"PINTURA AEROSOL","unit":"Galón","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15660","name":"PINT AER  NEGR MATE 350ML/250GR7327008","brand":"TEK BOND","linea":"PINTURAS","cat":"PINTURA AEROSOL","unit":"Galón","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15666","name":"SELLADOR MS HIBRID BL 250ML/400GR 327191","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15668","name":"SILICONA ALTA TEMPE NEUT GRIS 70GR BLIST","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15669","name":"SELLADOR PU40 BL 310ML/359GR 69957321924","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15670","name":"SELLADOR PU40GRI 310ML/360GR 69957321925","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15671","name":"SELLADO PU40 NEG 310ML/357GR 69957326998","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15672","name":"SELLAD  PREG FACIL   B/AGUA 420GR/280ML","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15673","name":"SILICONA ACE CONS TRANSP 256G/270ML 6982","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15674","name":"SILICONA ACETICA  270GRGRIS 17000015340","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15675","name":"SILICONA ACETICA  270GR NEGR 17000015341","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15677","name":"SILICONA 50GR BLISTER TRANSP 69957321895","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15678","name":"SILICONA 50GR BLISTER BLA 69957326630","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15679","name":"SILICONA ALT TEM GRIS 50GR BLIST 7321912","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15680","name":"SILICONA ALT TEM NEG 50GR BLISTE 7321915","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15764","name":"SILICONA USO GENERA 270GR BLANCO 0015339","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15778","name":"IMPAC 7000 N IMPERM BLAN CUÑ 19 LT 10232","brand":"IMPAC","linea":"IMPERMEABILIZACION","cat":"IMPERMEABILIZANTES LIQUIDOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15779","name":"IMPAC 7000 N IMPERM GRIS CUÑ 19 LT 10233","brand":"IMPAC","linea":"IMPERMEABILIZACION","cat":"IMPERMEABILIZANTES LIQUIDOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15780","name":"IMPAC 7000 N IMPER BLAN GAL 3.8 LT 10234","brand":"IMPAC","linea":"IMPERMEABILIZACION","cat":"IMPERMEABILIZANTES LIQUIDOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15781","name":"IMPAC 7000 N IMPER GRIS GAL 3.8 LT 10235","brand":"IMPAC","linea":"IMPERMEABILIZACION","cat":"IMPERMEABILIZANTES LIQUIDOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15783","name":"IMPAC SOKUL 15 BLANCO CUÑETE 19 LT 10253","brand":"IMPAC","linea":"IMPERMEABILIZACION","cat":"IMPERMEABILIZANTES LIQUIDOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15786","name":"IMPAC X-TERIOR TOTAL BLA GAL 3.8LT 10256","brand":"IMPAC","linea":"IMPERMEABILIZACION","cat":"IMPERMEABILIZANTES LIQUIDOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15788","name":"IMPAC FACHADAS 5 BLANCO CUÑE 19 LT 10229","brand":"IMPAC","linea":"PINTURAS","cat":"PINTURA PARA EXTERIOR (ACRILICA)","unit":"Galón","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15790","name":"IMPER MAXI 7 BLANCO CUÑETE 19 LT 10236","brand":"IMPAC","linea":"PINTURAS","cat":"PINTURA PARA EXTERIOR (ACRILICA)","unit":"Galón","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15791","name":"IMPER MAXI 7 BLANCO GALON 3.8 LT 10237","brand":"IMPAC","linea":"PINTURAS","cat":"PINTURA PARA EXTERIOR (ACRILICA)","unit":"Galón","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15816","name":"TAPA REGISTRO INVISIBLE TRG 30X60CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15884","name":"BROCHA POP 1 1/2 600153","brand":"CARIBE BROCHAS","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15885","name":"BROCHA POP 2 600154","brand":"CARIBE BROCHAS","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15886","name":"BROCHA POP 2 1/2 600155","brand":"CARIBE BROCHAS","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15887","name":"BROCHA POP 3 600156","brand":"CARIBE BROCHAS","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15897","name":"ESPATULA PROFESIONAL 4 61016","brand":"CARIBE BROCHAS","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15906","name":"MINIRODILLO 3 700203","brand":"CARIBE BROCHAS","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15907","name":"MINIRODILLO 4 700204","brand":"CARIBE BROCHAS","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15927","name":"EUCOFAST MEDIO 30KG PCPRHM10587603","brand":"TOXEMENT","linea":"ADITIVOS","cat":"MORTEROS DE REPARACIÓN","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15935","name":"SELLADO PREG FACIL BCO 140GR 69957367189","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15949","name":"MONOPUR MORTAR GRIS KIT 32.4KG TICPPI","brand":"TOXEMENT","linea":"MORTEROS","cat":"MORTEROS DE REPARACIÓN","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15950","name":"RODILLO INDUSTRIAL POP 9\" 5.15 REF700151","brand":"CARIBE BROCHAS","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15951","name":"EUCOPATCH E CCPRHK10612810","brand":"TOXEMENT","linea":"MORTEROS","cat":"MORTEROS DE REPARACIÓN","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15980","name":"EUCO 455 GEL 3KG CCPGAK10580410","brand":"TOXEMENT","linea":"ADHESIVOS","cat":"PEGANTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"15996","name":"TOC 8020 GRIS 3KG CCPARK11155810","brand":"TOXEMENT","linea":"RECUBRIMIENTO","cat":"EPOXICOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16","name":"PLACA FIBRO SB 8MMX1,22X2,44 105645","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16014","name":"LISSO 30KG  REF 11604","brand":"COREV","linea":"ESTUCOS Y MASILLAS","cat":"REVESTIMIENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16125","name":"CINTA ENMASCARAR CARIBE 2\" 48MM 74515","brand":"CARIBE BROCHAS","linea":"ACCESORIOS DE ACABADO","cat":"CINTAS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16191","name":"AQUARE TEX K115 80%-M115 10%-GRIS10% CUÑ","brand":"COREV","linea":"ESTUCOS Y MASILLAS","cat":"REVESTIMIENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16351","name":"PEGAMENTO REVOQUE SECO 25 KG REF314251","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS EN POLVO","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16407","name":"MARCO PARA CIELO RASO 70X50 EN TEE 7/8","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16441","name":"TAPA REGISTRO INVISIBLE TRG15X15CM CRUDO","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16442","name":"TAPA REGISTRO TRG-ARQ T4 20X20 NEGRO MAT","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16445","name":"SELLADOR PU46GRI 310ML/465GR 17000013175","brand":"TEK BOND","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16461","name":"MASILLA EN PASTA GYPLAC GALON 5,6 KG","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16462","name":"MASTIQUE GYPLAC CUN 115383","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16464","name":"MASILLA GYPLAC EN POLVO 25KG 106205","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS EN POLVO","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16483","name":"RODILLO ANTIGOTA 9\" CARIBE","brand":"CARIBE BROCHAS","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16538","name":"COMBO 25PLACA YESO ST1/2\"+1SELLPAN CJ27K","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16556","name":"MASTIQUE GYPLAC BALD 2,5GAL 115386","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16638","name":"COMBO MINIPULI INAL 8.500RPM+STAR KIT2.5","brand":"EINHELL","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS INALAMBRICAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16774","name":"L-MARCO CIELO RASO 12x16 W - 32x37","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16896","name":"OMEGA 22  2 1/2\" x 7/8\"X 3.05M C24 -0,55","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA CIELOS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"16899","name":"TAPA REGISTRO PALANCA MICROTEXT 36X30CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"17","name":"PLACA FIBRO SB 10MMX1,22X2,44 105635","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"172","name":"CANAL 2 1/2\"X1 C20 2,44M C25010020","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"18","name":"PLACA FIBRO SB 14MMX1,22X2,44 - 105647","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"19","name":"PLACA FIBRO SB 17MMX1,22X2,44 105648","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1969","name":"MASTIQUE SUPERMASTICK 1/4GAL","brand":"SUPERMASTIK","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1970","name":"MASTIQUE SUPERMASTICK BALD 2,5GAL","brand":"SUPERMASTIK","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1971","name":"MASTIQUE SUPERMASTICK CAJA 28KG","brand":"SUPERMASTIK","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1972","name":"MASTIQUE SUPERMASTICK CUN","brand":"SUPERMASTIK","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1973","name":"MASTIQUE SUPERMASTICK GAL","brand":"SUPERMASTIK","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1980","name":"TAPA DE INSPECCION PANEL YESO 0,20X0,20","brand":"GYPLAC DECO","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1986","name":"SERVNAL FLETE VENTAS","brand":"SIN MARCA","linea":"SERVICIOS NACIONALES","cat":"SERVICIOS NACIONALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"1997","name":"FRESCASA ECO  2 1/2\" FIBERG 9M2 RF 00168","brand":"FIBERGLASS AT","linea":"AISLAMIENTOS TERMOACUSTICOS","cat":"FIBRA DE VIDRIO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"20","name":"PLACA FIBRO SB 20MMX1,22X2,44 105649","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"200","name":"TORNILLO PANEL PB 6X1 5/8\" NEGRO","brand":"DELTA","linea":"TORNILLOS Y ANCLAJES","cat":"TORNILLOS","unit":"Caja","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"204","name":"TORNILLO SUPERBOARD PB 8X1 1/4\"","brand":"DELTA","linea":"TORNILLOS Y ANCLAJES","cat":"TORNILLOS","unit":"Caja","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"225","name":"CLAVO DE ACERO LISO 1\" X LIBRA","brand":"CLAVO ACERO MEJIA","linea":"TORNILLOS Y ANCLAJES","cat":"ANCLAJES","unit":"Caja","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"226","name":"CLAVO DE ACERO ESTRIADO 1\" X LIBRA","brand":"CLAVO ACERO MEJIA","linea":"TORNILLOS Y ANCLAJES","cat":"ANCLAJES","unit":"Caja","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"23","name":"PLACA FIBRO SB MAD 6MMX1,22X2,44","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2403","name":"BISTURI ALUMINIO FORTE COD 910638","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2404","name":"BISTURI ECONOMICO FORTE COD 910737","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2405","name":"REPUESTO BISTURI  BLISTER X10 UND R4159","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2406","name":"FLEXOMETRO 5\" FORTE COD 885897","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2411","name":"SERRUCHO TABLA ROCA IRWIN COD 1890","brand":"IRWIN","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2582","name":"LIJA DE AGUA No. 180 ABRACOL 1006 PLIEGO","brand":"ABRACOL","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2583","name":"LIJA OMEGA No. 80 ABRACOL 1102 PLIEGO","brand":"ABRACOL","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2584","name":"LIJA OMEGA No. 120 ABRACOL 1104 PLIEGO","brand":"ABRACOL","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2585","name":"LIJA OMEGA No. 150 ABRACOL 1105 PLIEGO","brand":"ABRACOL","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2586","name":"LIJA OMEGA No. 180 ABRACOL 1106 PLIEGO","brand":"ABRACOL","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2588","name":"DISCO DIAMAN DT1 180X22X7,00MM CONT MUL","brand":"ABRACOL","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS ELECTRICAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"26","name":"PLACA FIBRO SB SIDING MAD 8MMX0,20X2,44","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2612","name":"MASTIQUE GYPLAC BALD 2,5GAL","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2613","name":"MASILLA EN PASTA GYPLAC GALON 5,6 KG","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2614","name":"MASTIQUE GYPLAC CUN 115383","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS PREMEZCLADAS","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2615","name":"PLACA DE YESO GYPLAC 1/2\"X1,22X2,44 1061","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2616","name":"PLACA DE YESO CEILING 11MMX1,22X2,44","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2617","name":"PLACA DE YESO GYPLAC RH 1/2\"X1,22X2,44 -","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2625","name":"PLACA DE YESO GYPLAC 5/8\"X1,22X2,44","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2626","name":"PLACA DE YESO GYPLAC RF 5/8\"X1,22X2,44","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2627","name":"PLACA DE YESO GYPLAC RH 5/8\"X1,22X2.44","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2639","name":"RINCONE PLAST EXTE 2VIAS 1 1/2\"DXN6100A","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2650","name":"PLACA DE YESO EXTRAD GYPL 5/8\"X1,22X2,44","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"266","name":"CINTA ENMASCARAR 1\" RF4010 CE204 40M","brand":"CINTANDINA","linea":"ACCESORIOS DE ACABADO","cat":"CINTAS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2679","name":"REJILLA VENT ALETAS CURVAS L-RA 20X20CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2680","name":"REJILLA VENT ALETAS CURVAS L-RA 40X40CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2712","name":"CANAL B6-2 1/2\"X1\"C24-2440C2501000824","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2742","name":"ANGULO 2,5X2,5 0,40 MM FANALCA 2,44M","brand":"FANALCA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA CIELOS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2758","name":"PLACA DE YESO GYPLAC 3/8\"X1,22X2,44","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2797","name":"PLACA FONOABSORV EXSOUND GYPLAC R15N8","brand":"GYPLAC DECO","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"28","name":"PLACA FIBRO SB ENCHAPE 8MMX1,22X2,44","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"280","name":"CINTA ENMASCARAR 1,5\" RF4010 CE205 40M","brand":"CINTANDINA","linea":"ACCESORIOS DE ACABADO","cat":"CINTAS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2825","name":"CINTA DOBLE FAZ 3/4\"X 5M COD.DXN33031 -","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"CINTAS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2826","name":"CINTA DOBLE FAZ 3/4\"X 30M COD. DXN33032","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"CINTAS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2827","name":"PLACA DE YESO GYPLAC RF 1/2\"X1,22X2,44","brand":"GYPLAC","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"2829","name":"PROMASEAL A CART 310ML 12pc/box 4058733","brand":"PROMAT","linea":"ACCESORIOS DE ACABADO","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"286","name":"CINTA DE ENMASCARAR 3/4\" X 44M CE-203","brand":"CINTANDINA","linea":"ACCESORIOS DE ACABADO","cat":"CINTAS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"292","name":"ESQUINERO PLASTICO DEXSON 2,44 DXN6008P","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"293","name":"ESQUINERO PLASTICO DEXSON 3.05M DXN6000P","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"295","name":"DILATACION PLASTICA Z 1/2 3,05 DXN6007P","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"296","name":"TERMINAL PLAST L DEXSON 3,05M DXN6003P","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"297","name":"TERMINAL PLAST J DEXSON 3,05M DXN6002P","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"298","name":"ESTRIA PLAST U 10MM DEXS0N3,05M DXN6005P","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"301","name":"MEDIACANA PLAST 1 1/2\" DXN 3,05M DXN6004","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"302","name":"RINCON PLAST INTER 3 VIAS 1 1/2\"DXN6101A","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"306","name":"MEDIACANA PLAST ENSAM RIG 6CM UNIPERF 3M","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3071","name":"MANTO COLOMBIA 2MM REF 00467","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"31","name":"PLACA FIBRO SB MAD 8MMX1,22X2,44 105665","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3105","name":"ESQUINA INTERNA MEDIACANA 9CM UNIPERF","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3106","name":"ESQUINA EXTERNA MEDIACANA 9CM UNIPERF","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3108","name":"ACCES TAPA MEDIACANA ENSAMBLE 9CM UNIPE","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3108","name":"TAPA MEDIACANA ENSAMBLE 9CM UNIPE","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3113","name":"ESPATULA DRYWALL  12\" FORTE COD  5858","brand":"FORTE","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"316","name":"MEDIACANA PLAST ENSAM COEXT 9CM UNIPE 3M","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3175","name":"MANTO METALEX PRO 3.0MM 10M2 RF 27602","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3189","name":"MANTO METALEX PRO 2.0MM 10M2 RF 00479","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3190","name":"MANTO METALEX PRO 2.5MM 10M2 RF 00478","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3197","name":"MANTO PROTEKTOR PRO 2,7MM 10M2 RF 00495","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3198","name":"MANTO FG200 PRO 2,2MM 10M2 RF 27742","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3199","name":"MANTO 500XT PRO 2,8MM 10M2 RF 00499","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3204","name":"PLACA FONOABSORV EXSOUND GYPLAC R15N1","brand":"GYPLAC DECO","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"327","name":"ESQUINA INTERNA MEDIACANA 6CM UNIPERF","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3274","name":"DILATACION PLAST EN Z 6MM UNIPERF 3,05M","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"328","name":"ESQUINA EXTERNA MEDIACANA 6CM UNIPERF","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"329","name":"ESTRELLA MEDIACANA ENSAMBLE 6CM UNIPERF","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"330","name":"TAPA MEDIACANA ENSAMBLE 6CM UNIPERF","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"367","name":"LIJA DE AGUA No. 150 ABRACOL 1005 PLIEGO","brand":"ABRACOL","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"368","name":"LIJA DE AGUA No. 80 ABRACOL 1002 PLIEGO","brand":"ABRACOL","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"369","name":"LIJA DE AGUA No. 120 ABRACOL 1004 PLIEGO","brand":"ABRACOL","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"376","name":"FRESCASA 3 1/2\" FIBERG 18,58M2 REF 00173","brand":"FIBERGLASS AT","linea":"AISLAMIENTOS TERMOACUSTICOS","cat":"FIBRA DE VIDRIO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"380","name":"BLACK THEATHER 1\"X1,22X2,44 FIBERG 00051","brand":"FIBERGLASS AT","linea":"AISLAMIENTOS TERMOACUSTICOS","cat":"FIBRA DE VIDRIO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"381","name":"BLACK THEATHER 2\"X1,22X2,44 FIBERG 00052","brand":"FIBERGLASS AT","linea":"AISLAMIENTOS TERMOACUSTICOS","cat":"FIBRA DE VIDRIO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"385","name":"MEMBRANA ACUSTICA FIBERGLASS RF 00152","brand":"FIBERGLASS AT","linea":"AISLAMIENTOS TERMOACUSTICOS","cat":"FIBRA DE VIDRIO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"392","name":"FRESCASA ECO  3 1/2\" FIBERG 9M2 RF 00169","brand":"FIBERGLASS AT","linea":"AISLAMIENTOS TERMOACUSTICOS","cat":"FIBRA DE VIDRIO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"3956","name":"REJILLA VENT ALETAS CURVAS L-RA 60X60CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"4006","name":"TEXSATAPE ALUMINIO 33CMX5M","brand":"TEXSA","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"4007","name":"TEXSATAPE ALUMINIO 50CMX5M","brand":"TEXSA","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"4072","name":"PARAL B6-2 1/2\"X1 5/8\"C24-244P2501620824","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"4299","name":"PLACA FONOABSORV EXSOUND GYPLAC C8/18 N8","brand":"GYPLAC DECO","linea":"PLACAS","cat":"PLACAS DE YESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"4791","name":"ANGULO ESQUINERO 2CMX2CM UNIPERF 2,40M","brand":"UNIPERFILES","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"4876","name":"LIJA DE AGUA No. 220 ABRACOL 1007 PLIEGO","brand":"ABRACOL","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"4890","name":"PLACA FIBRO SB 12MMX1,22X2,44 105657","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"4985","name":"CANAL 3 5/8\" X 1\" 0,55MMX2,44 C36212524","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5121","name":"DILATACION PLAST EN Z 8MM 3.05M DXN6011P","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5227","name":"TAPA REGISTRO PALANCA TECH-PARED 30X30CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5228","name":"TAPA REGISTRO PALANCA TECH-PARED 40X40CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5229","name":"TAPA REGISTRO PALANCA TECH-PARED 60X60CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5280","name":"DURAFELT 20 M2 RF 27622","brand":"FIBERGLASS IMP","linea":"IMPERMEABILIZACION","cat":"MANTOS","unit":"Rollo","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5369","name":"TORNILLO SUPERBOARD AVELL PA 8X1 1/4\"","brand":"DELTA","linea":"TORNILLOS Y ANCLAJES","cat":"TORNILLOS","unit":"Caja","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5630","name":"PUNTA PHILIPS No. 2 DE 2\" COD 7398","brand":"PHILIPS","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5663","name":"PARAL 2 1/2\"X 1 1/4\" C24 X3,05 P25012524","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5684","name":"PARAL 3 5/8\"X1 5/8\" C24 X 2,44 P36216224","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5737","name":"SOTTOPAINT COREV CUÑETE","brand":"COREV","linea":"ESTUCOS Y MASILLAS","cat":"REVESTIMIENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"5755","name":"PARAL 2 1/2\"X 1 1/4  C20  2,44 P25012520","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"6208","name":"PLACA FIBRO SB INS DECO PA 6MM 1.20X2.40","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"6219","name":"PLACA FIBRO SB INS ART DEC 6MM 1.20X2.40","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"63","name":"MASILLA GYPLAC EN POLVO 25KG 106205","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS EN POLVO","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"634","name":"PLACA FIBRO SB 4MMX0,61X1,22 SIN PINT MT","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"638","name":"PLACA FIBRO SB 4MMX1,22X2,44 SIN PINT","brand":"SUPERBOARD","linea":"PLACAS","cat":"PLACAS FIBROCEMENTO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"662","name":"TEJA COLOMBIT P7 NO.6 105518","brand":"PROTEJA","linea":"CUBIERTAS","cat":"CUBIERTAS FIBROCEMENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"663","name":"TEJA COLOMBIT P7 NO.10  105521","brand":"PROTEJA","linea":"CUBIERTAS","cat":"CUBIERTAS FIBROCEMENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"668","name":"TEJA COLOMBIT P7 NO.8 105519","brand":"PROTEJA","linea":"CUBIERTAS","cat":"CUBIERTAS FIBROCEMENTO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"68","name":"PEGAMENTO GYPLAC 25KG 123808","brand":"GYPLAC","linea":"ESTUCOS Y MASILLAS","cat":"MASILLAS EN POLVO","unit":"Saco","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"6812","name":"MEDIACAÑA 9 BLANCO DEXSON 3.05M DXN6014P","brand":"DEXSON","linea":"ACCESORIOS DE ACABADO","cat":"PERFILERIA PLASTICA","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7009","name":"PEGANTE MOLDURAS ADEFIX P5/0.5 KG REF.30","brand":"ADEFIX","linea":"MOLDURAS DECORATIVAS","cat":"SILICONAS, SELLADORES Y ADHERENTES","unit":"Cartucho","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7164","name":"BROCHA GOYA CABO AZUL 1\" REF. BR023502","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7164","name":"BROCHA PROFES CABO AZUL 1\" REF. BR023502","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7165","name":"BROCHA GOYA CABO AZUL 1 1/2\"","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7168","name":"BROCHA CABO AZUL GOYA 5''","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7168","name":"BROCHA PROFESIONAL GO CABO AZUL GOYA 5''","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7169","name":"BROCHA  GOYA CABO AZUL 6''","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7169","name":"BROCHA  PROFESIONAL GOYA CABO AZUL 6''","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7170","name":"RODILLO ESPUMA GOYA 9\"","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7170","name":"RODILLO ESPUMA POPULAR GOYA 9\"","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7176","name":"BROCA HSS IRWIN 15/64\"","brand":"IRWIN","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7191","name":"CARGA CANANA AMARILLA CAL 27","brand":"CANANA","linea":"TORNILLOS Y ANCLAJES","cat":"ANCLAJES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7193","name":"CARGA VERDE CAL22 TIRO A TIRO","brand":"CANANA","linea":"TORNILLOS Y ANCLAJES","cat":"ANCLAJES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7241","name":"CANAL EME 90 *305 CAL 26","brand":"EME","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7248","name":"CHAZO EZ-COLADE MARRANO","brand":"EME","linea":"TORNILLOS Y ANCLAJES","cat":"ANCLAJES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7280","name":"TORNILLO ESTRU HORMIGA 7*7/16 PB","brand":"EME","linea":"TORNILLOS Y ANCLAJES","cat":"TORNILLOS","unit":"Caja","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7331","name":"LIJA PREMIER #120","brand":"PREMIER","linea":"ACCESORIOS DE ACABADO","cat":"ABRASIVOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"7728","name":"REPUESTO CEPILLO STANLEY PARA PANEL","brand":"STANLEY","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8227","name":"ESPATULA GOYA C/AZUL ACER INOX 4\"","brand":"GOYA","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8346","name":"PLACA DENSGLASS SHEATHING 1/2'' X 4X8","brand":"GEORGIA-PACIFIC","linea":"PLACAS","cat":"PLACAS FIBROYESO","unit":"Lámina","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8442","name":"PARAL 3 1/2X1 1/4 X2,44 P35012500","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8480","name":"PARAL 59 2 1/2 X1 1/4 X 2,44 0.40MM","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8568","name":"ESPATULA GOYA C/AZUL ACER INOX 2\"","brand":"GOYA","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8569","name":"ESPATULA GOYA C/AZUL ACER INOX 5\"","brand":"GOYA","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8570","name":"ESPATULA GOYA C/AZUL ACER INOX 3\"","brand":"GOYA","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8572","name":"LLANA LISA GOYA 11X5 ACERO INOXIDABLE","brand":"GOYA","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS MANUALES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8573","name":"RODILLO POLIMAX PREMIUM 9\" GOYA RD010106","brand":"GOYA","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8646","name":"TAPA REGISTRO PALANCA TECH-PARED 25X25CM","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8651","name":"MOLDURA NOMASTYL NE1 2M","brand":"NMC","linea":"MOLDURAS DECORATIVAS","cat":"MOLDURA POLIESTIRENO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8916","name":"PULVERIZADOR CONTROL SPRAY 100 WAGNER EA","brand":"WAGNER","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS ELECTRICAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8917","name":"PISTOLA CONTROL SPRAY 200 WAGNER","brand":"WAGNER","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS ELECTRICAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8919","name":"PULVERIZADORA MULTIUSOS READY SPRAYER WA","brand":"WAGNER","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS ELECTRICAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"8920","name":"PULVERIZADORA MULTIUSOS READY STATION WA","brand":"WAGNER","linea":"HERRAMIENTAS","cat":"HERRAMIENTAS ELECTRICAS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9134","name":"CARGA VERDE CAL22 MASTER COD.697","brand":"MASTER","linea":"TORNILLOS Y ANCLAJES","cat":"ANCLAJES","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9137","name":"CLAVO DE ANCLAJE 1/2\" MASTER COD.866","brand":"MASTER","linea":"TORNILLOS Y ANCLAJES","cat":"ANCLAJES","unit":"Caja","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9200","name":"PARAL 59 0,38 2 1/2X1 1/4 3,05 P25012510","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9224","name":"CANAL 90 3 5/8X1\"X 2,44 C3621000800","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9225","name":"CANAL 60 2 1/2X 1 X 2,44 C2501000800","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9356","name":"VIGUETA 1 1/2X3/4 0.40 VI150750800 2.44M","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA CIELOS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9555","name":"PARAL 59 0.55 X 3.05M  C24 MATECSA","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA MUROS ESPECIAL","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9654","name":"BROCHA ACEPINT 1\" 25.4MM MANGO PP ROJO","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9655","name":"BROCHA ACEPINT 1.5\" 38.1MM MANGO PP ROJO","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9656","name":"BROCHA ACEPINT 2\" 50.8MM MANGO PP ROJO","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9657","name":"BROCHA ACEPINT 2.5\" 63.5MM MANGO PP ROJO","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9658","name":"BROCHA ACEPINT 3\" 76.2MM MANGO PP ROJO C","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9659","name":"BROCHA ACEPINT 4\" 101.6MM MANGO PP ROJO","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9662","name":"BROCHA ACEPINT 2.5\" MANGO MADER BM557065","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9667","name":"BROCHA ACEPINT 4\" MANGO MADERA BM557100","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9669","name":"BROCHA ACEPINT 2.5\" 63.5MM Aqua Angular","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9670","name":"RECAMBIO RODILLO ACEPINT 9\" 12MM TRICOLO","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9671","name":"RECAMBIO RODILLO ACEPINT 9\" 12MM ANTIGOT","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9673","name":"RECAMBIO RODILLO ACEPINT 9\" 18MM MONTSER","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9674","name":"RODILLO ACEPINT 9\" 12MM TRICOLOM Antigot","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9675","name":"RODILLO ACEPINT 9\" 12MM ANTIGOTA RC00032","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9676","name":"RODILLO ACEPINT 9\" 18MM MONTSERRAT AZUL","brand":"ACEPINT","linea":"HERRAMIENTAS","cat":"BROCHAS Y RODILLOS","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9856","name":"MARCO PARA CIELO RASO 20X20 EN TEE 7/8","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9857","name":"MARCO PARA CIELO RASO 40X40 EN TEE 7/8","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9858","name":"MARCO PARA CIELO RASO 60X60 EN TEE 7/8","brand":"LAMINAIRE","linea":"ACCESORIOS DE ACABADO","cat":"TAPAS DE REGISTRO","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}},{"id":"9967","name":"OMEGA 2 3/16\" x 3/4\"X3.05 OM23062000PQ","brand":"MATECSA","linea":"PERFILERIA DRYWALL","cat":"PERFILERIA CIELOS ESTANDAR","unit":"Unidad","prices":{"constructor":0,"distribuidor":0,"no_distribuidor":0}}];
+</script>
+<script>
+/* ============================================================
+   ADL DRYWALL — Catálogo Virtual
+   Lógica de la aplicación
+   ============================================================ */
+
+(function(){
+"use strict";
+
+/* ---------- Configuración ---------- */
+var ADMIN_PASSWORD = "ADL2024"; // Cámbiala aquí. Búscala y edítala directamente en este archivo.
+var STORAGE_KEY = "adl_drywall_prices_v2";
+var QUOTE_KEY = "adl_drywall_quote_v1";
+
+var CHANNELS = [
+  { id: "constructor",     label: "Constructor" },
+  { id: "distribuidor",    label: "Distribuidor" },
+  { id: "no_distribuidor", label: "No Distribuidor" }
+];
+
+/* ---------- Estado ---------- */
+var state = {
+  role: null,              // 'admin' | 'asesor'
+  channel: "constructor",
+  search: "",
+  category: "ALL",
+  collapsed: {},            // catName -> bool
+  prices: {},               // productId -> {constructor, distribuidor, no_distribuidor}
+  quote: {},                // productId -> qty
+  photos: {}                // productId -> dataURL (base64)
+};
+
+var saveTimers = {};
+
+/* ============================================================
+   PERSISTENCIA
+   ============================================================ */
+function hasCloudStorage(){
+  return typeof window.storage !== "undefined" && window.storage && typeof window.storage.get === "function";
+}
+
+function loadPrices(){
+  return new Promise(function(resolve){
+    if (hasCloudStorage()){
+      window.storage.get(STORAGE_KEY, true).then(function(res){
+        if (res && res.value){
+          try { resolve(JSON.parse(res.value)); return; } catch(e){}
+        }
+        resolve(loadPricesLocalFallback());
+      }).catch(function(){
+        resolve(loadPricesLocalFallback());
+      });
+    } else {
+      resolve(loadPricesLocalFallback());
+    }
+  });
+}
+
+function loadPricesLocalFallback(){
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  }catch(e){}
+  return {};
+}
+
+function persistPrices(){
+  var json = JSON.stringify(state.prices);
+  try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){}
+  if (hasCloudStorage()){
+    window.storage.set(STORAGE_KEY, json, true).catch(function(){});
+  }
+}
+
+function persistQuote(){
+  try{ localStorage.setItem(QUOTE_KEY, JSON.stringify(state.quote)); }catch(e){}
+}
+
+function loadQuoteLocal(){
+  try{
+    var raw = localStorage.getItem(QUOTE_KEY);
+    if (raw) return JSON.parse(raw);
+  }catch(e){}
+  return {};
+}
+
+/* ---------- Fotos de producto ---------- */
+var PHOTO_PREFIX = "adl_drywall_photo_v1:";
+
+function getPhoto(productId){
+  return state.photos[productId] || null;
+}
+
+function setPhotoLocal(productId, dataUrl){
+  state.photos[productId] = dataUrl;
+  try{
+    var idx = JSON.parse(localStorage.getItem(PHOTO_PREFIX + "index") || "[]");
+    if (idx.indexOf(productId) === -1) idx.push(productId);
+    localStorage.setItem(PHOTO_PREFIX + "index", JSON.stringify(idx));
+    localStorage.setItem(PHOTO_PREFIX + productId, dataUrl);
+  }catch(e){
+    showToast("La foto no cabe en el almacenamiento local del navegador");
+  }
+}
+
+function persistPhoto(productId, dataUrl){
+  setPhotoLocal(productId, dataUrl);
+  if (hasCloudStorage()){
+    window.storage.set(PHOTO_PREFIX + productId, dataUrl, true).catch(function(){});
+  }
+}
+
+function removePhoto(productId){
+  delete state.photos[productId];
+  try{
+    localStorage.removeItem(PHOTO_PREFIX + productId);
+    var idx = JSON.parse(localStorage.getItem(PHOTO_PREFIX + "index") || "[]");
+    idx = idx.filter(function(id){ return id !== productId; });
+    localStorage.setItem(PHOTO_PREFIX + "index", JSON.stringify(idx));
+  }catch(e){}
+  if (hasCloudStorage()){
+    window.storage.delete(PHOTO_PREFIX + productId, true).catch(function(){});
+  }
+  showToast("Foto eliminada");
+}
+
+function loadPhotosLocalFallback(){
+  var out = {};
+  try{
+    var idx = JSON.parse(localStorage.getItem(PHOTO_PREFIX + "index") || "[]");
+    idx.forEach(function(id){
+      var v = localStorage.getItem(PHOTO_PREFIX + id);
+      if (v) out[id] = v;
+    });
+  }catch(e){}
+  return out;
+}
+
+function loadPhotos(){
+  return new Promise(function(resolve){
+    if (hasCloudStorage()){
+      window.storage.list(PHOTO_PREFIX, true).then(function(res){
+        if (!res || !res.keys || !res.keys.length){ resolve(loadPhotosLocalFallback()); return; }
+        var keys = res.keys.filter(function(k){ return k !== PHOTO_PREFIX + "index"; });
+        Promise.all(keys.map(function(k){
+          return window.storage.get(k, true).catch(function(){ return null; });
+        })).then(function(results){
+          var out = {};
+          results.forEach(function(r, i){
+            if (r && r.value){
+              var id = keys[i].slice(PHOTO_PREFIX.length);
+              out[id] = r.value;
+            }
+          });
+          resolve(Object.keys(out).length ? out : loadPhotosLocalFallback());
+        }).catch(function(){ resolve(loadPhotosLocalFallback()); });
+      }).catch(function(){ resolve(loadPhotosLocalFallback()); });
+    } else {
+      resolve(loadPhotosLocalFallback());
+    }
+  });
+}
+
+function resizeImageFile(file, maxDim, callback){
+  var reader = new FileReader();
+  reader.onload = function(){
+    var img = new Image();
+    img.onload = function(){
+      var w = img.width, h = img.height;
+      if (w > h && w > maxDim){ h = Math.round(h * (maxDim / w)); w = maxDim; }
+      else if (h > maxDim){ w = Math.round(w * (maxDim / h)); h = maxDim; }
+      var canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL("image/jpeg", 0.82));
+    };
+    img.onerror = function(){ callback(null); };
+    img.src = reader.result;
+  };
+  reader.onerror = function(){ callback(null); };
+  reader.readAsDataURL(file);
+}
+
+function handlePhotoFile(productId, file, thumbEl, product){
+  if (!file.type || file.type.indexOf("image/") !== 0){
+    showToast("Selecciona un archivo de imagen válido");
+    return;
+  }
+  resizeImageFile(file, 640, function(dataUrl){
+    if (!dataUrl){ showToast("No se pudo procesar la imagen"); return; }
+    persistPhoto(productId, dataUrl);
+    renderThumbContent(thumbEl, product, dataUrl);
+    showToast("Foto guardada");
+  });
+}
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function fmtCOP(n){
+  var v = Number(n) || 0;
+  return v.toLocaleString("es-CO", { maximumFractionDigits: 0 });
+}
+
+function getPrice(productId, channel){
+  var p = state.prices[productId];
+  if (!p) return 0;
+  return p[channel] || 0;
+}
+
+function setPrice(productId, channel, value){
+  if (!state.prices[productId]){
+    state.prices[productId] = { constructor: 0, distribuidor: 0, no_distribuidor: 0 };
+  }
+  state.prices[productId][channel] = value;
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, function(c){
+    return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c];
+  });
+}
+
+function showToast(msg){
+  var wrap = document.getElementById("toastWrap");
+  var t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(function(){ t.classList.add("show"); });
+  setTimeout(function(){
+    t.classList.remove("show");
+    setTimeout(function(){ t.remove(); }, 250);
+  }, 1800);
+}
+
+function channelLabel(id){
+  for (var i=0;i<CHANNELS.length;i++){ if (CHANNELS[i].id === id) return CHANNELS[i].label; }
+  return id;
+}
+
+function productById(id){
+  for (var i=0;i<PRODUCTS.length;i++){ if (PRODUCTS[i].id === id) return PRODUCTS[i]; }
+  return null;
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+function initLogin(){
+  document.getElementById("btnAsesor").addEventListener("click", function(){
+    enterApp("asesor");
+  });
+
+  var adminBtn = document.getElementById("btnAdmin");
+  var passBox = document.getElementById("adminPassBox");
+  var passInput = document.getElementById("adminPassInput");
+  var passError = document.getElementById("passError");
+  var passSubmit = document.getElementById("adminPassSubmit");
+
+  adminBtn.addEventListener("click", function(){
+    var willShow = !passBox.classList.contains("show");
+    passBox.classList.toggle("show", willShow);
+    if (willShow){ passInput.value=""; passError.classList.remove("show"); passInput.focus(); }
+  });
+
+  function tryAdminLogin(){
+    if (passInput.value === ADMIN_PASSWORD){
+      enterApp("admin");
+    } else {
+      passError.classList.add("show");
+    }
+  }
+  passSubmit.addEventListener("click", tryAdminLogin);
+  passInput.addEventListener("keydown", function(e){
+    if (e.key === "Enter") tryAdminLogin();
+  });
+}
+
+function enterApp(role){
+  state.role = role;
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("app").classList.add("show");
+  renderRoleUI();
+  renderAll();
+  updateQuoteFab();
+}
+
+function logout(){
+  state.role = null;
+  document.getElementById("app").classList.remove("show");
+  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("adminPassBox").classList.remove("show");
+  document.getElementById("adminPassInput").value = "";
+}
+
+/* ============================================================
+   TOP BAR — render dinámico según rol
+   ============================================================ */
+function renderRoleUI(){
+  var pill = document.getElementById("rolePill");
+  var isAdmin = state.role === "admin";
+  pill.classList.toggle("is-admin", isAdmin);
+  document.getElementById("rolePillText").textContent = isAdmin ? "Administrador" : "Asesor";
+  document.getElementById("adminTools").style.display = isAdmin ? "flex" : "none";
+}
+
+function renderChannelSwitch(){
+  var wrap = document.getElementById("channelSwitch");
+  wrap.innerHTML = "";
+  CHANNELS.forEach(function(ch){
+    var btn = document.createElement("button");
+    btn.textContent = ch.label;
+    btn.className = ch.id === state.channel ? "active" : "";
+    btn.addEventListener("click", function(){
+      state.channel = ch.id;
+      renderChannelSwitch();
+      renderAll();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+/* ============================================================
+   RIEL DE CATEGORÍAS (sublíneas) — picker visual
+   ============================================================ */
+function buildCategoryList(){
+  var order = [];
+  var counts = {};
+  PRODUCTS.forEach(function(p){
+    if (!counts[p.cat]){ counts[p.cat] = 0; order.push(p.cat); }
+    counts[p.cat]++;
+  });
+  order.sort(function(a,b){ return counts[b] - counts[a]; });
+  return order.map(function(c){ return { cat:c, count:counts[c] }; });
+}
+
+function renderCategoryRail(){
+  var rail = document.getElementById("catRail");
+  rail.innerHTML = "";
+  var cats = buildCategoryList();
+
+  cats.forEach(function(c){
+    var card = document.createElement("div");
+    card.className = "cat-card" + (state.category === c.cat ? " active" : "");
+    card.innerHTML =
+      '<div class="cc-icon">'+getIcon(c.cat)+'</div>' +
+      '<span class="cc-name">'+escapeHtml(c.cat)+'</span>' +
+      '<span class="cc-count">'+c.count+' ref.</span>';
+    card.addEventListener("click", function(){
+      state.category = (state.category === c.cat) ? "ALL" : c.cat;
+      renderCategoryRail();
+      updateClearCatBtn();
+      renderAll();
+      document.getElementById("catalogList").scrollIntoView({ behavior:"smooth", block:"start" });
+    });
+    rail.appendChild(card);
+  });
+  updateClearCatBtn();
+}
+
+function updateClearCatBtn(){
+  document.getElementById("clearCat").classList.toggle("show", state.category !== "ALL");
+}
+
+function initCategoryRailControls(){
+  document.getElementById("clearCat").addEventListener("click", function(){
+    state.category = "ALL";
+    renderCategoryRail();
+    renderAll();
+  });
+}
+
+/* ============================================================
+   HERO — estadísticas
+   ============================================================ */
+function renderHeroStats(){
+  document.getElementById("heroTotal").textContent = PRODUCTS.length;
+  var cats = {}; var brands = {};
+  PRODUCTS.forEach(function(p){ cats[p.cat]=1; if (p.brand) brands[p.brand]=1; });
+  document.getElementById("heroCats").textContent = Object.keys(cats).length;
+  document.getElementById("heroBrands").textContent = Object.keys(brands).length;
+}
+
+/* ============================================================
+   RENDER DEL CATÁLOGO
+   ============================================================ */
+function renderAll(){
+  var list = document.getElementById("catalogList");
+  list.innerHTML = "";
+
+  var term = state.search.trim().toLowerCase();
+  var filtered = PRODUCTS.filter(function(p){
+    if (state.category !== "ALL" && p.cat !== state.category) return false;
+    if (!term) return true;
+    return (p.name + " " + p.cat + " " + p.linea + " " + p.brand + " " + p.id).toLowerCase().indexOf(term) !== -1;
+  });
+
+  document.getElementById("resultCount").textContent = filtered.length;
+  document.getElementById("activeChannelLabel").textContent = channelLabel(state.channel);
+
+  if (filtered.length === 0){
+    var empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.innerHTML = '<span class="e-icon">&#128269;</span>No encontramos productos con esos filtros.<br>Intenta con otro término de búsqueda o categoría.';
+    list.appendChild(empty);
+    return;
+  }
+
+  // Agrupar por categoría preservando el orden de aparición
+  var order = [];
+  var groups = {};
+  filtered.forEach(function(p){
+    if (!groups[p.cat]){ groups[p.cat] = []; order.push(p.cat); }
+    groups[p.cat].push(p);
+  });
+
+  order.forEach(function(catName){
+    list.appendChild(renderCategorySection(catName, groups[catName]));
+  });
+}
+
+function renderCategorySection(catName, items){
+  var section = document.createElement("div");
+  section.className = "cat-section" + (state.collapsed[catName] ? " collapsed" : "");
+
+  var header = document.createElement("div");
+  header.className = "cat-header";
+  header.innerHTML =
+    '<span class="ch-icon">'+getIcon(catName)+'</span>' +
+    '<span class="chev">&#9660;</span>' +
+    '<h2>'+escapeHtml(catName)+'<small>'+escapeHtml(items[0].linea)+'</small></h2>' +
+    '<span class="cat-count">'+items.length+'</span>';
+  header.addEventListener("click", function(){
+    state.collapsed[catName] = !state.collapsed[catName];
+    section.classList.toggle("collapsed");
+  });
+  section.appendChild(header);
+
+  var itemsWrap = document.createElement("div");
+  itemsWrap.className = "cat-items";
+  items.forEach(function(p){
+    itemsWrap.appendChild(renderItemCard(p));
+  });
+  section.appendChild(itemsWrap);
+
+  return section;
+}
+
+function renderItemCard(p){
+  var card = document.createElement("div");
+  card.className = "item-card";
+
+  var thumb = document.createElement("div");
+  thumb.className = "item-thumb";
+  thumb.title = "Tomar o subir foto del producto";
+
+  var photoData = getPhoto(p.id);
+  renderThumbContent(thumb, p, photoData);
+
+  var fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
+  fileInput.capture = "environment";
+  fileInput.className = "hidden-photo-input";
+  fileInput.addEventListener("change", function(){
+    if (fileInput.files && fileInput.files[0]) handlePhotoFile(p.id, fileInput.files[0], thumb, p);
+  });
+  thumb.appendChild(fileInput);
+
+  thumb.addEventListener("click", function(e){
+    if (e.target && e.target.classList.contains("thumb-remove")) return;
+    fileInput.value = "";
+    fileInput.click();
+  });
+
+  card.appendChild(thumb);
+
+  var info = document.createElement("div");
+  info.className = "item-info";
+  info.innerHTML =
+    '<span class="item-name">'+escapeHtml(p.name)+'</span>' +
+    '<span class="item-id">Ref. '+escapeHtml(p.id)+'</span>' +
+    '<div class="item-meta">' +
+      (p.brand ? '<span class="brand-chip">'+escapeHtml(p.brand)+'</span>' : '') +
+      '<span class="spec-chip">'+escapeHtml(p.cat)+'</span>' +
+      '<span class="unit-chip">'+escapeHtml(p.unit)+'</span>' +
+    '</div>';
+  card.appendChild(info);
+
+  if (state.role === "admin"){
+    card.appendChild(renderPriceEdit(p));
+  } else {
+    card.appendChild(renderPriceTag(p));
+    var addBtn = document.createElement("button");
+    addBtn.className = "add-quote-btn";
+    addBtn.type = "button";
+    addBtn.title = "Agregar a cotización";
+    addBtn.textContent = "+";
+    addBtn.addEventListener("click", function(){
+      addToQuote(p.id);
+      addBtn.classList.add("added");
+      addBtn.textContent = "✓";
+      setTimeout(function(){ addBtn.classList.remove("added"); addBtn.textContent = "+"; }, 900);
+    });
+    card.appendChild(addBtn);
+  }
+
+  return card;
+}
+
+function renderThumbContent(thumb, p, photoData){
+  thumb.classList.toggle("has-photo", !!photoData);
+  var inner = photoData
+    ? '<img src="'+photoData+'" alt="Foto de '+escapeHtml(p.name)+'">' +
+      '<button type="button" class="thumb-remove" title="Quitar foto">✕</button>' +
+      '<div class="thumb-overlay">Cambiar foto</div>'
+    : getIcon(p.cat) +
+      '<div class="thumb-badge">📷</div>' +
+      '<div class="thumb-overlay">Tomar / subir foto</div>';
+  thumb.innerHTML = inner;
+  if (photoData){
+    var rm = thumb.querySelector(".thumb-remove");
+    if (rm){
+      rm.addEventListener("click", function(e){
+        e.stopPropagation();
+        if (confirm("¿Quitar la foto de este producto?")){
+          removePhoto(p.id);
+          renderThumbContent(thumb, p, null);
+        }
+      });
+    }
+  }
+}
+
+function renderPriceTag(p){
+  var tag = document.createElement("div");
+  tag.className = "price-tag";
+  var val = getPrice(p.id, state.channel);
+  tag.innerHTML =
+    '<span class="ptag-label">'+escapeHtml(channelLabel(state.channel))+'</span>' +
+    (val > 0
+      ? '<span class="ptag-value">$ '+fmtCOP(val)+'</span>'
+      : '<span class="ptag-value zero">Precio bajo cotización</span>') +
+    '<span class="ptag-cta">' + (val > 0 ? "+ Cotizar" : "Consultar") + '</span>';
+  return tag;
+}
+
+function renderPriceEdit(p){
+  var wrap = document.createElement("div");
+  wrap.className = "price-edit";
+
+  CHANNELS.forEach(function(ch){
+    var field = document.createElement("div");
+    field.className = "price-field" + (ch.id === state.channel ? " is-active" : "");
+
+    var label = document.createElement("label");
+    label.textContent = ch.label;
+    field.appendChild(label);
+
+    var row = document.createElement("div");
+    row.className = "price-input-row";
+
+    var cur = document.createElement("span");
+    cur.className = "cur";
+    cur.textContent = "$";
+    row.appendChild(cur);
+
+    var input = document.createElement("input");
+    input.type = "number";
+    input.min = "0";
+    input.step = "100";
+    input.inputMode = "numeric";
+    input.value = getPrice(p.id, ch.id) || "";
+    input.placeholder = "0";
+    input.setAttribute("aria-label", "Precio " + ch.label + " para " + p.name);
+
+    var flag = document.createElement("span");
+    flag.className = "save-flag";
+    flag.textContent = "OK";
+
+    input.addEventListener("input", function(){
+      var v = parseFloat(input.value);
+      if (isNaN(v) || v < 0) v = 0;
+      setPrice(p.id, ch.id, v);
+      clearTimeout(saveTimers[p.id + ch.id]);
+      saveTimers[p.id + ch.id] = setTimeout(function(){
+        persistPrices();
+        flag.classList.add("show");
+        setTimeout(function(){ flag.classList.remove("show"); }, 900);
+      }, 450);
+    });
+
+    row.appendChild(input);
+    field.appendChild(row);
+    field.appendChild(flag);
+    wrap.appendChild(field);
+  });
+
+  return wrap;
+}
+
+/* ============================================================
+   BÚSQUEDA
+   ============================================================ */
+function initSearch(){
+  var input = document.getElementById("searchInput");
+  var t;
+  input.addEventListener("input", function(){
+    clearTimeout(t);
+    t = setTimeout(function(){
+      state.search = input.value;
+      renderAll();
+    }, 180);
+  });
+}
+
+/* ============================================================
+   COTIZACIÓN (asesor) — carrito ligero
+   ============================================================ */
+function addToQuote(id){
+  state.quote[id] = (state.quote[id] || 0) + 1;
+  persistQuote();
+  updateQuoteFab();
+  showToast("Agregado a la cotización");
+}
+
+function setQuoteQty(id, qty){
+  if (qty <= 0){ delete state.quote[id]; }
+  else { state.quote[id] = qty; }
+  persistQuote();
+  updateQuoteFab();
+  renderQuoteBody();
+}
+
+function quoteCount(){
+  var n = 0;
+  Object.keys(state.quote).forEach(function(id){ n += state.quote[id]; });
+  return n;
+}
+
+function quoteTotal(){
+  var total = 0;
+  Object.keys(state.quote).forEach(function(id){
+    total += getPrice(id, state.channel) * state.quote[id];
+  });
+  return total;
+}
+
+function updateQuoteFab(){
+  var fab = document.getElementById("quoteFab");
+  var badge = document.getElementById("quoteBadge");
+  var n = quoteCount();
+  badge.textContent = n;
+  fab.classList.toggle("hide", state.role !== "asesor" || n === 0);
+}
+
+function renderQuoteBody(){
+  var body = document.getElementById("quoteBody");
+  body.innerHTML = "";
+  var ids = Object.keys(state.quote);
+  if (!ids.length){
+    body.innerHTML = '<div class="quote-empty">Aún no has agregado productos.<br>Usa el botón "+" en cada artículo del catálogo.</div>';
+  } else {
+    ids.forEach(function(id){
+      var p = productById(id);
+      if (!p) return;
+      var qty = state.quote[id];
+      var price = getPrice(id, state.channel);
+      var photo = getPhoto(id);
+      var row = document.createElement("div");
+      row.className = "quote-row";
+      row.innerHTML =
+        (photo ? '<img src="'+photo+'" alt="" style="width:38px;height:38px;border-radius:7px;object-fit:cover;flex-shrink:0;">' : '') +
+        '<div class="qr-info"><div class="qr-name">'+escapeHtml(p.name)+'</div><div class="qr-id">Ref. '+escapeHtml(p.id)+' · '+escapeHtml(p.unit)+'</div></div>' +
+        '<div class="qr-qty"><button class="qr-minus" type="button">−</button><span>'+qty+'</span><button class="qr-plus" type="button">+</button></div>' +
+        '<div class="qr-price">$ '+fmtCOP(price*qty)+'</div>' +
+        '<button class="qr-remove" type="button" title="Quitar">✕</button>';
+      row.querySelector(".qr-minus").addEventListener("click", function(){ setQuoteQty(id, qty-1); });
+      row.querySelector(".qr-plus").addEventListener("click", function(){ setQuoteQty(id, qty+1); });
+      row.querySelector(".qr-remove").addEventListener("click", function(){ setQuoteQty(id, 0); });
+      body.appendChild(row);
+    });
+  }
+  document.getElementById("quoteTotal").textContent = "$ " + fmtCOP(quoteTotal());
+}
+
+function initQuoteDrawer(){
+  document.getElementById("quoteFab").addEventListener("click", function(){
+    renderQuoteBody();
+    document.getElementById("quoteDrawer").classList.add("show");
+  });
+  function close(){ document.getElementById("quoteDrawer").classList.remove("show"); }
+  document.getElementById("quoteClose").addEventListener("click", close);
+  document.getElementById("quoteOverlay").addEventListener("click", close);
+  document.getElementById("quoteClear").addEventListener("click", function(){
+    if (!Object.keys(state.quote).length) return;
+    if (confirm("¿Vaciar la cotización actual?")){
+      state.quote = {};
+      persistQuote();
+      updateQuoteFab();
+      renderQuoteBody();
+    }
+  });
+  document.getElementById("quotePrint").addEventListener("click", function(){
+    window.print();
+  });
+}
+
+/* ============================================================
+   HERRAMIENTAS DE ADMINISTRADOR: EXPORTAR / IMPORTAR / RESET
+   ============================================================ */
+function exportCSV(){
+  var rows = [["id","linea","categoria","producto","marca","unidad","precio_constructor","precio_distribuidor","precio_no_distribuidor"]];
+  PRODUCTS.forEach(function(p){
+    rows.push([
+      p.id, p.linea, p.cat, p.name, p.brand, p.unit,
+      getPrice(p.id, "constructor"),
+      getPrice(p.id, "distribuidor"),
+      getPrice(p.id, "no_distribuidor")
+    ]);
+  });
+  var csv = rows.map(function(r){
+    return r.map(function(cell){
+      var s = String(cell).replace(/"/g, '""');
+      return /[",\n]/.test(s) ? '"'+s+'"' : s;
+    }).join(",");
+  }).join("\r\n");
+
+  var blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = "adl_drywall_precios_" + new Date().toISOString().slice(0,10) + ".csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Lista de precios exportada");
+}
+
+function parseCSV(text){
+  var rows = [];
+  var row = [];
+  var field = "";
+  var inQuotes = false;
+  for (var i=0; i<text.length; i++){
+    var c = text[i];
+    if (inQuotes){
+      if (c === '"'){
+        if (text[i+1] === '"'){ field += '"'; i++; } else { inQuotes = false; }
+      } else { field += c; }
+    } else {
+      if (c === '"'){ inQuotes = true; }
+      else if (c === ","){ row.push(field); field = ""; }
+      else if (c === "\n" || c === "\r"){
+        if (c === "\r" && text[i+1] === "\n") i++;
+        row.push(field); field = "";
+        rows.push(row); row = [];
+      } else { field += c; }
+    }
+  }
+  if (field.length || row.length){ row.push(field); rows.push(row); }
+  return rows.filter(function(r){ return r.length > 1 || (r.length===1 && r[0] !== ""); });
+}
+
+function importCSV(file){
+  var reader = new FileReader();
+  reader.onload = function(){
+    var text = String(reader.result).replace(/^\ufeff/, "");
+    var rows = parseCSV(text);
+    if (!rows.length){ showToast("El archivo está vacío"); return; }
+    var header = rows[0].map(function(h){ return h.trim().toLowerCase(); });
+    var idIdx = header.indexOf("id");
+    var cIdx = header.indexOf("precio_constructor");
+    var dIdx = header.indexOf("precio_distribuidor");
+    var nIdx = header.indexOf("precio_no_distribuidor");
+    if (idIdx === -1){ showToast("El CSV debe tener una columna 'id'"); return; }
+
+    var updated = 0;
+    for (var i=1; i<rows.length; i++){
+      var r = rows[i];
+      var id = (r[idIdx] || "").trim();
+      if (!id) continue;
+      var exists = PRODUCTS.some(function(p){ return p.id === id; });
+      if (!exists) continue;
+      if (cIdx > -1 && r[cIdx] !== undefined && r[cIdx] !== "") setPrice(id, "constructor", parseFloat(r[cIdx]) || 0);
+      if (dIdx > -1 && r[dIdx] !== undefined && r[dIdx] !== "") setPrice(id, "distribuidor", parseFloat(r[dIdx]) || 0);
+      if (nIdx > -1 && r[nIdx] !== undefined && r[nIdx] !== "") setPrice(id, "no_distribuidor", parseFloat(r[nIdx]) || 0);
+      updated++;
+    }
+    persistPrices();
+    renderAll();
+    showToast(updated + " productos actualizados desde el archivo");
+  };
+  reader.readAsText(file, "UTF-8");
+}
+
+function initAdminTools(){
+  document.getElementById("btnExport").addEventListener("click", exportCSV);
+
+  var fileInput = document.getElementById("importFile");
+  document.getElementById("btnImport").addEventListener("click", function(){
+    fileInput.value = "";
+    fileInput.click();
+  });
+  fileInput.addEventListener("change", function(){
+    if (fileInput.files && fileInput.files[0]) importCSV(fileInput.files[0]);
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function(){
+    if (confirm("¿Restablecer TODOS los precios a $0? Esta acción no se puede deshacer.")){
+      state.prices = {};
+      persistPrices();
+      renderAll();
+      showToast("Precios restablecidos");
+    }
+  });
+}
+
+/* ============================================================
+   INICIALIZACIÓN
+   ============================================================ */
+function init(){
+  initLogin();
+  document.getElementById("logoutBtn").addEventListener("click", logout);
+  renderChannelSwitch();
+  renderCategoryRail();
+  initCategoryRailControls();
+  renderHeroStats();
+  initSearch();
+  initAdminTools();
+  initQuoteDrawer();
+
+  state.quote = loadQuoteLocal();
+
+  loadPhotos().then(function(photos){
+    state.photos = photos || {};
+    renderAll();
+  });
+
+  loadPrices().then(function(prices){
+    state.prices = prices || {};
+    renderAll();
+    updateQuoteFab();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", init);
+
+})();
+
+</script>
+</body>
+</html>
