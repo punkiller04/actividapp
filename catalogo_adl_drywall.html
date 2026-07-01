@@ -623,6 +623,35 @@ input[type=file].hidden-photo-input{ display:none; }
 .add-quote-btn:hover{ background:var(--accent); border-color:var(--accent); color:#fff; }
 .add-quote-btn.added{ background:var(--good); border-color:var(--good); color:#fff; }
 
+/* Botones de admin en tarjeta */
+.admin-card-btns{
+  display:flex; flex-direction:column; gap:6px;
+  flex-shrink:0; justify-content:center;
+}
+.admin-card-btn{
+  width:32px; height:32px; border-radius:8px;
+  border:1.5px solid var(--line); background:var(--surface-2);
+  cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s, border-color .15s;
+}
+.admin-card-btn:hover{ background:var(--line); }
+.admin-card-btn.danger:hover{ background:#FEE2E2; border-color:#EF4444; }
+
+/* Badge de estado de conexión Firebase */
+.firebase-status{
+  display:flex; align-items:center; gap:6px;
+  font-size:11px; color:#F3C7CA; padding:4px 10px;
+  border-radius:999px; background:rgba(255,255,255,.07);
+}
+.firebase-status .fs-dot{
+  width:7px; height:7px; border-radius:50%; flex-shrink:0;
+}
+.firebase-status.online .fs-dot{ background:#4ade80; }
+.firebase-status.offline .fs-dot{ background:#f87171; animation:pulse-dot 1.8s infinite; }
+@keyframes pulse-dot{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+
 .quote-drawer{
   position:fixed; inset:0; z-index:95; display:none;
 }
@@ -886,6 +915,8 @@ input[type=file].hidden-photo-input{ display:none; }
     font-weight:700; text-transform:uppercase; letter-spacing:.02em;
   }
   .add-quote-btn.added{ background:var(--good-bg); color:var(--good); }
+  .admin-card-btns{ flex-direction:row; padding:10px 14px; border-top:1px solid var(--line); width:100%; box-sizing:border-box; }
+  .admin-card-btn{ width:36px; height:36px; font-size:16px; }
   .quote-fab{ font-size:13px; padding:12px 16px 12px 14px; }
 }
 
@@ -959,6 +990,58 @@ input[type=file].hidden-photo-input{ display:none; }
 }
 
 </style>
+
+<!-- ============================================================
+     FIREBASE — Sincronización en línea entre asesores
+     ============================================================
+     INSTRUCCIONES:
+     1. Crea un proyecto gratuito en https://console.firebase.google.com
+     2. Activa "Firestore Database" (modo producción, región la más cercana)
+     3. Copia tus credenciales (Configuración del proyecto > Tus apps > Config)
+        y pégalas abajo en FIREBASE_CONFIG, reemplazando los valores de ejemplo.
+     4. Si NO configuras esto, la app sigue funcionando normal pero guardando
+        los datos solo en el navegador de cada persona (como hasta ahora).
+     ============================================================ -->
+<script type="module">
+  var FIREBASE_CONFIG = {
+    apiKey: "AIzaSyDUOSpZlRUaeNSjniLNqPL7KkQM64sg04s",
+    authDomain: "adl-drywall.firebaseapp.com",
+    projectId: "adl-drywall",
+    storageBucket: "adl-drywall.firebasestorage.app",
+    messagingSenderId: "369067384841",
+    appId: "1:369067384841:web:4ff43ca9351602990a58d8"
+  };
+
+  window.__FIREBASE_READY = false;
+  if (FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey.indexOf("TU_API_KEY") === -1){
+    try{
+      var { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+      var {
+        getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs
+      } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+
+      var app = initializeApp(FIREBASE_CONFIG);
+      var db = getFirestore(app);
+
+      window.__firestore = {
+        db: db,
+        doc: doc, getDoc: getDoc, setDoc: setDoc, deleteDoc: deleteDoc,
+        collection: collection, getDocs: getDocs
+      };
+      window.__FIREBASE_READY = true;
+      console.log("✅ Firebase conectado — los datos se sincronizan en línea entre asesores.");
+    }catch(e){
+      console.warn("⚠️ No se pudo conectar a Firebase, usando almacenamiento local del navegador.", e);
+      window.__FIREBASE_READY = false;
+    }
+  } else {
+    console.warn("ℹ️ Firebase no configurado — usando almacenamiento local del navegador. Ver instrucciones en el código fuente (sección FIREBASE).");
+  }
+
+  // Señaliza a la app principal que la verificación de Firebase ya terminó
+  window.dispatchEvent(new Event("firebase-check-done"));
+</script>
+
 </head>
 <body>
 
@@ -1012,6 +1095,10 @@ input[type=file].hidden-photo-input{ display:none; }
       <div class="role-pill" id="rolePill">
         <span class="dot"></span>
         <span id="rolePillText">Asesor</span>
+      </div>
+      <div class="firebase-status offline" id="firebaseStatus" style="display:none;">
+        <span class="fs-dot"></span>
+        <span id="firebaseStatusText">Sin conexión</span>
       </div>
       <button class="logout-btn" id="logoutBtn" type="button">Salir</button>
     </div>
@@ -1274,26 +1361,43 @@ var state = {
 var saveTimers = {};
 
 /* ============================================================
-   PERSISTENCIA
+   PERSISTENCIA — Firestore (en línea) con respaldo local
    ============================================================ */
 function hasCloudStorage(){
-  return typeof window.storage !== "undefined" && window.storage && typeof window.storage.get === "function";
+  return window.__FIREBASE_READY === true && !!window.__firestore;
+}
+
+function waitForFirebaseCheck(){
+  return new Promise(function(resolve){
+    if (window.__FIREBASE_READY !== undefined && window.__firebaseCheckDone){ resolve(); return; }
+    window.addEventListener("firebase-check-done", function(){
+      window.__firebaseCheckDone = true;
+      resolve();
+    }, { once: true });
+    // Salvavidas: si por algún motivo el evento nunca llega, no bloquear la app
+    setTimeout(resolve, 2500);
+  });
+}
+
+function fsDoc(path, id){
+  var fb = window.__firestore;
+  return fb.doc(fb.db, path, id);
 }
 
 function loadPrices(){
-  return new Promise(function(resolve){
+  return waitForFirebaseCheck().then(function(){
     if (hasCloudStorage()){
-      window.storage.get(STORAGE_KEY, true).then(function(res){
-        if (res && res.value){
-          try { resolve(JSON.parse(res.value)); return; } catch(e){}
+      var fb = window.__firestore;
+      return fb.getDoc(fsDoc("adl_catalog", "prices")).then(function(snap){
+        if (snap.exists() && snap.data() && snap.data().value){
+          try { return JSON.parse(snap.data().value); } catch(e){}
         }
-        resolve(loadPricesLocalFallback());
+        return loadPricesLocalFallback();
       }).catch(function(){
-        resolve(loadPricesLocalFallback());
+        return loadPricesLocalFallback();
       });
-    } else {
-      resolve(loadPricesLocalFallback());
     }
+    return loadPricesLocalFallback();
   });
 }
 
@@ -1309,7 +1413,10 @@ function persistPrices(){
   var json = JSON.stringify(state.prices);
   try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){}
   if (hasCloudStorage()){
-    window.storage.set(STORAGE_KEY, json, true).catch(function(){});
+    var fb = window.__firestore;
+    fb.setDoc(fsDoc("adl_catalog", "prices"), { value: json, updatedAt: Date.now() }).catch(function(e){
+      console.warn("No se pudo sincronizar precios con Firebase:", e);
+    });
   }
 }
 
@@ -1327,6 +1434,7 @@ function loadQuoteLocal(){
 
 /* ---------- Fotos de producto ---------- */
 var PHOTO_PREFIX = "adl_drywall_photo_v1:";
+var PHOTO_COLLECTION = "adl_catalog_photos";
 
 function getPhoto(productId){
   return state.photos[productId] || null;
@@ -1347,7 +1455,11 @@ function setPhotoLocal(productId, dataUrl){
 function persistPhoto(productId, dataUrl){
   setPhotoLocal(productId, dataUrl);
   if (hasCloudStorage()){
-    window.storage.set(PHOTO_PREFIX + productId, dataUrl, true).catch(function(){});
+    var fb = window.__firestore;
+    fb.setDoc(fsDoc(PHOTO_COLLECTION, productId), { value: dataUrl, updatedAt: Date.now() }).catch(function(e){
+      console.warn("No se pudo sincronizar la foto con Firebase (puede ser muy grande):", e);
+      showToast("La foto se guardó solo en este dispositivo (muy grande para sincronizar)");
+    });
   }
 }
 
@@ -1360,7 +1472,8 @@ function removePhoto(productId){
     localStorage.setItem(PHOTO_PREFIX + "index", JSON.stringify(idx));
   }catch(e){}
   if (hasCloudStorage()){
-    window.storage.delete(PHOTO_PREFIX + productId, true).catch(function(){});
+    var fb = window.__firestore;
+    fb.deleteDoc(fsDoc(PHOTO_COLLECTION, productId)).catch(function(){});
   }
   showToast("Foto eliminada");
 }
@@ -1378,27 +1491,22 @@ function loadPhotosLocalFallback(){
 }
 
 function loadPhotos(){
-  return new Promise(function(resolve){
+  return waitForFirebaseCheck().then(function(){
     if (hasCloudStorage()){
-      window.storage.list(PHOTO_PREFIX, true).then(function(res){
-        if (!res || !res.keys || !res.keys.length){ resolve(loadPhotosLocalFallback()); return; }
-        var keys = res.keys.filter(function(k){ return k !== PHOTO_PREFIX + "index"; });
-        Promise.all(keys.map(function(k){
-          return window.storage.get(k, true).catch(function(){ return null; });
-        })).then(function(results){
-          var out = {};
-          results.forEach(function(r, i){
-            if (r && r.value){
-              var id = keys[i].slice(PHOTO_PREFIX.length);
-              out[id] = r.value;
-            }
-          });
-          resolve(Object.keys(out).length ? out : loadPhotosLocalFallback());
-        }).catch(function(){ resolve(loadPhotosLocalFallback()); });
-      }).catch(function(){ resolve(loadPhotosLocalFallback()); });
-    } else {
-      resolve(loadPhotosLocalFallback());
+      var fb = window.__firestore;
+      return fb.getDocs(fb.collection(fb.db, PHOTO_COLLECTION)).then(function(snapshot){
+        var out = {};
+        snapshot.forEach(function(docSnap){
+          var data = docSnap.data();
+          if (data && data.value) out[docSnap.id] = data.value;
+        });
+        return Object.keys(out).length ? out : loadPhotosLocalFallback();
+      }).catch(function(e){
+        console.warn("No se pudieron cargar fotos desde Firebase:", e);
+        return loadPhotosLocalFallback();
+      });
     }
+    return loadPhotosLocalFallback();
   });
 }
 
@@ -1546,6 +1654,17 @@ function renderRoleUI(){
   pill.classList.toggle("is-admin", isAdmin);
   document.getElementById("rolePillText").textContent = isAdmin ? "Administrador" : "Asesor";
   document.getElementById("adminTools").style.display = isAdmin ? "flex" : "none";
+
+  var fbStatus = document.getElementById("firebaseStatus");
+  var fbText = document.getElementById("firebaseStatusText");
+  fbStatus.style.display = "flex";
+  if (hasCloudStorage()){
+    fbStatus.className = "firebase-status online";
+    fbText.textContent = "Sincronizado en línea";
+  } else {
+    fbStatus.className = "firebase-status offline";
+    fbText.textContent = "Sin Firebase — modo local";
+  }
 }
 
 function renderChannelSwitch(){
@@ -1754,16 +1873,34 @@ function renderItemCard(p){
 
   if (state.role === "admin"){
     card.appendChild(renderPriceEdit(p));
+    var adminBtns = document.createElement("div");
+    adminBtns.className = "admin-card-btns";
+
     var changeBtn = document.createElement("button");
-    changeBtn.className = "add-quote-btn";
+    changeBtn.className = "admin-card-btn";
     changeBtn.type = "button";
     changeBtn.title = "Cambiar foto";
-    changeBtn.textContent = "📷";
+    changeBtn.innerHTML = "📷";
     changeBtn.addEventListener("click", function(e){
       e.stopPropagation();
       openPhotoChooser(p, cameraInput, galleryInput, photoState, thumb);
     });
-    card.appendChild(changeBtn);
+    adminBtns.appendChild(changeBtn);
+
+    var delBtn = document.createElement("button");
+    delBtn.className = "admin-card-btn danger";
+    delBtn.type = "button";
+    delBtn.title = "Eliminar producto";
+    delBtn.innerHTML = "🗑️";
+    delBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      if (confirm("¿Eliminar «" + p.name + "» del catálogo? Esta acción no se puede deshacer.")){
+        deleteProduct(p.id);
+      }
+    });
+    adminBtns.appendChild(delBtn);
+
+    card.appendChild(adminBtns);
   } else {
     card.appendChild(renderPriceTag(p));
     var addBtn = document.createElement("button");
@@ -2265,6 +2402,7 @@ function initAdminTools(){
    PRODUCTOS PERSONALIZADOS (agregados por el administrador)
    ============================================================ */
 var CUSTOM_PRODUCTS_KEY = "adl_drywall_custom_products_v1";
+var CUSTOM_PRODUCTS_COLLECTION = "adl_catalog";
 var pendingNewProductPhoto = null;
 
 function loadCustomProductsLocal(){
@@ -2278,22 +2416,25 @@ function loadCustomProductsLocal(){
 function persistCustomProducts(list){
   try{ localStorage.setItem(CUSTOM_PRODUCTS_KEY, JSON.stringify(list)); }catch(e){}
   if (hasCloudStorage()){
-    window.storage.set(CUSTOM_PRODUCTS_KEY, JSON.stringify(list), true).catch(function(){});
+    var fb = window.__firestore;
+    fb.setDoc(fsDoc(CUSTOM_PRODUCTS_COLLECTION, "custom_products"), {
+      value: JSON.stringify(list), updatedAt: Date.now()
+    }).catch(function(e){ console.warn("No se pudo sincronizar productos con Firebase:", e); });
   }
 }
 
 function loadCustomProducts(){
-  return new Promise(function(resolve){
+  return waitForFirebaseCheck().then(function(){
     if (hasCloudStorage()){
-      window.storage.get(CUSTOM_PRODUCTS_KEY, true).then(function(res){
-        if (res && res.value){
-          try { resolve(JSON.parse(res.value)); return; } catch(e){}
+      var fb = window.__firestore;
+      return fb.getDoc(fsDoc(CUSTOM_PRODUCTS_COLLECTION, "custom_products")).then(function(snap){
+        if (snap.exists() && snap.data() && snap.data().value){
+          try { return JSON.parse(snap.data().value); } catch(e){}
         }
-        resolve(loadCustomProductsLocal());
-      }).catch(function(){ resolve(loadCustomProductsLocal()); });
-    } else {
-      resolve(loadCustomProductsLocal());
+        return loadCustomProductsLocal();
+      }).catch(function(){ return loadCustomProductsLocal(); });
     }
+    return loadCustomProductsLocal();
   });
 }
 
@@ -2302,6 +2443,31 @@ function addCustomProduct(product){
   var custom = loadCustomProductsLocal();
   custom.push(product);
   persistCustomProducts(custom);
+}
+
+function deleteProduct(id){
+  // Quitar del array PRODUCTS en memoria
+  var idx = -1;
+  for (var i = 0; i < PRODUCTS.length; i++){
+    if (PRODUCTS[i].id === id){ idx = i; break; }
+  }
+  if (idx > -1) PRODUCTS.splice(idx, 1);
+
+  // Quitar precios de este item
+  delete state.prices[id];
+  persistPrices();
+
+  // Quitar foto si la tiene
+  if (state.photos[id]){ removePhoto(id); }
+
+  // Si era producto personalizado, actualizar la lista persistida
+  var custom = loadCustomProductsLocal().filter(function(p){ return p.id !== id; });
+  persistCustomProducts(custom);
+
+  renderHeroStats();
+  renderCategoryRail();
+  renderAll();
+  showToast("Producto eliminado");
 }
 
 function uniqueValues(field){
