@@ -273,6 +273,17 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
         <button class="bg2" style="margin-top:6px;width:100%" onclick="openM('m-nuevo-proy')">+ Crear nuevo proyecto</button>
       </div>
     </div>
+    <div class="f" id="fp-etapaobra" style="display:none">
+      <label>Etapa de la obra</label>
+      <div class="chips" id="ch-etapaobra">
+        <div class="chip on" data-v="EXCAVACIÓN">⛏️ Excavación</div>
+        <div class="chip" data-v="ESTRUCTURACIÓN">🏗️ Estructuración</div>
+        <div class="chip" data-v="MAMPOSTERÍA">🧱 Mampostería</div>
+        <div class="chip" data-v="OBRA GRIS">🏢 Obra gris</div>
+        <div class="chip" data-v="ACABADOS">🎨 Acabados</div>
+        <div class="chip" data-v="REMODELACIÓN">🔨 Remodelación</div>
+      </div>
+    </div>
     <div class="f">
       <label>Tipo de cliente</label>
       <select id="ntc" onchange="onTCli(this.value)">
@@ -423,15 +434,27 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <span class="mfc" data-g="tam" data-v="MEDIANA" onclick="setMF(this)">🔶 Mediana</span>
       <span class="mfc" data-g="tam" data-v="GRANDE" onclick="setMF(this)">🔷 Grande</span>
     </div>
+    <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;min-width:40px">Etapa obra:</span>
+      <span class="mfc on" data-g="etapaobra" data-v="" onclick="setMF(this)">Todas</span>
+      <span class="mfc" data-g="etapaobra" data-v="EXCAVACIÓN" onclick="setMF(this)">⛏️ Excav.</span>
+      <span class="mfc" data-g="etapaobra" data-v="ESTRUCTURACIÓN" onclick="setMF(this)">🏗️ Estruct.</span>
+      <span class="mfc" data-g="etapaobra" data-v="MAMPOSTERÍA" onclick="setMF(this)">🧱 Mampost.</span>
+      <span class="mfc" data-g="etapaobra" data-v="OBRA GRIS" onclick="setMF(this)">🏢 Obra gris</span>
+      <span class="mfc" data-g="etapaobra" data-v="ACABADOS" onclick="setMF(this)">🎨 Acabados</span>
+      <span class="mfc" data-g="etapaobra" data-v="REMODELACIÓN" onclick="setMF(this)">🔨 Remodel.</span>
+    </div>
   </div>
   <div id="mc"><div id="lmap"></div>
     <div class="mleg">
       <div>🏗️🟢 Obra imp. &nbsp;🏗️🔴 No imp.</div>
       <div>🔧🟢 Ferret. imp. &nbsp;🔧🔴 No imp.</div>
       <div style="font-size:9px;color:var(--muted);margin-top:2px">🔧 = 1ª visita/mes por cliente</div>
-      <div style="border-top:0.5px solid var(--brd);margin-top:4px;padding-top:4px">Borde Kanban:</div>
+      <div style="border-top:0.5px solid var(--brd);margin-top:4px;padding-top:4px">Anillo interno (Kanban):</div>
       <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#2471A3;border:2px solid #fff;vertical-align:middle"></span> Prospección &nbsp;<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#E67E22;border:2px solid #fff;vertical-align:middle"></span> Visita</div>
       <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#8E44AD;border:2px solid #fff;vertical-align:middle"></span> Cotización &nbsp;<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#219653;border:2px solid #fff;vertical-align:middle"></span> Ganado</div>
+      <div style="border-top:0.5px solid var(--brd);margin-top:4px;padding-top:4px">Anillo externo (Etapa obra):</div>
+      <div style="font-size:9px;line-height:1.7">⛏️ Excavación &nbsp;🏗️ Estructur. &nbsp;🧱 Mampost.<br>🏢 Obra gris &nbsp;🎨 Acabados &nbsp;🔨 Remodel.</div>
     </div>
   </div>
   <div class="nb">
@@ -730,6 +753,17 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <!-- Datos de la visita a editar -->
   <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Editar esta visita</div>
   <div class="f"><label>Impacto</label><div class="chips" id="mae-imp"><div class="chip on" data-v="IMPACTADO">🟢 Impactado</div><div class="chip" data-v="NO IMPACTADO">🔴 No impactado</div></div></div>
+  <div class="f" id="mae-etapaobra-wrap" style="display:none">
+    <label>Etapa de la obra</label>
+    <div class="chips" id="mae-etapaobra">
+      <div class="chip on" data-v="EXCAVACIÓN">⛏️ Excavación</div>
+      <div class="chip" data-v="ESTRUCTURACIÓN">🏗️ Estructuración</div>
+      <div class="chip" data-v="MAMPOSTERÍA">🧱 Mampostería</div>
+      <div class="chip" data-v="OBRA GRIS">🏢 Obra gris</div>
+      <div class="chip" data-v="ACABADOS">🎨 Acabados</div>
+      <div class="chip" data-v="REMODELACIÓN">🔨 Remodelación</div>
+    </div>
+  </div>
   <div class="f"><label>Tipo de visita</label><select id="mae-tv"><option>VISITA</option><option>SEGUIMIENTO</option><option>CIERRE</option><option>LLAMADA</option><option>OTRO</option></select></div>
   <div class="f"><label>Observación</label><textarea id="mae-obs" rows="3"></textarea></div>
   <button class="bp" type="button" onclick="saveAct()">Guardar visita</button>
@@ -997,11 +1031,12 @@ window.guardar=async function(){
   const obs=document.getElementById('n-obs').value;
   const ubi=window.GPS||'';
   const fsize=document.querySelector('#ch-fsize .chip.on')?.dataset.v||'';
+  const etapaObra=canal==='OBRAS'?(document.querySelector('#ch-etapaobra .chip.on')?.dataset.v||''):'';
   if(canal==='OBRAS'&&!proy){toast('Selecciona un proyecto');return;}
   if(!cli){toast('Selecciona un cliente');return;}
   btn.disabled=true;btn.innerHTML='<span class="sp"></span>Guardando...';
   try{
-    const data={ID_VISITA:Math.random().toString(36).substr(2,8),fecha:Timestamp.now(),ASESOR:window.CU?.nombre||'',CANAL:canal,'TIPO CLIENTE':document.getElementById('ntc').value,'TAMAÑO FERRETERIA':fsize,CLIENTE:cli,PROYECTO:proy,'TIPO DE VISITA':tv,FOTO:'',IMPACTO:imp,OBSERVACION:obs,UBICACION:ubi};
+    const data={ID_VISITA:Math.random().toString(36).substr(2,8),fecha:Timestamp.now(),ASESOR:window.CU?.nombre||'',CANAL:canal,'TIPO CLIENTE':document.getElementById('ntc').value,'TAMAÑO FERRETERIA':fsize,ETAPA_OBRA:etapaObra,CLIENTE:cli,PROYECTO:proy,'TIPO DE VISITA':tv,FOTO:'',IMPACTO:imp,OBSERVACION:obs,UBICACION:ubi};
     const ref2=await addDoc(collection(db,'actividades'),data);
     window.Actividades.unshift({id:ref2.id,...data});
     refreshStats();
@@ -1088,10 +1123,15 @@ window.saveAct=async function(){
   const imp=document.querySelector('#mae-imp .chip.on')?.dataset.v||'IMPACTADO';
   const tv=document.getElementById('mae-tv').value;
   const obs=document.getElementById('mae-obs').value;
+  const wrapEO=document.getElementById('mae-etapaobra-wrap');
+  const upd={IMPACTO:imp,'TIPO DE VISITA':tv,OBSERVACION:obs};
+  if(wrapEO&&wrapEO.style.display!=='none'){
+    upd.ETAPA_OBRA=document.querySelector('#mae-etapaobra .chip.on')?.dataset.v||'';
+  }
   try{
-    await window.FS.updateDoc(window.FS.doc(db,'actividades',id),{IMPACTO:imp,'TIPO DE VISITA':tv,OBSERVACION:obs});
+    await window.FS.updateDoc(window.FS.doc(db,'actividades',id),upd);
     const a=window.Actividades.find(function(x){return x.id===id;});
-    if(a){a.IMPACTO=imp;a['TIPO DE VISITA']=tv;a.OBSERVACION=obs;}
+    if(a)Object.assign(a,upd);
     toast('✅ Actualizado');closeM('m-act-edit');renderActs();renderMap();
   }catch(e){toast('Error: '+e.message);}
 };
@@ -1102,6 +1142,22 @@ window.eliminarAct=async function(id){
     await window.FS.deleteDoc(window.FS.doc(db,'actividades',id));
     window.Actividades=window.Actividades.filter(function(x){return x.id!==id;});
     toast('🗑️ Visita eliminada');refreshStats();renderActs();
+    if(window.mapaInited)renderMap();
+  }catch(e){toast('Error: '+e.message);}
+};
+
+// ── ELIMINAR PROYECTO (solo admin) ──────────────────────
+window.eliminarProy=async function(id){
+  var p=window.Proyectos.find(function(x){return x.id===id;});
+  if(!p)return;
+  if(!confirm('¿Eliminar el proyecto "'+(p['NOMBRE PROYECTO']||'')+'"? Esta acción no se puede deshacer. Las visitas y asignaciones asociadas NO se eliminarán.'))return;
+  try{
+    await window.FS.deleteDoc(window.FS.doc(db,'proyectos',id));
+    window.Proyectos=window.Proyectos.filter(function(x){return x.id!==id;});
+    toast('🗑️ Proyecto eliminado');
+    document.getElementById('proy-sub').textContent=window.Proyectos.length.toLocaleString()+' proyectos';
+    fltPL();renderKanban();
+    if(window.mapaInited)renderMap();
   }catch(e){toast('Error: '+e.message);}
 };
 
@@ -2053,7 +2109,7 @@ window._proyF='todos';
 window._asigF='p';
 window._selProy='';
 window._selCli='';
-window.mapFiltros={canal:'',imp:'',tam:''};
+window.mapFiltros={canal:'',imp:'',tam:'',etapaobra:''};
 window.mapaInited=false;
 window.mapaMarkers=[];
 window._editAID=null;
@@ -2063,6 +2119,16 @@ window._ferrLat=null;
 window._ferrLng=null;
 window._ferrAll=[];
 window._ferrTab='todas';
+
+// ── ETAPA DE OBRA (segundo anillo del mapa) ─────────────
+window.ETAPA_OBRA_COL={
+  'EXCAVACIÓN':'#8D6E63','ESTRUCTURACIÓN':'#607D8B','MAMPOSTERÍA':'#D35400',
+  'OBRA GRIS':'#7F8C8D','ACABADOS':'#F1C40F','REMODELACIÓN':'#16A085'
+};
+window.ETAPA_OBRA_ICO={
+  'EXCAVACIÓN':'⛏️','ESTRUCTURACIÓN':'🏗️','MAMPOSTERÍA':'🧱',
+  'OBRA GRIS':'🏢','ACABADOS':'🎨','REMODELACIÓN':'🔨'
+};
 
 // ── SESSION ─────────────────────────────────────────────
 var SK='actividapp_v7';
@@ -2272,12 +2338,13 @@ document.querySelectorAll('#ch-canal .chip').forEach(function(chip){
     this.classList.add('on');
     var v=this.dataset.v;
     document.getElementById('fp-proy').style.display=v==='OBRAS'?'block':'none';
+    document.getElementById('fp-etapaobra').style.display=v==='OBRAS'?'block':'none';
     document.getElementById('fp-fsize').style.display=v==='FERRETERIA'?'block':'none';
     if(v==='FERRETERIA'){document.getElementById('ntc').value='FERRETERIA';onTCli('FERRETERIA');}
     else{document.getElementById('ntc').value='';}
   };
 });
-['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri','mnp-est','mep-est','ch-fotos','mu-rol','mu-est','ch-fsize'].forEach(function(id){
+['ch-tv','ch-imp','mae-imp','mae2-est','ma-pri','mnp-est','mep-est','ch-fotos','mu-rol','mu-est','ch-fsize','ch-etapaobra','mae-etapaobra'].forEach(function(id){
   var g=document.getElementById(id);
   if(!g)return;
   g.addEventListener('click',function(e){
@@ -2692,6 +2759,14 @@ window.editAct=function(id){
   document.querySelectorAll('#mae-imp .chip').forEach(function(c){c.classList.remove('on');if(c.dataset.v===a.IMPACTO)c.classList.add('on');});
   document.getElementById('mae-tv').value=a['TIPO DE VISITA']||'VISITA';
   document.getElementById('mae-obs').value=a.OBSERVACION||'';
+  var wrapEO=document.getElementById('mae-etapaobra-wrap');
+  if((a.CANAL||'')==='OBRAS'){
+    wrapEO.style.display='block';
+    var etObraAct=a.ETAPA_OBRA||'EXCAVACIÓN';
+    document.querySelectorAll('#mae-etapaobra .chip').forEach(function(c){c.classList.remove('on');if(c.dataset.v===etObraAct)c.classList.add('on');});
+  }else{
+    wrapEO.style.display='none';
+  }
   var proyPanel=document.getElementById('mae-proy-panel');
   var cliPanel=document.getElementById('mae-cli-panel');
   var ETAPA_ICO={'PROSPECCIÓN':'🔵','VISITA TÉCNICA':'🟠','COTIZACIÓN':'🟣','PROYECTO GANADO':'🟢','CERRADO':'⚫'};
@@ -2808,6 +2883,7 @@ window.renderProyLista=function(list){
     var editBtn=isA?'<button class="bg2" style="margin-top:8px;width:100%" onclick="editProy(\''+p.id+'\')">✏️ Editar estado</button>':'';
     var navBtn=dir?'<button class="bg2" style="margin-top:6px;width:100%;color:var(--blue);border-color:var(--blue)" onclick="navegarA(\''+dir.replace(/'/g,'')+'\')">🧭 Navegar al proyecto</button>':'';
     var kanbanBtn='<button class="bg2" style="margin-top:6px;width:100%;color:#8E44AD;border-color:#8E44AD" onclick="abrirKanbanEtapa(\''+p.id+'\')">📊 Mover etapa</button>';
+    var delProyBtn=isA?'<button class="bg2" style="margin-top:6px;width:100%;color:var(--red);border-color:var(--red)" onclick="eliminarProy(\''+p.id+'\')">🗑️ Eliminar proyecto</button>':'';
     html+='<div class="card">'
       +'<div style="display:flex;justify-content:space-between;align-items:start">'
         +'<div style="flex:1;min-width:0"><div class="ct">'+n+'</div><div class="cs">'+(c?'Cód: '+c+' · ':'')+( b||p.CANAL||'')+'</div></div>'
@@ -2818,6 +2894,7 @@ window.renderProyLista=function(list){
       +navBtn
       +kanbanBtn
       +editBtn
+      +delProyBtn
     +'</div>';
   });
   el.innerHTML=html;
@@ -2920,6 +2997,12 @@ window.renderAsigAdminLista=function(){
     +'</div>';
   }).join('');
 };
+window.verTrazDesdeMapa=function(nombre){
+  if(window.leafMap)window.leafMap.closePopup();
+  go('trazabilidad');
+  document.getElementById('traz-q').value=nombre;
+  renderTraz();
+};
 window.navegarA=function(dir){
   if(!dir){toast('Sin dirección');return;}
   window.open('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(dir)+'&travelmode=driving','_blank');
@@ -2939,6 +3022,7 @@ window.renderMap=function(){
   var fC=window.mapFiltros.canal||'';
   var fI=window.mapFiltros.imp||'';
   var fT=window.mapFiltros.tam||'';
+  var fEO=window.mapFiltros.etapaobra||'';
   var isA=window.CU?.tipo==='ADMINISTRADOR';
   var mi=window.CU?.nombre||'';
   // Para ferreterías: solo mostrar la primera visita del mes por cliente (evita saturación)
@@ -2953,6 +3037,7 @@ window.renderMap=function(){
     if(fC&&(a.CANAL||'')!==fC)return false;
     if(fI&&(a.IMPACTO||'')!==fI)return false;
     if(fT&&(a['TAMAÑO FERRETERIA']||'')!==fT)return false;
+    if(fEO&&(a.ETAPA_OBRA||'')!==fEO)return false;
     if(!isA&&a.ASESOR!==mi)return false;
     // Lógica de deduplicación para ferreterías
     if((a.CANAL||'').toUpperCase()==='FERRETERIA'){
@@ -2978,6 +3063,8 @@ window.renderMap=function(){
     window.mapaMarkers=[];
   }
   var lats=[],lngs=[];
+  window._mapRevisitData=[];
+  function regRevisit(obj){window._mapRevisitData.push(obj);return window._mapRevisitData.length-1;}
   // Asignaciones en mapa — SOLO canal OBRAS
   (window.Asignaciones||[]).filter(function(a){
     if(!isA&&a.ASESOR!==mi)return false;
@@ -3009,23 +3096,28 @@ window.renderMap=function(){
     var pctP=visitasP.length?Math.round(impP/visitasP.length*100):0;
     var ETAPA_ICO={'PROSPECCIÓN':'🔵','VISITA TÉCNICA':'🟠','COTIZACIÓN':'🟣','PROYECTO GANADO':'🟢','CERRADO':'⚫'};
     var etapaIco=ETAPA_ICO[pKEtapa]||'';
-    var popHtml='<div style="min-width:200px;font-family:sans-serif">'
-      +'<div style="font-size:14px;font-weight:700;margin-bottom:6px;color:#1A1A1A">'+pNomA+'</div>'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:7px">'
-        +'<div style="background:#f4f4f0;border-radius:6px;padding:5px 7px"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase">Etapa</div><div style="font-size:12px;font-weight:600;color:'+asigBorder+'">'+etapaIco+' '+(pKEtapa||'—')+'</div></div>'
-        +'<div style="background:#f4f4f0;border-radius:6px;padding:5px 7px"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase">Estado</div><div style="font-size:12px;font-weight:600;color:'+aBg+'">'+aEst+'</div></div>'
-        +'<div style="background:#f4f4f0;border-radius:6px;padding:5px 7px"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase">Asesor</div><div style="font-size:11px;font-weight:500">'+(a.ASESOR||'—')+'</div></div>'
-        +'<div style="background:#f4f4f0;border-radius:6px;padding:5px 7px"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase">Visitas</div><div style="font-size:12px;font-weight:600">'+visitasP.length+'</div></div>'
+    var isAdminMapA=window.CU&&window.CU.tipo==='ADMINISTRADOR';
+    var revIdxA=regRevisit({canal:'OBRAS',proyecto:pNomA,cliente:'',tipoCliente:'CONSTRUCTOR',tamFerr:'',etapaObra:''});
+    var popHtml='<div style="width:190px;font-family:sans-serif;font-size:11px">'
+      +'<div style="font-size:12.5px;font-weight:700;margin-bottom:5px;color:#1A1A1A;line-height:1.25">'+pNomA+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:5px">'
+        +'<div style="background:#f4f4f0;border-radius:5px;padding:3px 5px"><div style="font-size:8px;color:#888;font-weight:600;text-transform:uppercase">Etapa</div><div style="font-size:10.5px;font-weight:600;color:'+asigBorder+'">'+etapaIco+' '+(pKEtapa||'—')+'</div></div>'
+        +'<div style="background:#f4f4f0;border-radius:5px;padding:3px 5px"><div style="font-size:8px;color:#888;font-weight:600;text-transform:uppercase">Estado</div><div style="font-size:10.5px;font-weight:600;color:'+aBg+'">'+aEst+'</div></div>'
+        +'<div style="background:#f4f4f0;border-radius:5px;padding:3px 5px;grid-column:span 2"><div style="font-size:8px;color:#888;font-weight:600;text-transform:uppercase">Asesor</div><div style="font-size:10.5px;font-weight:500">'+(a.ASESOR||'—')+' · '+visitasP.length+' vis.</div></div>'
       +'</div>'
-      +(visitasP.length>0?'<div style="margin-bottom:7px"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:3px">Impacto</div><div style="background:#e0e0d8;border-radius:3px;height:7px;overflow:hidden"><div style="height:100%;border-radius:3px;background:'+(pctP>=70?'#219653':pctP>=40?'#E67E22':'#C0392B')+';width:'+pctP+'%"></div></div><div style="font-size:10px;color:#555;margin-top:2px">'+impP+' imp. · '+(visitasP.length-impP)+' no imp. · '+pctP+'%</div></div>':'')
-      +(p&&p['DIRECCION']?'<div style="font-size:11px;color:#555;margin-bottom:6px">📍 '+p['DIRECCION']+'</div>':'')
-      +(a.INSTRUCCIONES?'<div style="font-size:11px;background:#EAF4FB;border-radius:6px;padding:5px 7px;margin-bottom:6px;color:#2471A3">📋 '+a.INSTRUCCIONES+'</div>':'')
-      +'<div style="display:flex;gap:6px;margin-top:2px">'
-        +'<a href="#" onclick="editAsig(\''+a.id+'\');window.leafMap.closePopup();return false" style="flex:1;text-align:center;background:#C0392B;color:#fff;border-radius:7px;padding:5px 0;font-size:11px;font-weight:600;text-decoration:none">✏️ Actualizar</a>'
-        +'<a href="https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng+'&travelmode=driving" target="_blank" style="flex:1;text-align:center;background:#2471A3;color:#fff;border-radius:7px;padding:5px 0;font-size:11px;font-weight:600;text-decoration:none">🧭 Navegar</a>'
+      +(visitasP.length>0?'<div style="margin-bottom:5px"><div style="background:#e0e0d8;border-radius:3px;height:5px;overflow:hidden"><div style="height:100%;border-radius:3px;background:'+(pctP>=70?'#219653':pctP>=40?'#E67E22':'#C0392B')+';width:'+pctP+'%"></div></div><div style="font-size:9px;color:#555;margin-top:1px">'+pctP+'% impacto</div></div>':'')
+      +(p&&p['DIRECCION']?'<div style="font-size:10px;color:#555;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">📍 '+p['DIRECCION']+'</div>':'')
+      +(a.INSTRUCCIONES?'<div style="font-size:10px;background:#EAF4FB;border-radius:5px;padding:4px 6px;margin-bottom:5px;color:#2471A3;max-height:36px;overflow:hidden">📋 '+a.INSTRUCCIONES.substring(0,90)+'</div>':'')
+      +'<div style="display:flex;gap:4px;margin-top:2px">'
+        +'<a href="#" onclick="editAsig(\''+a.id+'\');window.leafMap.closePopup();return false" style="flex:1;text-align:center;background:#C0392B;color:#fff;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;text-decoration:none">✏️ Actualizar</a>'
+        +'<a href="https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng+'&travelmode=driving" target="_blank" style="flex:1;text-align:center;background:#2471A3;color:#fff;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;text-decoration:none">🧭 Navegar</a>'
+      +'</div>'
+      +'<div style="display:flex;gap:4px;margin-top:4px">'
+        +'<a href="#" onclick="revisitarMapa('+revIdxA+')" style="flex:1;text-align:center;background:#219653;color:#fff;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;text-decoration:none">📝 Nueva visita</a>'
+        +(isAdminMapA?'<a href="#" onclick="eliminarAsig(\''+a.id+'\');window.leafMap.closePopup();return false" style="flex:1;text-align:center;background:#922B21;color:#fff;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;text-decoration:none">🗑️ Eliminar</a>':'')
       +'</div>'
     +'</div>';
-    m.bindPopup(popHtml,{maxWidth:240});
+    m.bindPopup(popHtml,{maxWidth:210,maxHeight:260,autoPanPadding:[10,10]});
     m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
   });
   // Visitas en mapa
@@ -3042,7 +3134,15 @@ window.renderMap=function(){
     var proy=pNom&&window.Proyectos?window.Proyectos.find(function(x){return x['NOMBRE PROYECTO']===pNom;}):null;
     var kanbanEtapa=proy?proy['ETAPA']||'PROSPECCIÓN':'';
     var borderColor=KANBAN_MAP_COLOR[kanbanEtapa]||'#fff';
-    var icon=L.divIcon({html:'<div style="background:'+color+';border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;border:3px solid '+borderColor+';box-shadow:0 1px 5px rgba(0,0,0,.4)">'+emoji+'</div>',iconSize:[30,30],iconAnchor:[15,15],className:''});
+    // Segundo anillo: etapa de la obra (solo canal OBRAS con dato registrado)
+    var eoKey=(a.CANAL||'').toUpperCase()==='OBRAS'?(a.ETAPA_OBRA||''):'';
+    var eoColor=window.ETAPA_OBRA_COL[eoKey]||'';
+    var innerCircle='<div style="background:'+color+';border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;border:3px solid '+borderColor+';box-shadow:0 1px 5px rgba(0,0,0,.4)">'+emoji+'</div>';
+    var iconHtml=eoColor
+      ?'<div style="width:40px;height:40px;border-radius:50%;border:3px solid '+eoColor+';display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.001)">'+innerCircle+'</div>'
+      :innerCircle;
+    var iconSizeV=eoColor?40:30;
+    var icon=L.divIcon({html:iconHtml,iconSize:[iconSizeV,iconSizeV],iconAnchor:[iconSizeV/2,iconSizeV/2],className:''});
     var m=L.marker([lat,lng],{icon});
     var f=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
     var visitasP2=proy?(window.Actividades||[]).filter(function(x){return x.PROYECTO===pNom;}).length:0;
@@ -3050,24 +3150,31 @@ window.renderMap=function(){
     var pctP2=visitasP2>0?Math.round(impP2/visitasP2*100):0;
     var ETAPA_ICO2={'PROSPECCIÓN':'🔵','VISITA TÉCNICA':'🟠','COTIZACIÓN':'🟣','PROYECTO GANADO':'🟢','CERRADO':'⚫'};
     var etapaIco2=ETAPA_ICO2[kanbanEtapa]||'';
-    var popHtml2='<div style="min-width:200px;font-family:sans-serif">'
-      +'<div style="font-size:14px;font-weight:700;margin-bottom:6px;color:#1A1A1A">'+(a.PROYECTO||a.CLIENTE||'—')+'</div>'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:7px">'
-        +(kanbanEtapa?'<div style="background:#f4f4f0;border-radius:6px;padding:5px 7px"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase">Etapa Kanban</div><div style="font-size:12px;font-weight:600;color:'+borderColor+'">'+etapaIco2+' '+kanbanEtapa+'</div></div>':'')
-        +'<div style="background:'+color+';border-radius:6px;padding:5px 7px"><div style="font-size:9px;color:rgba(255,255,255,.8);font-weight:600;text-transform:uppercase">Impacto visita</div><div style="font-size:12px;font-weight:600;color:#fff">'+(a.IMPACTO||'—')+'</div></div>'
-        +'<div style="background:#f4f4f0;border-radius:6px;padding:5px 7px"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase">Asesor</div><div style="font-size:11px;font-weight:500">'+(a.ASESOR||'—')+'</div></div>'
-        +'<div style="background:#f4f4f0;border-radius:6px;padding:5px 7px"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase">Canal</div><div style="font-size:11px;font-weight:600">'+(a.CANAL||'—')+'</div></div>'
-        +'<div style="background:#f4f4f0;border-radius:6px;padding:5px 7px;grid-column:span 2"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase">Fecha</div><div style="font-size:11px">'+f.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'})+' '+f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+'</div></div>'
+    var isAdminMap=window.CU&&window.CU.tipo==='ADMINISTRADOR';
+    var nombreTrazMapa=(a.PROYECTO||a.CLIENTE||'').replace(/'/g,'');
+    var revIdx=regRevisit({canal:a.CANAL||'OBRAS',proyecto:a.PROYECTO||'',cliente:a.CLIENTE||'',tipoCliente:a['TIPO CLIENTE']||'',tamFerr:a['TAMAÑO FERRETERIA']||'',etapaObra:a.ETAPA_OBRA||''});
+    var popHtml2='<div style="width:200px;font-family:sans-serif;font-size:11px">'
+      +'<div style="font-size:12.5px;font-weight:700;margin-bottom:5px;color:#1A1A1A;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(a.PROYECTO||a.CLIENTE||'—')+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:5px">'
+        +(kanbanEtapa?'<div style="background:#f4f4f0;border-radius:5px;padding:3px 5px"><div style="font-size:8px;color:#888;font-weight:600;text-transform:uppercase">Kanban</div><div style="font-size:10.5px;font-weight:600;color:'+borderColor+'">'+etapaIco2+' '+kanbanEtapa.substring(0,10)+'</div></div>':'')
+        +(eoKey?'<div style="background:#f4f4f0;border-radius:5px;padding:3px 5px"><div style="font-size:8px;color:#888;font-weight:600;text-transform:uppercase">Etapa obra</div><div style="font-size:10.5px;font-weight:600;color:'+eoColor+'">'+(window.ETAPA_OBRA_ICO[eoKey]||'')+' '+eoKey.substring(0,10)+'</div></div>':'')
+        +'<div style="background:'+color+';border-radius:5px;padding:3px 5px"><div style="font-size:8px;color:rgba(255,255,255,.8);font-weight:600;text-transform:uppercase">Impacto</div><div style="font-size:10.5px;font-weight:600;color:#fff">'+(a.IMPACTO||'—')+'</div></div>'
+        +'<div style="background:#f4f4f0;border-radius:5px;padding:3px 5px"><div style="font-size:8px;color:#888;font-weight:600;text-transform:uppercase">Asesor</div><div style="font-size:10.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(a.ASESOR||'—').split(' ')[0]+'</div></div>'
       +'</div>'
-      +(visitasP2>0?'<div style="margin-bottom:7px"><div style="font-size:9px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:3px">Impacto del proyecto ('+visitasP2+' visitas)</div><div style="background:#e0e0d8;border-radius:3px;height:7px;overflow:hidden"><div style="height:100%;border-radius:3px;background:'+(pctP2>=70?'#219653':pctP2>=40?'#E67E22':'#C0392B')+';width:'+pctP2+'%"></div></div><div style="font-size:10px;color:#555;margin-top:2px">'+impP2+' imp. · '+(visitasP2-impP2)+' no imp. · '+pctP2+'%</div></div>':'')
-      +(a.OBSERVACION?'<div style="font-size:11px;background:#f4f4f0;border-radius:6px;padding:5px 7px;margin-bottom:7px">'+a.OBSERVACION+'</div>':'')
-      +(proy&&proy['CANAL']?'<div style="font-size:10px;color:#888;margin-bottom:5px">Canal proy: <b>'+proy['CANAL']+'</b>'+(proy['BARRIO']?' · '+proy['BARRIO']:'')+'</div>':'')
-      +'<div style="display:flex;gap:6px;margin-top:2px">'
-        +'<a href="#" onclick="editAct(\''+a.id+'\');window.leafMap.closePopup();return false" style="flex:1;text-align:center;background:#C0392B;color:#fff;border-radius:7px;padding:5px 0;font-size:11px;font-weight:600;text-decoration:none">✏️ Editar</a>'
-        +'<a href="https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng+'&travelmode=driving" target="_blank" style="flex:1;text-align:center;background:#2471A3;color:#fff;border-radius:7px;padding:5px 0;font-size:11px;font-weight:600;text-decoration:none">🧭 Navegar</a>'
+      +'<div style="font-size:9.5px;color:#888;margin-bottom:5px">'+f.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'})+' · '+f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+(a.CANAL?' · '+a.CANAL:'')+'</div>'
+      +(visitasP2>0?'<div style="margin-bottom:5px"><div style="background:#e0e0d8;border-radius:3px;height:5px;overflow:hidden"><div style="height:100%;border-radius:3px;background:'+(pctP2>=70?'#219653':pctP2>=40?'#E67E22':'#C0392B')+';width:'+pctP2+'%"></div></div><div style="font-size:9px;color:#555;margin-top:1px">Proyecto: '+pctP2+'% impacto ('+visitasP2+' vis.)</div></div>':'')
+      +(a.OBSERVACION?'<div style="font-size:10px;background:#f4f4f0;border-radius:5px;padding:4px 6px;margin-bottom:5px;max-height:44px;overflow:hidden">'+a.OBSERVACION.substring(0,110)+(a.OBSERVACION.length>110?'…':'')+'</div>':'')
+      +'<div style="display:flex;gap:4px;margin-top:2px">'
+        +'<a href="#" onclick="editAct(\''+a.id+'\');window.leafMap.closePopup();return false" style="flex:1;text-align:center;background:#C0392B;color:#fff;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;text-decoration:none">✏️ Editar</a>'
+        +'<a href="https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng+'&travelmode=driving" target="_blank" style="flex:1;text-align:center;background:#2471A3;color:#fff;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;text-decoration:none">🧭 Navegar</a>'
       +'</div>'
+      +'<div style="display:flex;gap:4px;margin-top:4px">'
+        +'<a href="#" onclick="verTrazDesdeMapa(\''+nombreTrazMapa+'\');return false" style="flex:1;text-align:center;background:#8E44AD;color:#fff;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;text-decoration:none">🔍 Trazab.</a>'
+        +'<a href="#" onclick="revisitarMapa('+revIdx+')" style="flex:1;text-align:center;background:#219653;color:#fff;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;text-decoration:none">📝 Revisitar</a>'
+      +'</div>'
+      +(isAdminMap?'<div style="margin-top:4px"><a href="#" onclick="eliminarAct(\''+a.id+'\');window.leafMap.closePopup();return false" style="display:block;text-align:center;background:#922B21;color:#fff;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;text-decoration:none">🗑️ Eliminar visita</a></div>':'')
     +'</div>';
-    m.bindPopup(popHtml2,{maxWidth:240});
+    m.bindPopup(popHtml2,{maxWidth:220,maxHeight:280,autoPanPadding:[10,10]});
     m.addTo(window.leafMap);window.mapaMarkers.push(m);lats.push(lat);lngs.push(lng);
   });
   if(lats.length>1){
@@ -3075,6 +3182,36 @@ window.renderMap=function(){
     var minLng=Math.min.apply(null,lngs),maxLng=Math.max.apply(null,lngs);
     window.leafMap.fitBounds([[minLat,minLng],[maxLat,maxLng]],{padding:[40,40]});
   }
+};
+window.revisitarMapa=function(idx){
+  var d=window._mapRevisitData&&window._mapRevisitData[idx];
+  if(!d)return;
+  if(window.leafMap)window.leafMap.closePopup();
+  document.querySelectorAll('#ch-canal .chip').forEach(function(x){x.classList.remove('on');});
+  var canalV=d.canal||'OBRAS';
+  var canalChip=document.querySelector('#ch-canal .chip[data-v="'+canalV+'"]');
+  if(canalChip){canalChip.classList.add('on');canalChip.click();}
+  if(canalV==='OBRAS'&&d.proyecto){
+    window._selProy=d.proyecto;
+    document.getElementById('proy-sv-t').textContent=d.proyecto;
+    document.getElementById('proy-sv').classList.add('on');
+    document.getElementById('proy-sw').style.display='none';
+  }
+  if(d.cliente){
+    window._selCli=d.cliente;
+    document.getElementById('cli-sv-t').textContent=d.cliente;
+    document.getElementById('cli-sv').classList.add('on');
+    document.getElementById('cli-sw').style.display='none';
+  }
+  if(d.tipoCliente){document.getElementById('ntc').value=d.tipoCliente;onTCli(d.tipoCliente);}
+  if(d.tamFerr){
+    document.querySelectorAll('#ch-fsize .chip').forEach(function(c){c.classList.remove('on');if(c.dataset.v===d.tamFerr)c.classList.add('on');});
+  }
+  if(d.etapaObra&&canalV==='OBRAS'){
+    document.querySelectorAll('#ch-etapaobra .chip').forEach(function(c){c.classList.remove('on');if(c.dataset.v===d.etapaObra)c.classList.add('on');});
+  }
+  toast('📝 Listo para registrar nueva visita');
+  go('nueva');
 };
 
 // ── DASHBOARD GERENCIAL ──────────────────────────────────
