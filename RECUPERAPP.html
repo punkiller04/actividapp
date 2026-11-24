@@ -48,7 +48,7 @@ main{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
 .chip .n{opacity:.65;font-weight:600;margin-left:3px}
 .tg{display:inline-block;font-size:10.5px;font-weight:700;border-radius:10px;padding:2px 8px;white-space:nowrap}
 .sg-activo{background:var(--glight);color:var(--green)}.sg-riesgo{background:var(--alight);color:var(--amber)}.sg-inactivo{background:#FCE8D9;color:#B5531B}.sg-perdido{background:var(--rlight);color:var(--rdark)}
-.st-SIN{background:#EDEDEE;color:var(--muted)}.st-ASIGNADO{background:var(--blight);color:var(--blue)}.st-GESTION{background:var(--alight);color:var(--amber)}.st-COTIZADO{background:var(--plight);color:var(--purple)}.st-RECUPERADO{background:var(--glight);color:var(--green)}.st-DESCARTADO{background:#E4E4E7;color:#4b4d52}
+.st-REASIGNAR{background:#FFE9D6;color:#B5531B}.st-SIN{background:#EDEDEE;color:var(--muted)}.st-ASIGNADO{background:var(--blight);color:var(--blue)}.st-GESTION{background:var(--alight);color:var(--amber)}.st-COTIZADO{background:var(--plight);color:var(--purple)}.st-RECUPERADO{background:var(--glight);color:var(--green)}.st-DESCARTADO{background:#E4E4E7;color:#4b4d52}
 .pr{display:inline-flex;width:20px;height:20px;border-radius:6px;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
 .pr-A{background:var(--red)}.pr-B{background:var(--ink2)}.pr-C{background:var(--gray2)}.pr-D{background:#C9CACD}
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
@@ -206,6 +206,7 @@ main{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
   <section id="v-ale" class="vw" hidden>
    <div class="tb"><div style="flex:1"><h1>Clientes sin gestión</h1><div class="sub" id="ale-sub"></div></div><button onclick="copiarInforme()">Copiar informe</button></div>
    <div class="view">
+    <div class="card" id="al-sol" hidden></div>
     <div class="kp" id="al-k"></div>
     <div class="card"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><div><h3>Asignados hace más de <span class="u-sla"></span> días sin ninguna gestión</h3><div class="s" style="margin-bottom:0">Reasígnalos uno a uno, en bloque o de forma automática al asesor con menos carga. Al reasignar empieza a correr un nuevo plazo y el nuevo asesor recibe el aviso.</div></div>
      <div class="fl" style="margin:0"><select id="al-as" onchange="renderAle()"></select><label class="hint" style="display:flex;gap:6px;align-items:center">Plazo <select id="al-sla" onchange="cambiarSLA(this.value)"><option value="2">2 días</option><option value="3">3 días</option><option value="5">5 días</option><option value="7">7 días</option></select></label></div></div>
@@ -268,9 +269,10 @@ function titularDe(c){return ASES[c.ah];}
 function pct(x){return Math.round(x*100)+'%';}
 function seg(c){return c.dias<=UMB.riesgo?'activo':c.dias<=UMB.inactivo?'riesgo':c.dias<=UMB.perdido?'inactivo':'perdido';}
 var SEGL={activo:'Activo',riesgo:'En riesgo',inactivo:'Inactivo',perdido:'Perdido'};
-var ESTL={SIN:'Sin asignar',ASIGNADO:'Asignado',GESTION:'En gestión',COTIZADO:'Cotizado',RECUPERADO:'Recuperado',DESCARTADO:'Descartado'};
+var ESTL={SIN:'Sin asignar',ASIGNADO:'Asignado',GESTION:'En gestión',COTIZADO:'Cotizado',REASIGNAR:'Pide reasignar',RECUPERADO:'Recuperado',DESCARTADO:'Descartado'};
 var TIPOS=['Llamada','WhatsApp','Visita','Correo'];
-var RESUL=['No contesta','Número errado / sin datos','Contactado – volverá a comprar','Contactado – interesado, enviar cotización','Cotización enviada','Pedido confirmado','No interesado','Cliente cerró / ya no opera'];
+var RESUL=['No contesta','Número errado / sin datos','Contactado – volverá a comprar','Contactado – interesado, enviar cotización','Cotización enviada','Pedido confirmado','No interesado','Cliente cerró / ya no opera','Solicita reasignar – no desea atender al cliente'];
+var MOT_REA=['Mala relación con el cliente','El cliente pidió otro asesor','Cartera / problemas de pago','Fuera de su zona o ruta','Carga de trabajo','Otro'];
 var MOTIVOS=['','Precio','Compra a la competencia','Servicio / entregas','Cartera / crédito','Sin obras / sin necesidad','Calidad del producto','Atención del asesor','Otro'];
 var CONTACTO=/^Contactado|Cotizaci|Pedido|No interesado|cerró/;
 // ═══════════ ESTADO DE GESTIÓN (Firebase) ═══════════
@@ -367,7 +369,7 @@ async function autoAsignar(){
   var L=CL.filter(function(c){var s=seg(c);return (s==='perdido'||s==='inactivo'||s==='riesgo')&&!asig(c)&&c.v>=+document.getElementById('c-min').value;});
   if(!L.length){toast('No hay clientes sin asignar con venta ≥ el mínimo del filtro');return;}
   if(!confirm('Se asignarán '+N(L.length)+' clientes sin comprar (venta ≥ '+M(+document.getElementById('c-min').value)+') a su asesor histórico. ¿Continuar?'))return;
-  var by={};L.forEach(function(c){var a=ASES[c.ah].toUpperCase();(by[a]=by[a]||[]).push(c.nit);});
+  var by={};L=L.filter(function(c){return puedeAtender(c,ASES[c.ah]);});var by={};L.forEach(function(c){var a=ASES[c.ah].toUpperCase();(by[a]=by[a]||[]).push(c.nit);});
   for(var a in by){await asignar(by[a],a,true);lotes.push({a:a,nits:by[a]});}
   toast('✅ '+N(L.length)+' clientes asignados · envía el resumen desde Equipo');render();
 }
@@ -423,7 +425,14 @@ function renderRes(){
   var T=C.filter(function(c){return !asig(c)&&(seg(c)==='perdido'||seg(c)==='inactivo');}).sort(function(a,b){return b.v-a.v;}).slice(0,25);
   document.getElementById('r-top').innerHTML='<thead><tr><th>Pr.</th><th>Cliente</th><th>Canal</th><th class="r">Días sin comprar</th><th class="r">Venta 2024–26</th><th>Titular</th><th></th></tr></thead><tbody>'+(T.length?T.map(function(c){return '<tr class="ck" onclick="abrirFicha(\''+c.nit+'\')"><td><span class="pr pr-'+c.p+'">'+c.p+'</span></td><td><b>'+esc(c.n)+'</b><div class="ds">'+c.nit+'</div></td><td class="ds">'+esc(c.can)+'</td><td class="r"><span class="tg sg-'+seg(c)+'">'+N(c.dias)+' d</span></td><td class="r"><b>'+M(c.v)+'</b></td><td class="ds">'+esc(ASES[c.ah])+(c.nv>1?' <b style="color:var(--amber)">'+pct(c.sh)+'</b>':'')+'</td><td><button class="btn" onclick="event.stopPropagation();asignar([\''+c.nit+'\'],\''+esc(ASES[c.ah].toUpperCase())+'\')">Asignar</button></td></tr>';}).join(''):'<tr><td colspan="7" class="hint" style="padding:14px">Todos los clientes perdidos e inactivos ya tienen asesor.</td></tr>')+'</tbody>';
 }
-function noTitular(){return CL.filter(function(c){var a=asig(c);return a&&normNom(a)!==normNom(titularDe(c))&&['RECUPERADO','DESCARTADO'].indexOf(est(c))<0;});}
+function excluidos(c){var r=rec(c);return (r&&r.EXCLUIR)||[];}
+function puedeAtender(c,a){return excluidos(c).indexOf(normNom(a))<0;}
+// Mejor asesor para un cliente: el titular; si no puede, el siguiente que más le vendió; si no, el de menor carga
+function mejorAsesor(c,sin,carga){var ex=excluidos(c).concat(sin?[normNom(sin)]:[]);
+  for(var i=0;i<c.ven.length;i++){var a=ASES[+c.ven[i][0]];if(a&&ex.indexOf(normNom(a))<0)return {a:a,por:i===0?'titular':'también le vendió ('+pct(c.ven[i][1]/c.ven.reduce(function(s,x){return s+x[1];},0))+')'};}
+  carga=carga||cargaAsesores();var best=null;ASES.forEach(function(a){var k=normNom(a);if(ex.indexOf(k)>=0)return;if(best===null||carga[k]<carga[normNom(best)])best=a;});return best?{a:best,por:'menor carga'}:null;}
+function noTitular(){return CL.filter(function(c){var a=asig(c);return a&&normNom(a)!==normNom(titularDe(c))&&puedeAtender(c,titularDe(c))&&['RECUPERADO','DESCARTADO','REASIGNAR'].indexOf(est(c))<0;});}
+function solicitudes(){return CL.filter(function(c){return est(c)==='REASIGNAR';}).sort(function(a,b){return String(rec(b).SOLICITUD_FECHA||'').localeCompare(String(rec(a).SOLICITUD_FECHA||''));});}
 async function aTitular(){var L=noTitular();if(!L.length)return;if(!confirm('Se reasignarán '+L.length+' clientes a su titular (el asesor que más les vendió). ¿Continuar?'))return;
   var by={};L.forEach(function(c){var a=titularDe(c).toUpperCase();(by[a]=by[a]||[]).push(c.nit);});for(var a in by)await asignar(by[a],a,true);toast('✅ '+L.length+' clientes pasados a su titular');render();}
 // ═══════════ AGENDA ═══════════
@@ -476,6 +485,7 @@ function renderFicha(){
     .sort(function(a,b){return b.f-a.f;});
   var h='';
   h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><span class="tg sg-'+s+'">'+SEGL[s]+' · '+N(c.dias)+' días sin comprar</span><span class="tg st-'+e+'">'+ESTL[e]+'</span><span class="pr pr-'+c.p+'" title="Prioridad por venta histórica">'+c.p+'</span></div>';
+  if(e==='REASIGNAR')h+='<div class="card" style="background:#FFF1E6;border-color:#F5C9A6"><b style="color:#B5531B">↪ '+esc(titulo(r.SOLICITUD_POR||''))+' pidió reasignar este cliente</b><div style="font-size:13px;margin-top:3px">Motivo: '+esc(r.SOLICITUD_MOTIVO||'')+(r.SOLICITUD_NOTAS?' · '+esc(r.SOLICITUD_NOTAS):'')+'</div>'+(G?'<div class="hint" style="margin-top:4px">Elige el nuevo asesor en "Asignación y estado" o desde la pantalla Sin gestión.</div>':'')+'</div>';
   if(cp)h+='<div class="card" style="background:var(--glight);border-color:#BFE3CD"><b style="color:var(--green)">✅ Volvió a comprar</b> el '+fdt(cp.f,1)+' por '+M(cp.v)+', después de asignado el '+fdt(new Date(String(r.FECHA_ASIGNACION).slice(0,10)+'T00:00:00'),1)+'.</div>';
   h+='<div class="card"><div class="mini"><div><div class="k2">Venta 2024–26</div><div class="v2">'+M(c.v)+'</div></div><div><div class="k2">Margen</div><div class="v2">'+(c.v>0?Math.round((c.v-c.c)/c.v*100)+'%':'—')+'</div></div><div><div class="k2">Facturas</div><div class="v2">'+N(c.nf)+'</div></div><div><div class="k2">Última compra</div><div class="v2">'+fdt(c.ult,1)+'</div></div><div><div class="k2">Cliente desde</div><div class="v2">'+fdt(c.pri,1)+'</div></div><div><div class="k2">Ticket prom.</div><div class="v2">'+M(c.nf?c.v/c.nf:0)+'</div></div></div>'+
     '<div style="margin-top:12px;font-size:12px;font-weight:700;color:var(--muted)">COMPRAS POR MES'+(r.FECHA_ASIGNACION?' <span style="color:var(--green)">· verde = después de asignado</span>':'')+'</div>'+barrasMes(c)+
@@ -488,7 +498,7 @@ function renderFicha(){
   // contacto y asignación
   h+='<div class="card"><h3>Contacto</h3><div class="s">'+(ac.CELULAR&&!r.TELEFONO?'Tomado de Actividapp. ':'')+'Actualízalo cuando hables con el cliente</div><div class="g2"><div class="f"><label>Persona de contacto</label><input id="fx-con" value="'+esc(con)+'"></div><div class="f"><label>Teléfono</label><input id="fx-tel" type="tel" value="'+esc(tel)+'"></div></div><div class="f"><label>Correo</label><input id="fx-mail" type="email" value="'+esc(r.CORREO||'')+'"></div>'+
     '<div style="display:flex;gap:6px;flex-wrap:wrap">'+(telD?'<a class="btn d" href="tel:'+telD+'" style="text-decoration:none">📞 Llamar</a><a class="btn" style="text-decoration:none;color:var(--green)" href="https://wa.me/'+wa+'" target="_blank" rel="noopener">WhatsApp</a>':'')+'<button class="btn" onclick="guardarContacto()">Guardar contacto</button></div></div>';
-  if(G)h+='<div class="card"><h3>Asignación y estado</h3><div class="g2"><div class="f"><label>Asignado a</label><select id="fx-as">'+'<option value="">— Sin asignar —</option>'+asesoresOpts().map(function(o){return '<option value="'+esc(o[0])+'"'+(normNom(asig(c))===normNom(o[0])?' selected':'')+'>'+esc(o[1])+(+ASESK.indexOf(normNom(o[0]))===c.ah?' (titular)':'')+'</option>';}).join('')+'</select></div><div class="f"><label>Estado</label><select id="fx-es">'+['ASIGNADO','GESTION','COTIZADO','RECUPERADO','DESCARTADO'].map(function(k){return '<option value="'+k+'"'+((r.ESTADO||'ASIGNADO')===k?' selected':'')+'>'+ESTL[k]+'</option>';}).join('')+'</select></div></div><button class="btn d" onclick="guardarAsig()">Guardar asignación</button>'+(r.ASIGNADO_POR?'<div class="hint" style="margin-top:6px">Asignado por '+esc(titulo(r.ASIGNADO_POR))+' el '+fdt(new Date(String(r.FECHA_ASIGNACION).slice(0,10)+'T00:00:00'),1)+'</div>':'')+'</div>';
+  if(G)h+='<div class="card"><h3>Asignación y estado</h3><div class="g2"><div class="f"><label>Asignado a</label><select id="fx-as">'+'<option value="">— Sin asignar —</option>'+asesoresOpts().map(function(o){return '<option value="'+esc(o[0])+'"'+(normNom(asig(c))===normNom(o[0])?' selected':'')+'>'+esc(o[1])+(+ASESK.indexOf(normNom(o[0]))===c.ah?' (titular)':'')+(puedeAtender(c,o[0])?'':' · no desea atenderlo')+'</option>';}).join('')+'</select></div><div class="f"><label>Estado</label><select id="fx-es">'+['ASIGNADO','GESTION','COTIZADO','RECUPERADO','DESCARTADO'].map(function(k){return '<option value="'+k+'"'+((r.ESTADO||'ASIGNADO')===k?' selected':'')+'>'+ESTL[k]+'</option>';}).join('')+'</select></div></div><button class="btn d" onclick="guardarAsig()">Guardar asignación</button>'+(r.ASIGNADO_POR?'<div class="hint" style="margin-top:6px">Asignado por '+esc(titulo(r.ASIGNADO_POR))+' el '+fdt(new Date(String(r.FECHA_ASIGNACION).slice(0,10)+'T00:00:00'),1)+'</div>':'')+'</div>';
   // registrar gestión
   var puede=G||mine(c);
   if(puede)h+='<div class="card" style="border-color:var(--red)"><h3>Registrar gestión</h3><div class="s">Cada llamada, mensaje o visita queda en la trazabilidad del cliente</div>'+
@@ -496,6 +506,7 @@ function renderFicha(){
     '<div class="f"><label>Resultado *</label><select id="gx-res" onchange="gxRes()"><option value="">Seleccionar…</option>'+RESUL.map(function(x){return '<option>'+x+'</option>';}).join('')+'</select></div>'+
     '<div class="g2"><div class="f"><label>Habló con</label><input id="gx-con" value="'+esc(con)+'"></div><div class="f"><label>Motivo de no compra</label><select id="gx-mot">'+MOTIVOS.map(function(x){return '<option value="'+x+'">'+(x||'—')+'</option>';}).join('')+'</select></div></div>'+
     '<div class="f"><label>Qué se habló</label><textarea id="gx-not" rows="3" placeholder="Necesidades, obras activas, condiciones, compromisos…"></textarea></div>'+
+    '<div id="gx-rea" hidden style="background:#FFF1E6;border-radius:10px;padding:10px;margin-bottom:10px"><div class="g2"><div class="f"><label>Motivo *</label><select id="gx-rm">'+MOT_REA.map(function(m){return '<option>'+m+'</option>';}).join('')+'</select></div><div class="f"><label>Sugerir asesor (opcional)</label><select id="gx-rs"><option value="">— El gestor decide —</option>'+ASES.filter(function(a){return normNom(a)!==normNom(CU.nombre);}).map(function(a){return '<option value="'+esc(a.toUpperCase())+'">'+esc(a)+'</option>';}).join('')+'</select></div></div><div class="hint">El cliente sale de tu agenda y el gestor decide a quién pasarlo. No se te volverá a asignar.</div></div>'+
     '<div id="gx-cot" hidden style="background:var(--plight);border-radius:10px;padding:10px;margin-bottom:10px"><div class="g2"><div class="f"><label>N° cotización</label><input id="gx-cn"></div><div class="f"><label>Valor cotizado ($)</label><input id="gx-cv" type="number" min="0" oninput="document.getElementById(\'gx-cvf\').textContent=this.value?M(+this.value):\'\'"><div id="gx-cvf" class="hint"></div></div></div><div class="f" style="margin:0"><label>Archivo de la cotización (PDF o foto)</label><input id="gx-cf" type="file" accept=".pdf,image/*,.xlsx,.xls,.doc,.docx"></div></div>'+
     '<div class="g2"><div class="f"><label>Próxima acción</label><input id="gx-pa" placeholder="Ej: llamar para cerrar pedido"></div><div class="f"><label>Fecha</label><input id="gx-pf" type="date"></div></div>'+
     '<button class="btn p" id="gx-btn" style="width:100%;padding:12px;font-size:15px" onclick="guardarGestion()">Guardar gestión</button></div>';
@@ -503,7 +514,7 @@ function renderFicha(){
   document.getElementById('fx-b').innerHTML=h;
 }
 function chipOn(b){b.parentNode.querySelectorAll('.chip').forEach(function(x){x.classList.toggle('on',x===b);});}
-function gxRes(){var v=document.getElementById('gx-res').value;document.getElementById('gx-cot').hidden=!/Cotizaci|Pedido|interesado, enviar/.test(v);
+function gxRes(){var v=document.getElementById('gx-res').value;var rq=/reasignar/i.test(v);document.getElementById('gx-rea').hidden=!rq;if(rq){document.getElementById('gx-pa').value='';document.getElementById('gx-pf').value='';}document.getElementById('gx-cot').hidden=rq||!/Cotizaci|Pedido|interesado, enviar/.test(v);
   var d=new Date();var add=/No contesta|Número/.test(v)?2:/interesado|volverá/.test(v)?3:/Cotización/.test(v)?4:0;if(add){d.setDate(d.getDate()+add);if(d.getDay()===0)d.setDate(d.getDate()+1);document.getElementById('gx-pf').value=ymd(d).replace(/(\d{4})(\d\d)(\d\d)/,'$1-$2-$3');
     document.getElementById('gx-pa').value=/No contesta|Número/.test(v)?'Volver a llamar':/Cotización/.test(v)?'Seguimiento a la cotización':'Enviar cotización / cerrar pedido';}}
 // ═══════════ MOSTRADOR ═══════════
@@ -520,7 +531,7 @@ function poolMost(a){
   var k=normNom(a),bods=bodegasDe(a);
   return CL.filter(function(c){
     if(seg(c)==='activo'||asig(c)||est(c)==='RECUPERADO'||est(c)==='DESCARTADO'||c.v<300000)return false;
-    var h=ASES[c.ah];if(normNom(h)===k){c._mot='Titular'+(c.nv>1?' ('+pct(c.sh)+' de la venta)':'');return true;}
+    var h=ASES[c.ah];if(!puedeAtender(c,a))return false;if(normNom(h)===k){c._mot='Titular'+(c.nv>1?' ('+pct(c.sh)+' de la venta)':'');return true;}
     if(TRANSF&&!esMost(h)&&bods.indexOf(c.bod)>=0&&c.can!=='DISTRIBUIDOR'&&!NOMOST.test(c.sub||'')&&c.v<5e6){c._mot='Cliente pequeño de '+titulo(rolDe(h)||'otro asesor').replace('Distribucion','Distribución')+' · '+titulo(h).split(' ').slice(0,2).join(' ');return true;}
     return false;
   }).sort(function(x,y){return puntaje(y)-puntaje(x);});
@@ -556,15 +567,25 @@ var SLA=3;try{SLA=+localStorage.getItem('recupera_sla')||3;}catch(e){}
 function diasDesde(iso){return Math.floor((Date.now()-new Date(iso))/864e5);}
 function vencidosSLA(){
   var lim=Date.now()-SLA*864e5;
-  return CL.filter(function(c){var r=rec(c);if(!r||!r.ASIGNADO_A||!r.FECHA_ASIGNACION)return false;if(['RECUPERADO','DESCARTADO'].indexOf(est(c))>=0)return false;
+  return CL.filter(function(c){var r=rec(c);if(!r||!r.ASIGNADO_A||!r.FECHA_ASIGNACION)return false;if(['RECUPERADO','DESCARTADO','REASIGNAR'].indexOf(est(c))>=0)return false;
     var fa=new Date(r.FECHA_ASIGNACION);if(fa.getTime()>lim)return false;
     return !GS.some(function(g){return g.NIT===c.nit&&g.TIPO!=='Sistema'&&tsD(g.FECHA)>=fa;});});
 }
 function cargaAsesores(){var o={};ASES.forEach(function(a){o[normNom(a)]=0;});CL.forEach(function(c){var a=normNom(asig(c));if(a&&a in o&&['RECUPERADO','DESCARTADO'].indexOf(est(c))<0)o[a]++;});return o;}
-function sugerido(actual,carga){var best=null;ASES.forEach(function(a){var k=normNom(a);if(k===normNom(actual))return;if(best===null||carga[k]<carga[best])best=k;});return best;}
+function sugerido(actual,carga,c){var best=null;var ex=c?excluidos(c):[];ASES.forEach(function(a){var k=normNom(a);if(k===normNom(actual)||ex.indexOf(k)>=0)return;if(best===null||carga[k]<carga[best])best=k;});return best;}
 var ALSEL={};
 function cambiarSLA(v){SLA=+v;try{localStorage.setItem('recupera_sla',v);}catch(e){}render();}
+function renderSol(){
+  var S=solicitudes();var el=document.getElementById('al-sol');el.hidden=!S.length;if(!S.length)return;var carga=cargaAsesores();
+  el.innerHTML='<h3 style="color:#B5531B">↪ Solicitudes de reasignación ('+S.length+')</h3><div class="s">El asesor no desea seguir con el cliente. Por defecto se sugiere el titular o, si es quien pide el cambio, el siguiente asesor que más le ha vendido.</div><div class="tw"><table class="tbl"><thead><tr><th>Cliente</th><th>Pide el cambio</th><th>Motivo</th><th>Cuándo</th><th>Reasignar a</th><th></th></tr></thead><tbody>'+
+    S.map(function(c){var r=rec(c);var m=r.SOLICITUD_SUGERIDO&&puedeAtender(c,r.SOLICITUD_SUGERIDO)?{a:titulo(r.SOLICITUD_SUGERIDO),por:'sugerido por el asesor'}:mejorAsesor(c,r.SOLICITUD_POR,carga);var ex=excluidos(c);
+      return '<tr><td class="ck" style="cursor:pointer" onclick="abrirFicha(\''+c.nit+'\')"><b>'+esc(c.n)+'</b><div class="ds">'+M(c.v)+' · titular '+esc(titularDe(c))+'</div></td><td>'+esc(titulo(r.SOLICITUD_POR||''))+'</td><td><b>'+esc(r.SOLICITUD_MOTIVO||'')+'</b>'+(r.SOLICITUD_NOTAS?'<div class="ds">'+esc(r.SOLICITUD_NOTAS)+'</div>':'')+'</td><td class="ds">'+(r.SOLICITUD_FECHA?fdt(new Date(r.SOLICITUD_FECHA),1):'')+'</td>'+
+        '<td><select id="rs-'+c.nit+'" style="padding:6px;border:1px solid #D4D4D8;border-radius:8px;max-width:260px">'+ASES.filter(function(a){return ex.indexOf(normNom(a))<0;}).map(function(a){return '<option value="'+esc(a.toUpperCase())+'"'+(m&&normNom(m.a)===normNom(a)?' selected':'')+'>'+esc(a)+' ('+carga[normNom(a)]+')'+(m&&normNom(m.a)===normNom(a)?' · '+esc(m.por):'')+'</option>';}).join('')+'</select></td>'+
+        '<td style="white-space:nowrap"><button class="btn d" onclick="aceptarSol(\''+c.nit+'\')">Reasignar</button> <button class="btn" onclick="rechazarSol(\''+c.nit+'\')">Rechazar</button></td></tr>';}).join('')+'</tbody></table></div>';
+}
+async function aceptarSol(nit){var to=document.getElementById('rs-'+nit).value;if(!to)return;await asignar([nit],to);}
 function renderAle(){
+  renderSol();
   document.querySelectorAll('.u-sla').forEach(function(e){e.textContent=SLA;});document.getElementById('al-sla').value=String(SLA);
   var fa=document.getElementById('al-as').value;var V=vencidosSLA();var carga=cargaAsesores();
   var L=V.filter(function(c){return !fa||normNom(asig(c))===normNom(fa);}).sort(function(a,b){return new Date(rec(a).FECHA_ASIGNACION)-new Date(rec(b).FECHA_ASIGNACION)||b.v-a.v;});
@@ -575,7 +596,7 @@ function renderAle(){
   document.getElementById('al-k').innerHTML=[K('Sin gestión',N(V.length),'más de '+SLA+' días desde la asignación',V.length?'var(--red)':'var(--green)'),K('Venta histórica',M(vv),'de esos clientes'),K('Asesores con atraso',N(nas),'de '+ASES.length),K('Cumplimiento',tot?Math.round((tot-V.length)/tot*100)+'%':'—','asignados activos al día')].join('');
   var opt=function(cur,sel){return ASES.filter(function(a){return normNom(a)!==normNom(cur);}).map(function(a){var k=normNom(a);return '<option value="'+esc(a.toUpperCase())+'"'+(k===sel?' selected':'')+'>'+esc(a)+' ('+carga[k]+')</option>';}).join('');};
   document.getElementById('al-t').innerHTML=L.length?'<thead><tr><th><input type="checkbox" onclick="alTodo(this.checked)"></th><th>Pr.</th><th>Cliente</th><th>Asignado a</th><th class="r">Hace</th><th class="r">Venta 2024–26</th><th class="r">Días sin comprar</th><th>Reasignar a (carga actual)</th><th></th></tr></thead><tbody>'+
-    L.map(function(c){var r=rec(c),d=diasDesde(r.FECHA_ASIGNACION),sg=sugerido(asig(c),carga);return '<tr><td><input type="checkbox" '+(ALSEL[c.nit]?'checked':'')+' onchange="alSel(\''+c.nit+'\',this.checked)"></td><td><span class="pr pr-'+c.p+'">'+c.p+'</span></td><td class="ck" onclick="abrirFicha(\''+c.nit+'\')" style="cursor:pointer"><b>'+esc(c.n)+'</b><div class="ds">'+c.nit+'</div></td><td>'+esc(titulo(asig(c)))+'</td><td class="r" style="color:var(--red)"><b>'+d+' d</b></td><td class="r">'+M(c.v)+'</td><td class="r"><span class="tg sg-'+seg(c)+'">'+N(c.dias)+' d</span></td><td><select id="ra-'+c.nit+'" style="padding:6px;border:1px solid #D4D4D8;border-radius:8px;max-width:240px">'+opt(asig(c),sg)+'</select></td><td><button class="btn d" onclick="reasignar1(\''+c.nit+'\')">Reasignar</button></td></tr>';}).join('')+'</tbody>'
+    L.map(function(c){var r=rec(c),d=diasDesde(r.FECHA_ASIGNACION),sg=sugerido(asig(c),carga,c);return '<tr><td><input type="checkbox" '+(ALSEL[c.nit]?'checked':'')+' onchange="alSel(\''+c.nit+'\',this.checked)"></td><td><span class="pr pr-'+c.p+'">'+c.p+'</span></td><td class="ck" onclick="abrirFicha(\''+c.nit+'\')" style="cursor:pointer"><b>'+esc(c.n)+'</b><div class="ds">'+c.nit+'</div></td><td>'+esc(titulo(asig(c)))+'</td><td class="r" style="color:var(--red)"><b>'+d+' d</b></td><td class="r">'+M(c.v)+'</td><td class="r"><span class="tg sg-'+seg(c)+'">'+N(c.dias)+' d</span></td><td><select id="ra-'+c.nit+'" style="padding:6px;border:1px solid #D4D4D8;border-radius:8px;max-width:240px">'+opt(asig(c),sg)+'</select></td><td><button class="btn d" onclick="reasignar1(\''+c.nit+'\')">Reasignar</button></td></tr>';}).join('')+'</tbody>'
     :'<tbody><tr><td class="em" style="text-align:left">✅ Todos los clientes asignados tienen gestión dentro del plazo de '+SLA+' días.</td></tr></tbody>';
   document.getElementById('al-to').innerHTML='<option value="">Reasignar a…</option>'+ASES.map(function(a){return '<option value="'+esc(a.toUpperCase())+'">'+esc(a)+' ('+carga[normNom(a)]+')</option>';}).join('');
   alBar();
@@ -595,13 +616,13 @@ function alTodo(on){ALSEL={};if(on)vencidosSLA().filter(function(c){var fa=docum
 function alBar(){var n=Object.keys(ALSEL).length;document.getElementById('al-bulk').hidden=!n;document.getElementById('al-n').textContent=n;}
 async function reasignar1(nit){var to=document.getElementById('ra-'+nit).value;if(!to)return;await asignar([nit],to);delete ALSEL[nit];}
 async function reasignarSel(){var to=document.getElementById('al-to').value;if(!to){toast('Elige el asesor');return;}var L=Object.keys(ALSEL).filter(function(n){return normNom(asig(BYNIT[n]))!==normNom(to);});await asignar(L,to);ALSEL={};render();}
-async function reasignarAuto(){var carga=cargaAsesores();var by={};Object.keys(ALSEL).forEach(function(n){var k=sugerido(asig(BYNIT[n]),carga);carga[k]++;(by[k]=by[k]||[]).push(n);});
+async function reasignarAuto(){var carga=cargaAsesores();var by={};Object.keys(ALSEL).forEach(function(n){var k=sugerido(asig(BYNIT[n]),carga,BYNIT[n]);carga[k]++;(by[k]=by[k]||[]).push(n);});
   for(var k in by)await asignar(by[k],k,true);toast('✅ '+N(Object.keys(ALSEL).length)+' clientes reasignados al asesor con menos carga');ALSEL={};render();}
 async function quitarSel(){if(!confirm('¿Quitar la asignación de '+Object.keys(ALSEL).length+' clientes? Volverán a "Sin asignar".'))return;await window.desasignar(Object.keys(ALSEL));ALSEL={};render();}
 function textoInforme(){var V=vencidosSLA();var by={};V.forEach(function(c){var a=titulo(asig(c));(by[a]=by[a]||[]).push(c);});
   return 'INFORME RECUPERA · '+fdt(new Date(),1)+'\nClientes asignados hace más de '+SLA+' días sin gestión: '+V.length+' (venta histórica '+M(V.reduce(function(s,c){return s+c.v;},0))+')\n'+Object.keys(by).sort(function(a,b){return by[b].length-by[a].length;}).map(function(a){return '\n'+a+' – '+by[a].length+':\n'+by[a].map(function(c){return '  • '+corto(c.n)+' (asignado hace '+diasDesde(rec(c).FECHA_ASIGNACION)+' d, compró '+M(c.v)+')';}).join('\n');}).join('\n');}
 function copiarInforme(){var t=textoInforme();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){toast('Informe copiado: pégalo en WhatsApp o correo');},function(){prompt('Copia el informe:',t);});}
-function badgeAle(){var b=document.getElementById('b-ale');if(!isG()){b.hidden=true;return;}var n=vencidosSLA().length;b.hidden=!n;b.textContent=n;}
+function badgeAle(){var b=document.getElementById('b-ale');if(!isG()){b.hidden=true;return;}var n=vencidosSLA().length+solicitudes().length;b.hidden=!n;b.textContent=n;}
 
 // ═══════════ AVISOS ═══════════
 var NOTIF=[],EQUIPO={};
@@ -615,7 +636,7 @@ function permTxt(){
 function pedirPermiso(){if(!('Notification' in window))return;Notification.requestPermission().then(function(){renderNot();});}
 function renderNot(){
   document.getElementById('n-perm').innerHTML=permTxt();
-  document.getElementById('n-list').innerHTML=NOTIF.length?NOTIF.slice(0,200).map(function(x){var f=tsD(x.FECHA);return '<div class="ntf'+(x.LEIDA?' leida':'')+'"><div class="h">'+fdt(f,1)+' '+f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+' · de '+esc(titulo(x.DE||''))+'</div><div class="t">'+esc(x.TITULO)+'</div><div style="font-size:13px;margin-top:2px;white-space:pre-line">'+esc(x.TEXTO)+'</div><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+(x.TIPO==='SLA'?'<button class="btn d" onclick="leer(\''+x.id+'\');go(\'ale\')">Ver informe y reasignar</button>':(x.NITS||[]).length===1?'<button class="btn d" onclick="abrirNot(\''+x.id+'\',\''+x.NITS[0]+'\')">Abrir cliente</button>':'<button class="btn d" onclick="abrirNot(\''+x.id+'\')">Ver en mi agenda</button>')+(x.LEIDA?'':'<button class="btn" onclick="leer(\''+x.id+'\')">Marcar leído</button>')+'</div></div>';}).join(''):'<div class="em">No tienes avisos.</div>';
+  document.getElementById('n-list').innerHTML=NOTIF.length?NOTIF.slice(0,200).map(function(x){var f=tsD(x.FECHA);return '<div class="ntf'+(x.LEIDA?' leida':'')+'"><div class="h">'+fdt(f,1)+' '+f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+' · de '+esc(titulo(x.DE||''))+'</div><div class="t">'+esc(x.TITULO)+'</div><div style="font-size:13px;margin-top:2px;white-space:pre-line">'+esc(x.TEXTO)+'</div><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+(x.TIPO==='REASIGNAR'?'<button class="btn d" onclick="leer(\''+x.id+'\');go(\'ale\')">Ver solicitud</button>':x.TIPO==='SLA'?'<button class="btn d" onclick="leer(\''+x.id+'\');go(\'ale\')">Ver informe y reasignar</button>':(x.NITS||[]).length===1?'<button class="btn d" onclick="abrirNot(\''+x.id+'\',\''+x.NITS[0]+'\')">Abrir cliente</button>':'<button class="btn d" onclick="abrirNot(\''+x.id+'\')">Ver en mi agenda</button>')+(x.LEIDA?'':'<button class="btn" onclick="leer(\''+x.id+'\')">Marcar leído</button>')+'</div></div>';}).join(''):'<div class="em">No tienes avisos.</div>';
 }
 function abrirNot(id,nit){leer(id);if(nit)abrirFicha(nit);else go('age');}
 function avisoSistema(titulo_,texto){
@@ -745,6 +766,13 @@ async function revisarSLA(){
   }
 }
 setInterval(()=>{if(CU&&navigator.onLine)revisarSLA();},15*60*1000);
+window.rechazarSol=async function(nit){
+  const r=RC[nit]||{};const por=r.SOLICITUD_POR||'';const c=BYNIT[nit];
+  const d={ESTADO:'GESTION',SOLICITUD_POR:'',EXCLUIR:(r.EXCLUIR||[]).filter(x=>x!==normNom(por)),ACTUALIZADO:new Date().toISOString()};
+  try{await setDoc(doc(db,'recup_clientes',nit),d,{merge:true});Object.assign(r,d);evento(nit,'Solicitud de reasignación rechazada: sigue con '+titulo(por));
+    setDoc(doc(collection(db,'recup_notif')),{PARA:normNom(por),DE:CU.nombre,FECHA:Timestamp.now(),LEIDA:false,TITULO:'Tu solicitud de reasignación no fue aprobada',TEXTO:(c?c.n:nit)+' sigue a tu cargo. Habla con '+titulo(CU.nombre).split(' ').slice(0,2).join(' ')+' si necesitas apoyo.',NITS:[nit]}).catch(()=>{});
+    toast('Solicitud rechazada');render();}catch(e){toast('Error: '+e.message);}
+};
 window.desasignar=async function(nits){
   for(const nit of nits){const prev=RC[nit]||{};if(!prev.ASIGNADO_A)continue;await setDoc(doc(db,'recup_clientes',nit),{ASIGNADO_A:'',ESTADO:'',ACTUALIZADO:new Date().toISOString()},{merge:true});
     evento(nit,'Se quitó la asignación a '+titulo(prev.ASIGNADO_A)+' por falta de gestión');prev.ASIGNADO_A='';prev.ESTADO='';}
@@ -794,7 +822,7 @@ window.asignar=async function(nits,a,silencio){
   const hoy=new Date().toISOString();let n=0;const hechos=[];
   for(const nit of nits){
     const prev=RC[nit]||{};if(normNom(prev.ASIGNADO_A)===normNom(a))continue;const txt=(prev.ASIGNADO_A?'Reasignado de '+titulo(prev.ASIGNADO_A)+' a ':'Asignado a ')+titulo(a);
-    const d={ASIGNADO_A:a,ASIGNADO_POR:CU.nombre,FECHA_ASIGNACION:hoy,ESTADO:prev.ESTADO&&prev.ESTADO!=='DESCARTADO'?prev.ESTADO:'ASIGNADO',ACTUALIZADO:hoy};
+    const d={ASIGNADO_A:a,ASIGNADO_POR:CU.nombre,FECHA_ASIGNACION:hoy,ESTADO:prev.ESTADO&&['DESCARTADO','REASIGNAR'].indexOf(prev.ESTADO)<0?prev.ESTADO:'ASIGNADO',PROX_ACCION:prev.ESTADO==='REASIGNAR'?'':(prev.PROX_ACCION||''),PROX_FECHA:prev.ESTADO==='REASIGNAR'?'':(prev.PROX_FECHA||''),SOLICITUD_POR:'',ACTUALIZADO:hoy};
     await setDoc(doc(db,'recup_clientes',nit),d,{merge:true}).catch(e=>{toast('Error: '+e.message);throw e;});
     RC[nit]=Object.assign(prev,d,{id:nit});evento(nit,txt);n++;hechos.push(nit);
   }
@@ -826,15 +854,20 @@ window.guardarGestion=async function(){
     const r=doc(collection(db,'recup_gestiones'));const wp=setDoc(r,g);
     const prev=RC[nit]||{};
     let estN=prev.ESTADO||'ASIGNADO';
-    if(/Pedido confirmado/.test(res))estN='RECUPERADO';else if(/Cotización enviada/.test(res)||g.COT_VALOR>0||g.COT_URL)estN='COTIZADO';else if(/cerró/.test(res))estN='DESCARTADO';else if(estN==='ASIGNADO')estN='GESTION';
+    const rq=/reasignar/i.test(res);
+    if(rq){g.MOTIVO_REASIGNAR=document.getElementById('gx-rm').value;g.SUGERIDO=document.getElementById('gx-rs').value;g.PROX_ACCION='';g.PROX_FECHA='';}
+    if(rq)estN='REASIGNAR';else if(/Pedido confirmado/.test(res))estN='RECUPERADO';else if(/Cotización enviada/.test(res)||g.COT_VALOR>0||g.COT_URL)estN='COTIZADO';else if(/cerró/.test(res))estN='DESCARTADO';else if(estN==='ASIGNADO')estN='GESTION';
     const d={ESTADO:estN,PROX_ACCION:g.PROX_ACCION,PROX_FECHA:g.PROX_FECHA,ULT_GESTION:new Date().toISOString(),ULT_RESULTADO:res,ACTUALIZADO:new Date().toISOString()};
     if(!prev.ASIGNADO_A){d.ASIGNADO_A=CU.nombre.toUpperCase();d.FECHA_ASIGNACION=new Date().toISOString();d.ASIGNADO_POR=CU.nombre;}
     if(g.CONTACTO&&!prev.CONTACTO)d.CONTACTO=g.CONTACTO;
+    if(rq){Object.assign(d,{SOLICITUD_POR:CU.nombre,SOLICITUD_MOTIVO:g.MOTIVO_REASIGNAR,SOLICITUD_NOTAS:g.NOTAS,SOLICITUD_SUGERIDO:g.SUGERIDO,SOLICITUD_FECHA:new Date().toISOString(),EXCLUIR:Array.from(new Set((prev.EXCLUIR||[]).concat([normNom(CU.nombre)])))});
+      const gest=USERS.filter(u=>['ADMINISTRADOR','SUPERNUMERARIO'].indexOf(u.TIPO||u.tipo)>=0).map(u=>normNom(u['NOMBRE EMPLEADO']||u.nombre));
+      Array.from(new Set(gest.concat(prev.ASIGNADO_POR?[normNom(prev.ASIGNADO_POR)]:[]))).forEach(k=>{if(k!==normNom(CU.nombre))setDoc(doc(collection(db,'recup_notif')),{PARA:k,DE:CU.nombre,TIPO:'REASIGNAR',FECHA:Timestamp.now(),LEIDA:false,TITULO:titulo(CU.nombre).split(' ').slice(0,2).join(' ')+' pide reasignar un cliente',TEXTO:c.n+' · motivo: '+g.MOTIVO_REASIGNAR+(g.NOTAS?' · '+g.NOTAS:''),NITS:[nit]}).catch(()=>{});});}
     const wp2=setDoc(doc(db,'recup_clientes',nit),d,{merge:true});
     const ok=await Promise.race([Promise.all([wp,wp2]).then(()=>'ok'),new Promise(x=>setTimeout(()=>x('pend'),4000))]);
     Promise.all([wp,wp2]).catch(e=>toast('⚠️ No se pudo sincronizar: '+e.message));
     GS.push({id:r.id,...g});RC[nit]=Object.assign(prev,d,{id:nit});
-    toast(ok==='ok'?'✅ Gestión guardada':'📶 Guardada en el teléfono; se envía al recuperar señal');render();
+    toast(rq?'↪ Solicitud enviada al gestor':ok==='ok'?'✅ Gestión guardada':'📶 Guardada en el teléfono; se envía al recuperar señal');render();
   }catch(e){toast('Error: '+e.message);}
   btn.disabled=false;btn.textContent='Guardar gestión';
 };
