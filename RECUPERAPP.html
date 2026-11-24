@@ -196,8 +196,9 @@ main{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
   </section>
   <!-- EQUIPO -->
   <section id="v-eq" class="vw" hidden>
-   <div class="tb"><div style="flex:1"><h1>Equipo</h1><div class="sub">Celular de cada asesor para avisarle por WhatsApp</div></div><button onclick="guardarEquipo()">Guardar</button></div>
-   <div class="view"><div class="card"><h3>Asesores de la Regional Antioquia</h3><div class="s">Con el celular registrado, al asignar clientes la app te ofrece enviarle el aviso por WhatsApp con un toque. Además, cada asesor recibe el aviso dentro de la app.</div><div class="tw"><table class="tbl" id="eq-t"></table></div></div></div>
+   <div class="tb"><div style="flex:1"><h1>Equipo</h1><div class="sub">Resumen de cartera por WhatsApp para cada asesor</div></div><button onclick="resumenTodos()">Enviar resumen a todos</button></div>
+   <div class="view"><div class="card"><h3>Asesores de la Regional Antioquia</h3><div class="s">Asigna todos los clientes que necesites y envía <b>un solo resumen</b> por asesor (por ejemplo, cada mañana): sus clientes asignados, en qué estado están y qué debe hacer primero. El mismo resumen le queda en Avisos dentro de la app.</div><div class="tw"><table class="tbl" id="eq-t"></table></div><div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn" onclick="guardarEquipo()">Guardar celulares</button></div></div>
+    <div class="card" id="eq-prev" hidden><h3 id="eq-pt"></h3><div class="s">Así le llegará el mensaje</div><pre id="eq-px" style="white-space:pre-wrap;font-family:var(--font);font-size:13px;background:#E7F6EC;border-radius:10px;padding:12px;line-height:1.4"></pre></div></div>
   </section>
   <!-- GESTIONES -->
   <section id="v-ges" class="vw" hidden>
@@ -328,7 +329,7 @@ function sel(nit,on){if(on)SEL[nit]=1;else delete SEL[nit];bulkBar();}
 function selTodo(on){if(on)LISTA.slice(0,LIM).forEach(function(c){SEL[c.nit]=1;});else SEL={};renderCar(true);}
 function bulkBar(){var n=Object.keys(SEL).length;var b=document.getElementById('c-bulk');b.hidden=!(isG()&&n);document.getElementById('c-nsel').textContent=n;}
 async function asignarSel(){var to=document.getElementById('c-to').value;if(!to){toast('Elige el asesor');return;}var L=Object.keys(SEL);if(!L.length)return;
-  await asignar(L,to);SEL={};renderCar(true);ofrecerWA([{a:to,nits:L}]);}
+  await asignar(L,to);SEL={};renderCar(true);}
 async function autoAsignar(){
   var lotes=[];
   var L=CL.filter(function(c){var s=seg(c);return (s==='perdido'||s==='inactivo'||s==='riesgo')&&!asig(c)&&c.v>=+document.getElementById('c-min').value;});
@@ -336,7 +337,7 @@ async function autoAsignar(){
   if(!confirm('Se asignarán '+N(L.length)+' clientes sin comprar (venta ≥ '+M(+document.getElementById('c-min').value)+') a su asesor histórico. ¿Continuar?'))return;
   var by={};L.forEach(function(c){var a=ASES[c.ah].toUpperCase();(by[a]=by[a]||[]).push(c.nit);});
   for(var a in by){await asignar(by[a],a,true);lotes.push({a:a,nits:by[a]});}
-  toast('✅ '+N(L.length)+' clientes asignados');render();ofrecerWA(lotes);
+  toast('✅ '+N(L.length)+' clientes asignados · envía el resumen desde Equipo');render();
 }
 // ═══════════ RESUMEN ═══════════
 function renderRes(){
@@ -470,16 +471,69 @@ function permTxt(){
 function pedirPermiso(){if(!('Notification' in window))return;Notification.requestPermission().then(function(){renderNot();});}
 function renderNot(){
   document.getElementById('n-perm').innerHTML=permTxt();
-  document.getElementById('n-list').innerHTML=NOTIF.length?NOTIF.slice(0,200).map(function(x){var f=tsD(x.FECHA);return '<div class="ntf'+(x.LEIDA?' leida':'')+'"><div class="h">'+fdt(f,1)+' '+f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+' · de '+esc(titulo(x.DE||''))+'</div><div class="t">'+esc(x.TITULO)+'</div><div style="font-size:13px;margin-top:2px">'+esc(x.TEXTO)+'</div><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+((x.NITS||[]).length===1?'<button class="btn d" onclick="abrirNot(\''+x.id+'\',\''+x.NITS[0]+'\')">Abrir cliente</button>':'<button class="btn d" onclick="abrirNot(\''+x.id+'\')">Ver en mi agenda</button>')+(x.LEIDA?'':'<button class="btn" onclick="leer(\''+x.id+'\')">Marcar leído</button>')+'</div></div>';}).join(''):'<div class="em">No tienes avisos.</div>';
+  document.getElementById('n-list').innerHTML=NOTIF.length?NOTIF.slice(0,200).map(function(x){var f=tsD(x.FECHA);return '<div class="ntf'+(x.LEIDA?' leida':'')+'"><div class="h">'+fdt(f,1)+' '+f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+' · de '+esc(titulo(x.DE||''))+'</div><div class="t">'+esc(x.TITULO)+'</div><div style="font-size:13px;margin-top:2px;white-space:pre-line">'+esc(x.TEXTO)+'</div><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+((x.NITS||[]).length===1?'<button class="btn d" onclick="abrirNot(\''+x.id+'\',\''+x.NITS[0]+'\')">Abrir cliente</button>':'<button class="btn d" onclick="abrirNot(\''+x.id+'\')">Ver en mi agenda</button>')+(x.LEIDA?'':'<button class="btn" onclick="leer(\''+x.id+'\')">Marcar leído</button>')+'</div></div>';}).join(''):'<div class="em">No tienes avisos.</div>';
 }
 function abrirNot(id,nit){leer(id);if(nit)abrirFicha(nit);else go('age');}
 function avisoSistema(titulo_,texto){
   try{if('Notification' in window&&Notification.permission==='granted'){var n=new Notification(titulo_,{body:texto,tag:'recupera',renotify:true});n.onclick=function(){window.focus();go('not');n.close();};}}catch(e){}
   toast('🔔 '+titulo_);
 }
+// ═══════════ RESUMEN POR ASESOR ═══════════
+var ULTRES={};
+function corto(n,max){n=titulo(n);return n.length>(max||38)?n.slice(0,(max||38)-1)+'…':n;}
+function fcorta(s){return fdt(new Date(s+'T00:00:00'));}
+function resumenAsesor(a){
+  var k=normNom(a),h=hoyStr();var mis=CL.filter(function(c){return normNom(asig(c))===k;});
+  var by={SIN:0,ASIGNADO:0,GESTION:0,COTIZADO:0,RECUPERADO:0,DESCARTADO:0};mis.forEach(function(c){by[est(c)]++;});
+  var act=mis.filter(function(c){return ['RECUPERADO','DESCARTADO'].indexOf(est(c))<0;});
+  var venc=act.filter(function(c){var r=rec(c);return r.PROX_FECHA&&r.PROX_FECHA<h;}).sort(function(a,b){return rec(a).PROX_FECHA.localeCompare(rec(b).PROX_FECHA);});
+  var hoy=act.filter(function(c){return rec(c).PROX_FECHA===h;});
+  var sinG=act.filter(function(c){return !gestionesDe(c.nit).length;}).sort(function(a,b){return b.v-a.v;});
+  var cot=act.filter(function(c){return est(c)==='COTIZADO';});
+  var recu=mis.filter(function(c){return est(c)==='RECUPERADO';});
+  var ult=ULTRES[k]?new Date(ULTRES[k]):null;
+  var nuevos=mis.filter(function(c){var r=rec(c);return ult&&r.FECHA_ASIGNACION&&new Date(r.FECHA_ASIGNACION)>ult;});
+  var nom=titulo(a).split(' ');nom=nom.length>=4?nom.slice(2).join(' '):nom.length===3?nom.slice(1).join(' '):nom[nom.length-1];
+  var L=[],TOP=8;
+  var lista=function(arr,fn){var o=arr.slice(0,TOP).map(fn);if(arr.length>TOP)o.push('   _… y '+(arr.length-TOP)+' más en la app_');return o;};
+  L.push('*RECUPERA · Resumen '+fdt(new Date(),1)+'*');
+  L.push('Hola '+nom+', así va tu cartera de clientes por recuperar:');
+  L.push('');
+  L.push('📋 Asignados: *'+mis.length+'*');
+  L.push('   ⚪ Sin gestionar: '+sinG.length+' · 🟠 En gestión: '+by.GESTION+' · 🟣 Cotizados: '+by.COTIZADO);
+  L.push('   ✅ Recuperados: '+by.RECUPERADO+(by.DESCARTADO?' · ⚫ Descartados: '+by.DESCARTADO:''));
+  if(ult&&nuevos.length)L.push('🆕 Nuevos desde el último resumen: *'+nuevos.length+'*');
+  var paso=1;
+  if(venc.length){L.push('');L.push('*'+(paso++)+'. Acciones vencidas ('+venc.length+')* → hazlas hoy:');L=L.concat(lista(venc,function(c){var r=rec(c);return '• '+corto(c.n)+' – '+(r.PROX_ACCION||'seguimiento')+' (era '+fcorta(r.PROX_FECHA)+')';}));}
+  if(hoy.length){L.push('');L.push('*'+(paso++)+'. Para hoy ('+hoy.length+')*:');L=L.concat(lista(hoy,function(c){return '• '+corto(c.n)+' – '+(rec(c).PROX_ACCION||'seguimiento');}));}
+  if(cot.length){L.push('');L.push('*'+(paso++)+'. Cotizaciones por cerrar ('+cot.length+')* → llama para concretar el pedido:');L=L.concat(lista(cot,function(c){var g=gestionesDe(c.nit).find(function(x){return +x.COT_VALOR>0||x.COT_NUM;});return '• '+corto(c.n)+(g?' – '+(g.COT_NUM?g.COT_NUM+' ':'')+(+g.COT_VALOR?M(+g.COT_VALOR):''):'');}));}
+  if(sinG.length){L.push('');L.push('*'+(paso++)+'. Sin gestionar ('+sinG.length+')* → primer contacto, empieza por los de mayor compra:');L=L.concat(lista(sinG,function(c){return '• '+corto(c.n)+' – compró '+M(c.v)+' · '+c.dias+' días sin comprar';}));}
+  if(recu.length){L.push('');L.push('🎉 *Recuperados:* '+recu.slice(0,5).map(function(c){var p=compraPost(c);return corto(c.n,28)+(p?' ('+M(p.v)+')':'');}).join(', ')+(recu.length>5?' y '+(recu.length-5)+' más':''));}
+  if(!mis.length)L.push('','Por ahora no tienes clientes asignados.');
+  L.push('');
+  L.push('👉 Registra cada llamada en la app *Recupera*: resultado, qué se habló, cotización (con el archivo) y la fecha de la próxima acción.');
+  return {txt:L.join('\n'),n:mis.length,venc:venc.length,sinG:sinG.length,nuevos:nuevos.length,ult:ult};
+}
+function verResumen(i){var a=ASES[i];var r=resumenAsesor(a);document.getElementById('eq-prev').hidden=false;document.getElementById('eq-pt').textContent='Resumen para '+a;document.getElementById('eq-px').textContent=r.txt;document.getElementById('eq-prev').scrollIntoView({behavior:'smooth'});}
+function enviarResumen(i,ev){
+  var a=ASES[i],k=normNom(a);var tel=EQUIPO[k]||(document.querySelector('#eq-t input[data-k="'+k+'"]')||{}).value;
+  if(!tel){if(ev)ev.preventDefault();toast('Registra el celular de '+titulo(a)+' y guarda');return;}
+  var r=resumenAsesor(a);
+  if(ev&&ev.currentTarget&&ev.currentTarget.tagName==='A')ev.currentTarget.href=waLink(tel,r.txt);else window.open(waLink(tel,r.txt),'_blank');
+  ULTRES[k]=new Date().toISOString();if(window.marcarResumen)window.marcarResumen(k,r);setTimeout(render,300);
+}
+function resumenTodos(){
+  var h=ASES.map(function(a,i){var k=normNom(a);var r=resumenAsesor(a);if(!r.n)return '';var tel=EQUIPO[k];
+    return tel?'<a class="btn" href="#" target="_blank" rel="noopener" onclick="enviarResumen('+i+',event);this.style.opacity=.45;this.querySelector(\'.ok\').textContent=\'Enviado ✓\'"><span>'+esc(titulo(a))+' · '+r.n+' clientes'+(r.venc?' · <b style="color:var(--red)">'+r.venc+' vencidas</b>':'')+'</span><span class="ok">WhatsApp ›</span></a>':'<div class="hint" style="margin-bottom:6px">'+esc(titulo(a))+': sin celular registrado</div>';}).join('');
+  document.getElementById('wa-l').innerHTML=h||'<div class="hint">Ningún asesor tiene clientes asignados todavía.</div>';
+  document.querySelector('#wa h3').textContent='Enviar resumen a cada asesor';document.querySelector('#wa .hint').textContent='Un mensaje por asesor con todos sus clientes, el estado y qué hacer primero. Toca cada uno para abrirlo en WhatsApp.';
+  document.getElementById('wa').classList.add('on');
+}
+function hace(d){if(!d)return 'Nunca';var h=Math.round((Date.now()-d)/36e5);return h<1?'Hace un momento':h<24?'Hace '+h+' h':'Hace '+Math.round(h/24)+' d';}
+
 function renderEq(){
-  document.getElementById('eq-t').innerHTML='<thead><tr><th>Asesor</th><th>Usuario en la app</th><th>Celular (WhatsApp)</th><th class="r">Clientes asignados</th></tr></thead><tbody>'+ASES.map(function(a){var k=normNom(a);var u=USERS.some(function(x){return normNom(x['NOMBRE EMPLEADO']||x.nombre)===k;});var n=CL.filter(function(c){return normNom(asig(c))===k;}).length;
-    return '<tr><td><b>'+esc(a)+'</b></td><td>'+(u?'<span class="tg st-RECUPERADO">Sí</span>':'<span class="tg st-GESTION">Falta crearlo en Actividapp</span>')+'</td><td><input data-k="'+esc(k)+'" type="tel" value="'+esc(EQUIPO[k]||'')+'" placeholder="300 000 0000" style="padding:7px 9px;border:1px solid #D4D4D8;border-radius:8px;width:160px"></td><td class="r">'+N(n)+'</td></tr>';}).join('')+'</tbody>';
+  document.getElementById('eq-t').innerHTML='<thead><tr><th>Asesor</th><th>Celular (WhatsApp)</th><th class="r">Asignados</th><th class="r">Sin gestionar</th><th class="r">Vencidas</th><th>Último resumen</th><th></th></tr></thead><tbody>'+ASES.map(function(a,i){var k=normNom(a);var u=USERS.some(function(x){return normNom(x['NOMBRE EMPLEADO']||x.nombre)===k;});var r=resumenAsesor(a);
+    return '<tr><td><b>'+esc(a)+'</b>'+(u?'':'<div><span class="tg st-GESTION">Sin usuario en Actividapp</span></div>')+'</td><td><input data-k="'+esc(k)+'" type="tel" value="'+esc(EQUIPO[k]||'')+'" placeholder="300 000 0000" style="padding:7px 9px;border:1px solid #D4D4D8;border-radius:8px;width:150px"></td><td class="r">'+N(r.n)+'</td><td class="r" style="color:'+(r.sinG?'var(--amber)':'')+'">'+N(r.sinG)+'</td><td class="r" style="color:'+(r.venc?'var(--red)':'')+'">'+N(r.venc)+'</td><td class="ds">'+hace(r.ult)+(r.nuevos?'<div style="color:var(--red);font-weight:700">'+r.nuevos+' nuevos sin avisar</div>':'')+'</td><td style="white-space:nowrap">'+(r.n?'<button class="btn" onclick="verResumen('+i+')">Ver</button> <a class="btn p" style="text-decoration:none" href="#" target="_blank" rel="noopener" onclick="enviarResumen('+i+',event)">Enviar ›</a>':'')+'</td></tr>';}).join('')+'</tbody>';
 }
 function waLink(tel,txt){var d=String(tel||'').replace(/\D/g,'');if(!d)return '';if(d.length===10)d='57'+d;return 'https://wa.me/'+d+'?text='+encodeURIComponent(txt);}
 // Tras asignar: lista de avisos por WhatsApp (solo asesores con celular)
@@ -519,7 +573,7 @@ function entrar(u){
   document.getElementById('n-u').innerHTML='<b>'+esc(titulo(CU.nombre).split(' ').slice(0,2).join(' '))+'</b><br>'+(isG()?'Gestor de recuperación':'Asesor comercial');
   initFiltros();go(isG()?'res':'age');
   escucharAvisos();
-  getDoc(doc(db,'recup_config','equipo')).then(d=>{if(d.exists())EQUIPO=d.data().TEL||{};}).catch(()=>{});
+  getDoc(doc(db,'recup_config','equipo')).then(d=>{if(d.exists()){EQUIPO=d.data().TEL||{};ULTRES=d.data().ULT_RESUMEN||{};}if(VIEW==='eq')render();}).catch(()=>{});
 }
 let _unsub=null,_primera=true;
 function escucharAvisos(){
@@ -535,9 +589,14 @@ function escucharAvisos(){
 }
 window.leer=function(id){const x=NOTIF.find(n=>n.id===id);if(!x||x.LEIDA)return;x.LEIDA=true;updateDoc(doc(db,'recup_notif',id),{LEIDA:true}).catch(()=>{});render();};
 window.leerTodo=function(){NOTIF.filter(x=>!x.LEIDA).forEach(x=>{x.LEIDA=true;updateDoc(doc(db,'recup_notif',x.id),{LEIDA:true}).catch(()=>{});});render();};
+window.marcarResumen=function(k,r){
+  const u={};u['ULT_RESUMEN.'+k]=new Date().toISOString();
+  updateDoc(doc(db,'recup_config','equipo'),u).catch(()=>setDoc(doc(db,'recup_config','equipo'),{ULT_RESUMEN:{[k]:new Date().toISOString()}},{merge:true}).catch(()=>{}));
+  setDoc(doc(collection(db,'recup_notif')),{PARA:k,DE:CU.nombre,FECHA:Timestamp.now(),LEIDA:false,TITULO:'Resumen de tu cartera por recuperar',TEXTO:r.txt.replace(/[*_]/g,''),NITS:[]}).catch(()=>{});
+};
 window.guardarEquipo=async function(){
   const T={};document.querySelectorAll('#eq-t input[data-k]').forEach(i=>{if(i.value.trim())T[i.dataset.k]=i.value.trim();});
-  try{await setDoc(doc(db,'recup_config','equipo'),{TEL:T,ACTUALIZADO:new Date().toISOString()});EQUIPO=T;toast('✅ Celulares guardados');}catch(e){toast('Error: '+e.message);}
+  try{await setDoc(doc(db,'recup_config','equipo'),{TEL:T,ACTUALIZADO:new Date().toISOString()},{merge:true});EQUIPO=T;toast('✅ Celulares guardados');render();}catch(e){toast('Error: '+e.message);}
 };
 window.login=async function(){
   const ced=document.getElementById('l-u').value,pw=document.getElementById('l-p').value,e=document.getElementById('l-e');
@@ -578,7 +637,7 @@ window.asignar=async function(nits,a,silencio){
 };
 window.guardarAsig=async function(){
   const nit=FX,a=document.getElementById('fx-as').value,e=document.getElementById('fx-es').value;const prev=RC[nit]||{};
-  if(a&&normNom(a)!==normNom(prev.ASIGNADO_A)){await asignar([nit],a,true);ofrecerWA([{a:a,nits:[nit]}]);}
+  if(a&&normNom(a)!==normNom(prev.ASIGNADO_A)){await asignar([nit],a,true);}
   if(!a&&prev.ASIGNADO_A){await setDoc(doc(db,'recup_clientes',nit),{ASIGNADO_A:'',ESTADO:''},{merge:true});RC[nit].ASIGNADO_A='';evento(nit,'Se quitó la asignación');}
   if(a&&e!==(RC[nit].ESTADO||'ASIGNADO')){await setDoc(doc(db,'recup_clientes',nit),{ESTADO:e,ACTUALIZADO:new Date().toISOString()},{merge:true});RC[nit].ESTADO=e;evento(nit,'Estado: '+ESTL[e]);}
   toast('✅ Guardado');render();
