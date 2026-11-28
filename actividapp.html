@@ -865,7 +865,7 @@ function gesItem(g,conCliente,c){
   return '<div class="ti '+(sis?'t-s':/Pedido/.test(g.RESULTADO||'')?'t-c':'t-g')+'"'+(conCliente&&c?' style="cursor:pointer" onclick="abrirFicha(\''+g.NIT+'\')"':'')+'><div class="h">'+fdt(f,1)+' '+f.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+' · '+esc(titulo(g.USUARIO||''))+(sis?'':' · '+esc(g.TIPO||''))+'</div>'+
     (conCliente?'<div class="nm" style="font-size:13px">'+esc(g.CLIENTE||(c&&c.n)||g.NIT)+'</div>':'')+
     '<div class="b"><b>'+esc(g.RESULTADO||'')+'</b>'+(g.MOTIVO?' · motivo: '+esc(g.MOTIVO):'')+(g.CONTACTO?' · habló con '+esc(g.CONTACTO):'')+'</div>'+(g.NOTAS?'<div class="b" style="color:var(--ink2)">'+esc(g.NOTAS)+'</div>':'')+
-    (g.COT_NUM||g.COT_VALOR||g.COT_URL?'<div class="q">💜 Cotización '+esc(g.COT_NUM||'')+(+g.COT_VALOR?' · '+M(+g.COT_VALOR):'')+(g.COT_URL?' · <a href="'+esc(g.COT_URL)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--purple)">📎 '+esc(g.COT_NOMBRE||'ver archivo')+'</a>':'')+'</div>':'')+
+    (g.COT_NUM||g.COT_VALOR||g.COT_URL||g.COT_FS||g.COT_SUBIENDO?'<div class="q">💜 Cotización '+esc(g.COT_NUM||'')+(+g.COT_VALOR?' · '+M(+g.COT_VALOR):'')+(g.COT_URL?' · <a href="'+esc(g.COT_URL)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--purple)">📎 '+esc(g.COT_NOMBRE||'ver archivo')+'</a>':g.COT_FS&&window.archLink?' · <span onclick="event.stopPropagation()">'+archLink({fs:g.COT_FS,n:g.COT_N||1,tipo:g.COT_TIPO||'',nombre:g.COT_NOMBRE||'cotización'},'','📎 '+esc(g.COT_NOMBRE||'ver archivo'))+'</span>':g.COT_SUBIENDO?' · <span class="ds">📎 subiendo archivo…</span>':'')+'</div>':'')+
     (g.PROX_FECHA?'<div class="h" style="margin-top:3px">➡ '+esc(g.PROX_ACCION||'Siguiente acción')+' · '+fdt(new Date(g.PROX_FECHA+'T00:00:00'),1)+'</div>':'')+'</div>';
 }
 // ═══════════ FICHA ═══════════
@@ -2003,11 +2003,17 @@ function bloquearExport(){var A=esAdmin();document.querySelectorAll('.adm-only')
 function conTiempo(p,ms,msg){return Promise.race([p,new Promise(function(_,rej){setTimeout(function(){rej(new Error(msg||'tiempo agotado'));},ms);})]);}
 function b64DeBlob(b){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result).split(',')[1]||'');};r.onerror=rej;r.readAsDataURL(b);});}
 window.subirArch=async function(path,blob,nombre,tipo,onSt){var F=window.FB;tipo=tipo||blob.type||'application/octet-stream';
-  try{onSt&&onSt('Subiendo '+nombre+'…');var sr=F.ref(F.st,path);await conTiempo(F.uploadBytes(sr,blob,{contentType:tipo}),45000,'Storage no respondió');var u=await conTiempo(F.getDownloadURL(sr),15000,'Storage no respondió');return {nombre:nombre,url:u,tipo:tipo};}
-  catch(e){console.warn('Storage falló, se guarda en Firestore:',e);if(blob.size>4.5e6)throw new Error('El archivo pesa más de 4,5 MB y no se pudo subir: '+e.message);
-    onSt&&onSt('Guardando '+nombre+' en la base…');var b64=await b64DeBlob(blob);var T=700000,n=Math.ceil(b64.length/T)||1;var id=F.doc(F.collection(F.db,'archivos')).id;
-    for(var i=0;i<n;i++)await conTiempo(F.setDoc(F.doc(F.db,'archivos',id+'_'+i),{d:b64.slice(i*T,(i+1)*T),i:i,n:n,nombre:nombre,tipo:tipo,por:CU?CU.nombre:'',fecha:new Date().toISOString()}),20000,'Sin conexión con la base').catch(function(er){if(/Sin conexión/.test(er.message))return;throw er;});
-    return {nombre:nombre,url:'',fs:id,n:n,tipo:tipo};}};
+  // archivos de hasta 1 MB van directo a la base (rápido y sin depender de Storage); los grandes intentan Storage y, si no responde, la base
+  var directo=blob.size<=1e6||window._stMalo;
+  if(!directo){try{onSt&&onSt('Subiendo '+nombre+'…');var sr=F.ref(F.st,path);await conTiempo(F.uploadBytes(sr,blob,{contentType:tipo}),25000,'Storage no respondió');var u=await conTiempo(F.getDownloadURL(sr),10000,'Storage no respondió');return {nombre:nombre,url:u,tipo:tipo};}
+    catch(e){console.warn('Storage falló, se guarda en la base:',e);window._stMalo=true;}}
+  if(blob.size>6e6)throw new Error('El archivo pesa más de 6 MB: envíalo como foto o un PDF más liviano');
+  onSt&&onSt('Guardando '+nombre+'…');var b64=await b64DeBlob(blob);var T=700000,n=Math.ceil(b64.length/T)||1;var id=F.doc(F.collection(F.db,'archivos')).id;
+  var W=[];for(var i=0;i<n;i++)W.push(F.setDoc(F.doc(F.db,'archivos',id+'_'+i),{d:b64.slice(i*T,(i+1)*T),i:i,n:n,nombre:nombre,tipo:tipo,por:CU?CU.nombre:'',fecha:new Date().toISOString()}));
+  await conTiempo(Promise.all(W),20000,'pend').catch(function(er){if(er.message==='pend')return;throw er;});
+  return {nombre:nombre,url:'',fs:id,n:n,tipo:tipo};};
+window.archBytes=async function(a){var F=window.FB;if(a.fs){var s='';for(var i=0;i<(+a.n||1);i++){var d=await F.getDoc(F.doc(F.db,'archivos',a.fs+'_'+i));s+=(d.exists()?d.data().d:'');}var bin=atob(s),u=new Uint8Array(bin.length);for(var j=0;j<bin.length;j++)u[j]=bin.charCodeAt(j);return u;}
+  var r=await fetch(a.url);if(!r.ok)throw new Error('HTTP '+r.status);return new Uint8Array(await r.arrayBuffer());};
 var _arcU={};
 window.abrirArch=async function(fs,n,tipo,nombre){var F=window.FB;try{if(!_arcU[fs]){toast('Abriendo '+(nombre||'archivo')+'…');var s='';for(var i=0;i<(+n||1);i++){var d=await F.getDoc(F.doc(F.db,'archivos',fs+'_'+i));s+=(d.exists()?d.data().d:'');}
     var bin=atob(s),u=new Uint8Array(bin.length);for(var j=0;j<bin.length;j++)u[j]=bin.charCodeAt(j);_arcU[fs]=URL.createObjectURL(new Blob([u],{type:tipo||'application/octet-stream'}));}
@@ -2888,13 +2894,27 @@ window.aboInformeXLS=async function(){var L=aboFilas();if(!L.length){toast('No h
     L.forEach(function(a,i){if(a.COMP&&a.COMP.url){var c=XLSX.utils.encode_cell({r:i+1,c:9});ws[c].l={Target:a.COMP.url};ws[c].v='Ver comprobante';}});
     var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Abonos');var who=RCD.as===''?'Equipo':nomCorto(ASES[+RCD.as]||CU.nombre);
     XLSX.writeFile(wb,'Abonos '+mesISO(+RCD.mes)+' - '+who+'.xlsx');}catch(e){toast('Error: '+e.message);}};
-window.aboInformePDF=function(){var L=aboFilas();if(!L.length){toast('No hay abonos en este mes');return;}var who=RCD.as===''?'Equipo comercial':titulo(ASES[+RCD.as]||CU.nombre);var T=L.reduce(function(s,a){return s+(+a.VALOR||0);},0);
-  var html='<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Abonos '+mesTxt(+RCD.mes)+' - '+esc(who)+'</title><style>body{font-family:Barlow,Arial,sans-serif;margin:0;padding:24px 30px;font-size:12px;color:#111214}h1{font-size:20px;margin:0}.hd{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #DD091C;padding-bottom:8px;margin-bottom:12px}.hd img{height:36px}table{width:100%;border-collapse:collapse}th{background:#2A2C30;color:#fff;font-size:10px;text-align:left;padding:5px}td{border-bottom:1px solid #EEE;padding:5px;vertical-align:top}.r{text-align:right}.cp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.cp div{border:1px solid #E2E2E5;border-radius:8px;padding:6px;page-break-inside:avoid}.cp img{width:100%;max-height:260px;object-fit:contain}.s{color:#6C6F75;font-size:10.5px}@media print{.np{display:none}}</style></head><body>'+
+// convierte cada comprobante en imagen para que aparezca dentro del PDF (fotos tal cual; PDFs, sus primeras páginas)
+async function aboImgs(c){if(!c)return [];var tipo=c.tipo||'',esPdf=/pdf/i.test(tipo)||/\.pdf$/i.test(c.nombre||'');
+  if(!esPdf&&c.url)return [c.url];
+  var u=await archBytes(c);
+  if(!esPdf){var b=new Blob([u],{type:tipo||'image/jpeg'});return [await new Promise(function(r){var f=new FileReader();f.onload=function(){r(f.result);};f.readAsDataURL(b);})];}
+  if(!window.pdfjsLib){await cargarJS('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
+  var doc=await pdfjsLib.getDocument({data:u}).promise,out=[];
+  for(var p=1;p<=Math.min(doc.numPages,2);p++){var pg=await doc.getPage(p),vp=pg.getViewport({scale:1.6});var cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;out.push(cv.toDataURL('image/jpeg',0.82));}
+  return out;}
+window.aboInformePDF=async function(){var L=aboFilas();if(!L.length){toast('No hay abonos en este mes');return;}
+  var w=window.open('','_blank');if(!w){toast('Permite ventanas emergentes para generar el informe');return;}
+  w.document.write('<p style="font-family:Arial;padding:30px">Preparando el informe y los comprobantes de pago…</p>');
+  var who=RCD.as===''?'Equipo comercial':titulo(ASES[+RCD.as]||CU.nombre);var T=L.reduce(function(s,a){return s+(+a.VALOR||0);},0);
+  var imgs=[];for(var i=0;i<L.length;i++){try{imgs.push(await conTiempo(aboImgs(L[i].COMP),30000,'tiempo agotado'));}catch(e){console.warn(e);imgs.push(null);}
+    try{w.document.body.innerHTML='<p style="font-family:Arial;padding:30px">Preparando comprobantes: '+(i+1)+' de '+L.length+'…</p>';}catch(e){}}
+  var html='<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Abonos '+mesTxt(+RCD.mes)+' - '+esc(who)+'</title><style>body{font-family:Barlow,Arial,sans-serif;margin:0;padding:24px 30px;font-size:12px;color:#111214}h1{font-size:20px;margin:0}h2{font-size:14px;border-left:4px solid #DD091C;padding-left:8px;margin:18px 0 8px}.hd{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #DD091C;padding-bottom:8px;margin-bottom:12px}.hd img{height:36px}table{width:100%;border-collapse:collapse}th{background:#DD091C;color:#fff;font-size:10px;text-align:left;padding:5px}td{border-bottom:1px solid #EEE;padding:5px;vertical-align:top}.r{text-align:right}.cp{border:1px solid #E2E2E5;border-radius:8px;padding:8px;margin-bottom:12px;page-break-inside:avoid;break-inside:avoid}.cp img{display:block;max-width:100%;max-height:640px;margin:6px auto 0;border:1px solid #EEE}.s{color:#6C6F75;font-size:10.5px}@media print{.np{display:none}}</style></head><body>'+
    '<div class="np" style="text-align:right;margin-bottom:8px"><button onclick="print()" style="background:#DD091C;color:#fff;border:0;border-radius:8px;padding:9px 16px;font-weight:700">Guardar como PDF / imprimir</button></div>'+
    '<div class="hd"><div><h1>Informe de abonos · '+mesTxt(+RCD.mes)+'</h1><div class="s">'+esc(who)+' · '+L.length+' abonos · total '+M(T)+' · generado el '+fdt(new Date(),1)+'</div></div><img src="'+document.querySelector('#nav .brand img').src+'"></div>'+
    '<table><tr><th>#</th><th>Fecha</th><th>Cliente</th><th>NIT</th><th>Factura(s)</th><th>Medio · ref.</th><th class="r">Valor</th>'+(RCD.as===''?'<th>Asesor</th>':'')+'<th>Estado</th></tr>'+L.map(function(a,i){return '<tr><td>'+(i+1)+'</td><td>'+esc(a.FECHA)+'</td><td>'+esc(a.CLIENTE)+'</td><td>'+esc(a.NIT)+'</td><td>'+esc((a.DOCS||[]).join(', '))+'</td><td>'+esc(a.MEDIO||'')+(a.REF?' · '+esc(a.REF):'')+'</td><td class="r">'+M(+a.VALOR||0)+'</td>'+(RCD.as===''?'<td>'+esc(nomCorto(a.ASESOR))+'</td>':'')+'<td>'+titulo(a.ESTADO||'REGISTRADO')+'</td></tr>';}).join('')+'<tr><td colspan="6" class="r"><b>TOTAL</b></td><td class="r"><b>'+M(T)+'</b></td></tr></table>'+
-   '<div class="cp">'+L.map(function(a,i){var c=a.COMP;var im=c&&c.url&&/^image\//.test(c.tipo||'');return '<div><b>#'+(i+1)+' · '+esc(a.CLIENTE)+'</b><div class="s">'+esc(a.FECHA)+' · '+M(+a.VALOR||0)+'</div>'+(im?'<img src="'+esc(c.url)+'">':c&&c.url?'<a href="'+esc(c.url)+'">📄 '+esc(c.nombre)+'</a>':c?'<div class="s">📎 '+esc(c.nombre)+' (ver en Actividapp)</div>':'<div class="s" style="color:#DD091C">Sin comprobante</div>')+'</div>';}).join('')+'</div></body></html>';
-  var w=window.open('','_blank');if(!w){toast('Permite ventanas emergentes para generar el informe');return;}w.document.write(html);w.document.close();};
+   '<h2>Comprobantes de pago</h2>'+L.map(function(a,i){var c=a.COMP,im=imgs[i];return '<div class="cp"><b>#'+(i+1)+' · '+esc(a.CLIENTE)+'</b> <span class="s">· '+esc(a.FECHA)+' · '+M(+a.VALOR||0)+(c?' · '+esc(c.nombre||''):'')+'</span>'+(im&&im.length?im.map(function(s){return '<img src="'+s+'">';}).join(''):c?'<div class="s" style="color:#DD091C;margin-top:6px">No se pudo mostrar el comprobante'+(c.url?': <a href="'+esc(c.url)+'">abrir archivo</a>':' (ábrelo desde Recaudo en Actividapp)')+'</div>':'<div class="s" style="color:#DD091C;margin-top:6px">Sin comprobante</div>')+'</div>';}).join('')+'</body></html>';
+  w.document.open();w.document.write(html);w.document.close();};
 
 // ═══════════════════ SEGUIMIENTO CANAL OBRAS (coordinación técnica) ═══════════════════
 var SOB={per:'mes',as:'',f:'pend',lim:40};
@@ -3924,6 +3944,69 @@ window.guardarUsuario=async function(id){var F=window.FB;var n=document.getEleme
     if(u){Object.assign(u,d);if(d.PW_HASH)delete u['CONTRASEÑA'];}else USERS.push(Object.assign({id:did},d));CANA=null;cerrarMd();toast('✅ Usuario guardado');render();}catch(e){toast('Error: '+e.message);}};
 // ═══════════ FUERZA COMERCIAL (adaptador) ═══════════
 function renderFCv(){if(!CRM_OK){document.getElementById('fc-k').innerHTML='<div class="em">Cargando visitas…</div>';return;}window.Actividades=ACTS;window.Usuarios=USERS;window.Presupuestos=PRES;window.Proyectos=PROYS;window.initFC();}
+
+// ═══════════════════ GESTIÓN DE RECUPERACIÓN: no perder lo escrito, guardar rápido, adjunto en segundo plano ═══════════════════
+var FXD={nit:null,dirty:false,file:null};
+function gxDraftKey(nit){return 'gx_borrador_'+(CU?normNom(CU.nombre):'')+'_'+nit;}
+function gxLeerForm(){var o={};document.querySelectorAll('#fx-b input[id^="gx-"],#fx-b select[id^="gx-"],#fx-b textarea[id^="gx-"]').forEach(function(el){if(el.type==='file')return;o[el.id]=el.value;});var ch=document.querySelector('#gx-tipo .chip.on');if(ch)o._tipo=ch.dataset.v;o._t=Date.now();return o;}
+function gxGuardarBorrador(){if(!FX)return;try{var o=gxLeerForm();var hay=Object.keys(o).some(function(k){return k[0]!=='_'&&k!=='gx-con'&&o[k];});if(hay)localStorage.setItem(gxDraftKey(FX),JSON.stringify(o));}catch(e){}}
+function gxBorrarBorrador(nit){try{localStorage.removeItem(gxDraftKey(nit||FX));}catch(e){}}
+function gxRestaurar(){if(!FX||!document.getElementById('gx-res'))return;var o=null;try{o=JSON.parse(localStorage.getItem(gxDraftKey(FX))||'null');}catch(e){}if(!o||Date.now()-o._t>3*864e5)return;
+  var rs=document.getElementById('gx-res');if(rs&&o['gx-res']){rs.value=o['gx-res'];try{gxRes();}catch(e){}}
+  Object.keys(o).forEach(function(k){if(k[0]==='_'||k==='gx-res')return;var el=document.getElementById(k);if(el&&el.type!=='file')el.value=o[k];});
+  if(o._tipo){var b=document.querySelector('#gx-tipo .chip[data-v="'+o._tipo+'"]');if(b)chipOn(b);}var cvf=document.getElementById('gx-cvf');if(cvf&&o['gx-cv'])cvf.textContent=M(+o['gx-cv']);
+  if(!FXD.avisado){FXD.avisado=FX;toast('📝 Recuperamos la gestión que estabas escribiendo');}}
+// mientras el asesor escribe, no se vuelve a pintar la ficha (antes se borraba con la actualización automática)
+var _rfAnterior=window.renderFicha;
+window.renderFicha=function(forzar){var b=document.getElementById('fx-b');
+  if(!forzar&&FXD.dirty&&FXD.nit===FX&&b&&document.getElementById('gx-res'))return;
+  _rfAnterior();FXD.nit=FX;FXD.dirty=false;FXD.file=null;gxRestaurar();};
+var _cfAnterior=window.cerrarFicha;
+window.cerrarFicha=function(){if(FXD.dirty)gxGuardarBorrador();FXD.dirty=false;FXD.avisado=null;_cfAnterior();};
+['input','change'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(!t||!t.closest||!t.closest('#fx-b'))return;if(!/^gx-/.test(t.id||''))return;FXD.dirty=true;FXD.nit=FX;if(t.id==='gx-cf')FXD.file=t.files&&t.files[0];gxGuardarBorrador();},true);});
+document.addEventListener('click',function(e){var t=e.target;if(t&&t.closest&&t.closest('#gx-tipo')){FXD.dirty=true;FXD.nit=FX;setTimeout(gxGuardarBorrador,0);}},true);
+// guardar: primero la gestión (rápido), luego el archivo de la cotización en segundo plano
+var gxGuardar=async function(){
+  var F=window.FB,nit=FX,c=BYNIT[nit];var v=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
+  var res=v('gx-res');if(!res){toast('Elige el resultado de la gestión');return;}
+  var btn=document.getElementById('gx-btn');btn.disabled=true;btn.textContent='Guardando…';
+  var cf=document.getElementById('gx-cf');var fi=(cf&&cf.files&&cf.files[0])||FXD.file||null;
+  var borrador=gxLeerForm();
+  try{
+    var g={NIT:nit,CLIENTE:c.n,FECHA:F.Timestamp.now(),USUARIO:CU.nombre,TIPO:(document.querySelector('#gx-tipo .chip.on')||{dataset:{}}).dataset.v||'Llamada',RESULTADO:res,MOTIVO:v('gx-mot'),CONTACTO:v('gx-con'),NOTAS:v('gx-not'),
+      COT_NUM:v('gx-cn'),COT_VALOR:+v('gx-cv')||0,COT_URL:'',COT_NOMBRE:fi?fi.name:'',PROX_ACCION:v('gx-pa'),PROX_FECHA:v('gx-pf')};
+    if(fi)g.COT_SUBIENDO=true;
+    var prev=RC[nit]||{};var estN=prev.ESTADO||'ASIGNADO';var rq=/reasignar/i.test(res);
+    if(rq){g.MOTIVO_REASIGNAR=v('gx-rm');g.SUGERIDO=v('gx-rs');g.PROX_ACCION='';g.PROX_FECHA='';}
+    if(rq)estN='REASIGNAR';else if(/Pedido confirmado/.test(res))estN='RECUPERADO';else if(/Cotización enviada/.test(res)||g.COT_VALOR>0||fi)estN='COTIZADO';else if(/cerró/.test(res))estN='DESCARTADO';else if(estN==='ASIGNADO')estN='GESTION';
+    var d={ESTADO:estN,PROX_ACCION:g.PROX_ACCION,PROX_FECHA:g.PROX_FECHA,ULT_GESTION:new Date().toISOString(),ULT_RESULTADO:res,ACTUALIZADO:new Date().toISOString()};
+    if(!prev.ASIGNADO_A){d.ASIGNADO_A=CU.nombre.toUpperCase();d.FECHA_ASIGNACION=new Date().toISOString();d.ASIGNADO_POR=CU.nombre;}
+    if(g.CONTACTO&&!prev.CONTACTO)d.CONTACTO=g.CONTACTO;
+    if(rq){Object.assign(d,{SOLICITUD_POR:CU.nombre,SOLICITUD_MOTIVO:g.MOTIVO_REASIGNAR,SOLICITUD_NOTAS:g.NOTAS,SOLICITUD_SUGERIDO:g.SUGERIDO,SOLICITUD_FECHA:new Date().toISOString(),EXCLUIR:Array.from(new Set((prev.EXCLUIR||[]).concat([normNom(CU.nombre)])))});
+      var gest=USERS.filter(function(u){return ['ADMINISTRADOR','SUPERNUMERARIO'].indexOf(u.TIPO||u.tipo)>=0;}).map(function(u){return normNom(u['NOMBRE EMPLEADO']||u.nombre);});
+      Array.from(new Set(gest.concat(prev.ASIGNADO_POR?[normNom(prev.ASIGNADO_POR)]:[]))).forEach(function(k){if(k!==normNom(CU.nombre))F.setDoc(F.doc(F.collection(F.db,'recup_notif')),{PARA:k,DE:CU.nombre,TIPO:'REASIGNAR',FECHA:F.Timestamp.now(),LEIDA:false,TITULO:titulo(CU.nombre).split(' ').slice(0,2).join(' ')+' pide reasignar un cliente',TEXTO:c.n+' · motivo: '+g.MOTIVO_REASIGNAR+(g.NOTAS?' · '+g.NOTAS:''),NITS:[nit]}).catch(function(){});});}
+    var r=F.doc(F.collection(F.db,'recup_gestiones'));
+    var wp=Promise.all([F.setDoc(r,g),F.setDoc(F.doc(F.db,'recup_clientes',nit),d,{merge:true})]);
+    var ok=await Promise.race([wp.then(function(){return 'ok';}),new Promise(function(x){setTimeout(function(){x('pend');},6000);})]);
+    var gl=Object.assign({id:r.id},g);GS.push(gl);RC[nit]=Object.assign(prev,d,{id:nit});
+    wp.catch(function(e){GS=GS.filter(function(x){return x!==gl;});try{localStorage.setItem(gxDraftKey(nit),JSON.stringify(borrador));}catch(er){}
+      abrirMd('<h3>⚠️ La gestión no se guardó</h3><div class="hint" style="margin:6px 0 10px">El servidor la rechazó: '+esc(e.message)+'.<br>Lo que escribiste quedó guardado en este equipo: abre de nuevo el cliente e intenta otra vez. Si se repite, avisa al administrador.</div><button class="btn p" style="width:100%" onclick="cerrarMd()">Entendido</button>');render();});
+    gxBorrarBorrador(nit);FXD.dirty=false;FXD.file=null;
+    toast(rq?'↪ Solicitud enviada al gestor':ok==='ok'?'✅ Gestión guardada'+(fi?' · subiendo la cotización…':''):'📶 Guardada en el equipo; se envía al recuperar señal');
+    if(FX===nit)renderFicha(true);render();
+    if(fi)gxSubirCot(r.id,nit,fi,gl);
+  }catch(e){toast('Error: '+e.message);}
+  var b2=document.getElementById('gx-btn');if(b2){b2.disabled=false;b2.textContent='Guardar gestión';}
+};
+async function gxSubirCot(id,nit,fi,gl){var F=window.FB;
+  try{var blob=/^image\//.test(fi.type)?await comprimir(fi):fi;
+    var a=await subirArch('cotizaciones/'+nit+'/'+Date.now()+'_'+fi.name.replace(/[^\w.\-]/g,'_'),blob,fi.name,blob.type||fi.type);
+    var up={COT_SUBIENDO:false,COT_NOMBRE:fi.name,COT_URL:a.url||''};if(!a.url){up.COT_FS=a.fs;up.COT_N=a.n;up.COT_TIPO=a.tipo;}
+    await F.updateDoc(F.doc(F.db,'recup_gestiones',id),up);Object.assign(gl,up);toast('📎 Cotización adjuntada a la gestión');if(FX===nit&&!FXD.dirty)renderFicha(true);}
+  catch(e){F.updateDoc(F.doc(F.db,'recup_gestiones',id),{COT_SUBIENDO:false}).catch(function(){});gl.COT_SUBIENDO=false;toast('⚠️ La gestión quedó guardada, pero el archivo no se pudo subir ('+e.message+'). Agrégalo en otra gestión o envíalo por WhatsApp.');if(FX===nit&&!FXD.dirty)renderFicha(true);}}
+
+// el módulo de Firebase define su propio guardarGestion al final de la carga: se reemplaza después
+document.addEventListener('DOMContentLoaded',function(){window.guardarGestion=gxGuardar;});setTimeout(function(){window.guardarGestion=gxGuardar;},0);window.addEventListener('load',function(){window.guardarGestion=gxGuardar;});
 
 </script>
 <script type="module">
